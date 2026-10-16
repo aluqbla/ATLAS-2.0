@@ -167,10 +167,11 @@ body.atlas-subpage-open .nav{display:none!important}body.atlas-subpage-open .ass
       <div class="bridge-status" id="bridgeStatus">Sin conexión configurada.</div>
       <div class="bridge-contract">
         <div class="subpage-section-title">Contrato H3</div>
-        <div class="bridge-contract-row"><strong>Perfil y dispositivo</strong><span>/api/garmin/profile · /api/garmin/devices</span></div>
-        <div class="bridge-contract-row"><strong>Métricas diarias</strong><span>/api/garmin/daily?date=YYYY-MM-DD</span></div>
-        <div class="bridge-contract-row"><strong>Estado y umbral</strong><span>/api/garmin/training-status · /api/garmin/threshold</span></div>
-        <div class="bridge-contract-row"><strong>Actividades y equipamiento</strong><span>/api/garmin/activities · /api/garmin/gear</span></div>
+        <div class="bridge-contract-row"><strong>Estado del Bridge</strong><span>/api/status</span></div>
+        <div class="bridge-contract-row"><strong>Perfil</strong><span>/api/profile</span></div>
+        <div class="bridge-contract-row"><strong>Atleta y equipamiento</strong><span>/api/bootstrap</span></div>
+        <div class="bridge-contract-row"><strong>Actividades y wellness</strong><span>/api/sync?oldest=…&newest=…</span></div>
+        <div class="bridge-contract-row"><strong>VO₂ preciso</strong><span>/api/activity-vo2max?id=…</span></div>
       </div>
     </div>
   </div>
@@ -179,7 +180,7 @@ body.atlas-subpage-open .nav{display:none!important}body.atlas-subpage-open .ass
 
 <script>
 /* ========================================================= 10. CONSTANTS ========================================================= */
-const APP_VERSION='2.0.0-H2';
+const APP_VERSION='2.0.0-H3.1';
 const TABS=['today','activities','assistant','plan','data'];
 /* ========================================================= 20. UTILITIES ========================================================= */
 const $=(s,r=document)=>r.querySelector(s); const $$=(s,r=document)=>[...r.querySelectorAll(s)];
@@ -282,46 +283,76 @@ async function bridgeRequest(path,{timeoutMs=18000}={}){
 function unwrapBridgePayload(p){return p?.data??p?.result??p}
 const GarminAdapter={
   status:()=>bridgeRequest('/api/status',{timeoutMs:10000}),
-  profile:()=>bridgeRequest('/api/garmin/profile'),
-  devices:()=>bridgeRequest('/api/garmin/devices'),
-  daily:date=>bridgeRequest(`/api/garmin/daily?date=${encodeURIComponent(date)}`),
-  trainingStatus:date=>bridgeRequest(`/api/garmin/training-status?date=${encodeURIComponent(date)}`),
-  threshold:()=>bridgeRequest('/api/garmin/threshold'),
-  activities:(oldest,newest)=>bridgeRequest(`/api/garmin/activities?oldest=${encodeURIComponent(oldest)}&newest=${encodeURIComponent(newest)}`),
-  gear:()=>bridgeRequest('/api/garmin/gear')
+  profile:()=>bridgeRequest('/api/profile',{timeoutMs:12000}),
+  bootstrap:()=>bridgeRequest('/api/bootstrap',{timeoutMs:20000}),
+  sync:(oldest,newest)=>bridgeRequest(`/api/sync?oldest=${encodeURIComponent(oldest)}&newest=${encodeURIComponent(newest)}`,{timeoutMs:45000}),
+  calendar:(oldest,newest)=>bridgeRequest(`/api/calendar?oldest=${encodeURIComponent(oldest)}&newest=${encodeURIComponent(newest)}`,{timeoutMs:25000}),
+  activityVo2Max:id=>bridgeRequest(`/api/activity-vo2max?id=${encodeURIComponent(id)}`,{timeoutMs:20000})
 };
 /* ========================================================= 70. NORMALIZERS ========================================================= */
 const nnum=v=>{const n=Number(v);return Number.isFinite(n)?n:null};
 const nstr=v=>v==null?null:String(v);
 const narr=v=>Array.isArray(v)?v:[];
 const pick=(o,...keys)=>{for(const k of keys)if(o&&o[k]!=null)return o[k];return null};
-function normalizeAthletePayload(raw,devicesRaw=null){const p=unwrapBridgePayload(raw)?.profile||unwrapBridgePayload(raw)||{};const devices=narr(unwrapBridgePayload(devicesRaw)?.devices||unwrapBridgePayload(devicesRaw));const primary=devices.find(d=>d?.primary===true||d?.isPrimary===true)||devices[0]||p?.primaryDevice||null;return{id:'primary',name:nstr(pick(p,'displayName','fullName','name','userName'))||'Perfil',heightCm:nnum(pick(p,'heightCm','height')),weightKg:nnum(pick(p,'weightKg','weight')),primaryDevice:primary?{id:nstr(pick(primary,'id','deviceId','unitId')),name:nstr(pick(primary,'name','productDisplayName','displayName','productName')),firmware:nstr(pick(primary,'firmware','softwareVersion'))}:null,updatedAt:nowISO()}}
-function normalizeDailyMetricsPayload(raw,date){const x=unwrapBridgePayload(raw)||{};const r=x.trainingReadiness||x.readiness||null,h=x.hrv||x.hrvStatus||null,sl=x.sleep||x.sleepData||null,st=x.stress||null,bb=x.bodyBattery||x.bodyBatteryData||null,sp=x.spo2||x.spO2||null;return{date,restingHr:nnum(pick(x,'restingHr','restingHeartRate','rhr')),hrv:h,sleep:sl,bodyBattery:bb,trainingReadiness:r,stress:st,spo2:sp,sourceDate:nstr(pick(x,'sourceDate','calendarDate','date'))||date,syncedAt:nowISO()}}
-function normalizeTrainingStatusPayload(raw,date){const x=unwrapBridgePayload(raw)?.trainingStatus||unwrapBridgePayload(raw)||{};const lf=x.loadFocus||x.trainingLoadFocus||{};return{date,vo2Max:nnum(pick(x,'vo2Max','vo2max','genericVO2Max')),maxHr:nnum(pick(x,'maxHr','maxHeartRate')),status:nstr(pick(x,'status','trainingStatus','trainingStatusLabel')),acuteLoad:nnum(pick(x,'acuteLoad','acuteTrainingLoad','trainingLoad')),chronicLoad:nnum(pick(x,'chronicLoad','chronicTrainingLoad')),acuteChronicRatio:nnum(pick(x,'acuteChronicRatio','acwr','acuteChronicWorkloadRatio')),loadFocus:{lowAerobic:nnum(pick(lf,'lowAerobic','aerobicLow','lowAerobicLoad')),highAerobic:nnum(pick(lf,'highAerobic','aerobicHigh','highAerobicLoad')),anaerobic:nnum(pick(lf,'anaerobic','anaerobicLoad'))},syncedAt:nowISO()}}
-function normalizeThresholdPayload(raw){const x=unwrapBridgePayload(raw)?.lactateThreshold||unwrapBridgePayload(raw)||{};return{id:'running',sport:'running',heartRate:nnum(pick(x,'heartRate','thresholdHeartRate','lactateThresholdHeartRate')),paceSecPerKm:nnum(pick(x,'paceSecPerKm','thresholdPaceSecPerKm')),powerWatts:nnum(pick(x,'powerWatts','thresholdPower','runningFTP')),detectedAt:nstr(pick(x,'detectedAt','timestamp','date')),source:'garmin'}}
-function normalizeActivityPayload(a){const id=pick(a,'id','activityId','activityID');if(id==null)return null;const distance=nnum(pick(a,'distanceM','distance','distanceMeters'));const duration=nnum(pick(a,'durationSec','duration','elapsedDuration'));const pace=nnum(pick(a,'avgPaceSecPerKm','avgPace','averagePace'));return{id:String(id),date:nstr(pick(a,'date','startDateLocal','startTimeLocal','startTime'))?.slice(0,10)||null,type:nstr(pick(a,'type','activityType','sportType'))||'unknown',name:nstr(pick(a,'name','activityName'))||'Actividad',distanceM:distance,durationSec:duration,movingTimeSec:nnum(pick(a,'movingTimeSec','movingDuration')),avgHr:nnum(pick(a,'avgHr','averageHR','averageHeartRate')),maxHr:nnum(pick(a,'maxHr','maxHR','maxHeartRate')),avgPace:pace,elevationGainM:nnum(pick(a,'elevationGainM','elevationGain','totalElevationGain')),calories:nnum(pick(a,'calories','caloriesBurned')),trainingLoad:nnum(pick(a,'trainingLoad','activityTrainingLoad')),aerobicEffect:nnum(pick(a,'aerobicEffect','aerobicTrainingEffect')),anaerobicEffect:nnum(pick(a,'anaerobicEffect','anaerobicTrainingEffect')),hasGps:Boolean(pick(a,'hasGps','hasGPS','gps')),hasIntervals:Boolean(pick(a,'hasIntervals','intervals')),updatedAt:nowISO()}}
-function normalizeGearPayload(g){const id=pick(g,'id','gearId','uuid');if(id==null)return null;const retired=Boolean(pick(g,'retired','isRetired'))||String(pick(g,'status')||'').toLowerCase()==='retired';return{id:String(id),name:nstr(pick(g,'name','displayName','gearName'))||'Equipamiento',type:nstr(pick(g,'type','gearType'))||'shoe',status:retired?'retired':'active',startDate:nstr(pick(g,'startDate','dateBegin')),retirementDistanceM:nnum(pick(g,'retirementDistanceM','maxDistance','maximumDistance')),totalDistanceM:nnum(pick(g,'totalDistanceM','totalDistance','distance')),totalActivities:nnum(pick(g,'totalActivities','activityCount','activities')),updatedAt:nowISO()}}
-async function persistGarminSnapshot({date,profile,devices,daily,status,threshold,activities,gear}){
-  const athlete=normalizeAthletePayload(profile,devices);await AthleteRepository.save(athlete);
-  if(daily)await MetricsRepository.saveDaily(normalizeDailyMetricsPayload(daily,date));
-  if(status)await MetricsRepository.saveTrainingStatus(normalizeTrainingStatusPayload(status,date));
-  if(threshold)await MetricsRepository.saveThreshold(normalizeThresholdPayload(threshold));
-  let activityCount=0;for(const a of narr(unwrapBridgePayload(activities)?.activities||unwrapBridgePayload(activities))){const n=normalizeActivityPayload(a);if(n){await ActivityRepository.save(n);activityCount++}}
-  let gearCount=0;for(const g of narr(unwrapBridgePayload(gear)?.gear||unwrapBridgePayload(gear))){const n=normalizeGearPayload(g);if(n){await GearRepository.save(n);gearCount++}}
-  return{athlete,activityCount,gearCount};
+function runningSportSetting(rows){return narr(rows).find(s=>narr(s?.types).some(t=>/run/i.test(String(t)))||/run/i.test(String(s?.type||s?.sport||s?.name||'')))||null}
+function thresholdPaceSecKm(sport){const n=nnum(sport?.threshold_pace);if(!(n>0))return null;if(sport?.pace_units==='MINS_KM'&&n<15)return 1000/n;if(n>=120&&n<=900)return n;return null}
+function normalizeAthletePayload(profileRaw,bootstrapRaw=null){
+  const profile=unwrapBridgePayload(profileRaw)?.profile||unwrapBridgePayload(profileRaw)||{};
+  const boot=unwrapBridgePayload(bootstrapRaw)||{};
+  const athlete=boot?.athlete||{};
+  const base={...profile,...athlete};
+  const primary=pick(base,'primaryDevice','device')||narr(base?.devices).find(d=>d?.primary===true||d?.isPrimary===true)||narr(base?.devices)[0]||null;
+  return{id:'primary',name:nstr(pick(base,'displayName','fullName','name','userName'))||'Perfil',heightCm:nnum(pick(base,'heightCm','height')),weightKg:nnum(pick(base,'weightKg','icu_weight','weight')),primaryDevice:primary?{id:nstr(pick(primary,'id','deviceId','unitId')),name:nstr(pick(primary,'name','productDisplayName','displayName','productName')),firmware:nstr(pick(primary,'firmware','softwareVersion'))}:null,updatedAt:nowISO()}
 }
-
-
+function normalizeDailyMetricsFromWellness(row,date){
+  const x=row||{};const sleepSecs=nnum(pick(x,'sleepSecs','sleep_secs','sleep'));const sleepScore=nnum(pick(x,'sleepScore','sleep_score'));
+  const hrvValue=nnum(pick(x,'hrv'));const rhr=nnum(pick(x,'restingHR','resting_hr','restingHr'));
+  return{date,restingHr:rhr,hrv:hrvValue==null?null:{overnightAvg:hrvValue,weeklyAvg:null,baselineLow:null,baselineHigh:null,status:null},sleep:(sleepSecs!=null||sleepScore!=null)?{durationSec:sleepSecs,score:sleepScore,stages:null}:null,bodyBattery:null,trainingReadiness:null,stress:null,spo2:null,sourceDate:nstr(pick(x,'id','date','calendarDate'))||date,syncedAt:nowISO()}
+}
+function normalizeTrainingStatusFromLegacy({wellnessRow=null,sport=null,vo2Payload=null,date}){
+  const vo2=nnum(pick(vo2Payload,'vo2max','vo2Max'))??nnum(pick(wellnessRow,'vo2max','vo2Max','vo2_max'));
+  return{date,vo2Max:vo2,maxHr:nnum(pick(sport,'max_hr','maxHr','maxHeartRate')),status:null,acuteLoad:null,chronicLoad:null,acuteChronicRatio:null,loadFocus:{lowAerobic:null,highAerobic:null,anaerobic:null},syncedAt:nowISO()}
+}
+function normalizeThresholdFromSportSetting(sport){return{id:'running',sport:'running',heartRate:nnum(pick(sport,'lthr','thresholdHeartRate','lactateThresholdHeartRate')),paceSecPerKm:thresholdPaceSecKm(sport),powerWatts:nnum(pick(sport,'running_ftp','runningFTP','thresholdPower')),detectedAt:nstr(pick(sport,'updatedAt','updated_at')),source:'bridge'} }
+function normalizeActivityPayload(a){
+  const id=pick(a,'id','activityId','activityID');if(id==null)return null;
+  const distance=nnum(pick(a,'distanceM','distance','distanceMeters'));
+  const duration=nnum(pick(a,'durationSec','moving_time','movingTime','elapsed_time','elapsedDuration','duration'));
+  let pace=nnum(pick(a,'avgPaceSecPerKm','avgPace','averagePace'));if(!(pace>0)&&distance>0&&duration>0)pace=duration/(distance/1000);
+  return{id:String(id),date:nstr(pick(a,'date','start_date_local','startDateLocal','start_date','startTimeLocal','startTime'))?.slice(0,10)||null,type:nstr(pick(a,'type','activityType','sportType'))||'unknown',name:nstr(pick(a,'name','activityName'))||'Actividad',distanceM:distance,durationSec:duration,movingTimeSec:nnum(pick(a,'movingTimeSec','moving_time','movingDuration')),avgHr:nnum(pick(a,'avgHr','average_heartrate','averageHR','averageHeartRate')),maxHr:nnum(pick(a,'maxHr','max_heartrate','maxHR','maxHeartRate')),avgPace:pace,elevationGainM:nnum(pick(a,'elevationGainM','total_elevation_gain','elevationGain','totalElevationGain')),calories:nnum(pick(a,'calories','caloriesBurned')),trainingLoad:nnum(pick(a,'trainingLoad','icu_training_load','activityTrainingLoad')),aerobicEffect:nnum(pick(a,'aerobicEffect','aerobic_training_effect','aerobicTrainingEffect')),anaerobicEffect:nnum(pick(a,'anaerobicEffect','anaerobic_training_effect','anaerobicTrainingEffect')),hasGps:Boolean(pick(a,'hasGps','hasGPS','gps')??pick(a,'start_latlng','map')),hasIntervals:Boolean(pick(a,'hasIntervals','intervals','laps')),updatedAt:nowISO()}
+}
+function normalizeGearPayload(g){
+  const id=pick(g,'id','gearId','uuid');if(id==null)return null;const retired=Boolean(pick(g,'retired','isRetired'))||String(pick(g,'status')||'').toLowerCase()==='retired';
+  return{id:String(id),name:nstr(pick(g,'name','displayName','gearName'))||'Equipamiento',type:nstr(pick(g,'type','gearType'))||'shoe',status:retired?'retired':'active',startDate:nstr(pick(g,'startDate','dateBegin','purchased'))?.slice(0,10)||null,retirementDistanceM:nnum(pick(g,'retirementDistanceM','maxDistance','maximumDistance')),totalDistanceM:nnum(pick(g,'totalDistanceM','totalDistance','distance')),totalActivities:nnum(pick(g,'totalActivities','activityCount','activities')),updatedAt:nowISO()}
+}
+function mostRecentWellness(rows,date){return narr(rows).filter(r=>String(pick(r,'id','date')||'').slice(0,10)<=date).sort((a,b)=>String(pick(b,'id','date')||'').localeCompare(String(pick(a,'id','date')||'')))[0]||null}
+function mostRecentRun(rows){return narr(rows).filter(a=>/run|correr|running/i.test(String(pick(a,'type','activityType','sportType','name')||''))).sort((a,b)=>String(pick(b,'start_date_local','startDateLocal','date','start_date')||'').localeCompare(String(pick(a,'start_date_local','startDateLocal','date','start_date')||'')))[0]||null}
+async function persistBridgeSnapshot({date,profile,bootstrap,sync,vo2Payload}){
+  const boot=unwrapBridgePayload(bootstrap)||{},syncData=unwrapBridgePayload(sync)||{};
+  const athlete=normalizeAthletePayload(profile,bootstrap);await AthleteRepository.save(athlete);
+  const wellness=Array.isArray(syncData?.wellness)?syncData.wellness:[];const recentWellness=mostRecentWellness(wellness,date);
+  if(recentWellness){const sourceDate=String(pick(recentWellness,'id','date')||date).slice(0,10);await MetricsRepository.saveDaily(normalizeDailyMetricsFromWellness(recentWellness,sourceDate))}
+  const sport=runningSportSetting(boot?.sportSettings||athlete?.sportSettings||[]);
+  await MetricsRepository.saveTrainingStatus(normalizeTrainingStatusFromLegacy({wellnessRow:recentWellness,sport,vo2Payload,date}));
+  if(sport)await MetricsRepository.saveThreshold(normalizeThresholdFromSportSetting(sport));
+  let activityCount=0;for(const a of narr(syncData?.activities)){const n=normalizeActivityPayload(a);if(n){await ActivityRepository.save(n);activityCount++}}
+  let gearCount=0;for(const g of narr(boot?.gear)){const n=normalizeGearPayload(g);if(n){await GearRepository.save(n);gearCount++}}
+  return{athlete,activityCount,gearCount,wellnessCount:wellness.length,sourceDate:recentWellness?String(pick(recentWellness,'id','date')||'').slice(0,10):null};
+}
+function optionalRead(label,promise){return Promise.resolve(promise).then(value=>({ok:true,label,value})).catch(error=>({ok:false,label,error}))}
 const GarminReadService={
-  async test(){const status=await GarminAdapter.status();return status},
+  async test(){return GarminAdapter.status()},
   async readNow(){
     const date=todayISO(),d=new Date();d.setDate(d.getDate()-30);const oldest=d.toISOString().slice(0,10);
-    const tasks={profile:GarminAdapter.profile(),devices:GarminAdapter.devices(),daily:GarminAdapter.daily(date),status:GarminAdapter.trainingStatus(date),threshold:GarminAdapter.threshold(),activities:GarminAdapter.activities(oldest,date),gear:GarminAdapter.gear()};
-    const out={};for(const [k,p] of Object.entries(tasks)){try{out[k]=await p}catch(e){out[k]=null;out[k+'Error']=e}}
-    if(!out.profile)throw out.profileError||new Error('Garmin Bridge no ha devuelto el perfil.');
-    const saved=await persistGarminSnapshot({date,...out});
-    await SyncRepository.save('garminRead',{lastSuccessfulSync:nowISO(),sourceDate:date,activityCount:saved.activityCount,gearCount:saved.gearCount,partialErrors:Object.keys(out).filter(k=>k.endsWith('Error')).map(k=>({part:k.replace('Error',''),message:String(out[k]?.message||out[k])}))});
-    return{date,saved,partialErrors:Object.keys(out).filter(k=>k.endsWith('Error'))};
+    const sync=await GarminAdapter.sync(oldest,date); // fuente deportiva obligatoria del Worker 0.8.6
+    const [profileR,bootstrapR]=await Promise.all([optionalRead('profile',GarminAdapter.profile()),optionalRead('bootstrap',GarminAdapter.bootstrap())]);
+    const syncData=unwrapBridgePayload(sync)||{};const lastRun=mostRecentRun(syncData?.activities);let vo2R={ok:false,label:'vo2',error:null};
+    if(lastRun?.id!=null)vo2R=await optionalRead('vo2',GarminAdapter.activityVo2Max(lastRun.id));
+    const profile=profileR.ok?profileR.value:null,bootstrap=bootstrapR.ok?bootstrapR.value:null,vo2Payload=vo2R.ok?unwrapBridgePayload(vo2R.value):null;
+    const saved=await persistBridgeSnapshot({date,profile,bootstrap,sync,vo2Payload});
+    const partialErrors=[profileR,bootstrapR,vo2R].filter(r=>!r.ok&&r.error).map(r=>({part:r.label,status:r.error?.status||null,message:String(r.error?.message||r.error)}));
+    await SyncRepository.save('garminRead',{lastSuccessfulSync:nowISO(),sourceDate:saved.sourceDate||date,activityCount:saved.activityCount,gearCount:saved.gearCount,wellnessCount:saved.wellnessCount,partialErrors,workerContract:'0.8.6-compat'});
+    return{date,saved,partialErrors,workerContract:'0.8.6-compat'};
   }
 };
 /* ========================================================= 80. SYNC ENGINE ========================================================= */
@@ -368,7 +399,7 @@ function loadBridgeForm(){const cfg=GarminBridgeConfig.load();$('#bridgeUrl').va
 function saveBridgeForm(){return GarminBridgeConfig.save({url:$('#bridgeUrl').value,token:$('#bridgeToken').value})}
 $('#bridgeSettingsOpen').addEventListener('click',()=>{loadBridgeForm();setBridgeSheet(true)});$('#bridgeBack').addEventListener('click',()=>setBridgeSheet(false));
 $('#bridgeTest').addEventListener('click',async()=>{const btn=$('#bridgeTest');try{saveBridgeForm();btn.disabled=true;setBridgeStatus('Probando Garmin Bridge…');const p=await GarminReadService.test();setBridgeStatus(`<strong>Conectado</strong> · ${p?.version||p?.workerVersion||'Bridge disponible'}`,'ok')}catch(e){setBridgeStatus(`<strong>Error</strong> · ${String(e?.message||e)}`,'error')}finally{btn.disabled=false}});
-$('#bridgeRead').addEventListener('click',async()=>{const btn=$('#bridgeRead');try{saveBridgeForm();btn.disabled=true;setBridgeStatus('Leyendo Garmin…');const r=await GarminReadService.readNow();await renderProfileFromLocal();setBridgeStatus(`<strong>Garmin leído</strong> · ${r.saved.activityCount} actividades · ${r.saved.gearCount} equipos${r.partialErrors.length?' · lectura parcial':''}`,'ok')}catch(e){setBridgeStatus(`<strong>Error</strong> · ${String(e?.message||e)}`,'error')}finally{btn.disabled=false}});
+$('#bridgeRead').addEventListener('click',async()=>{const btn=$('#bridgeRead');try{saveBridgeForm();btn.disabled=true;setBridgeStatus('Leyendo Garmin…');const r=await GarminReadService.readNow();await renderProfileFromLocal();setBridgeStatus(`<strong>Lectura completada</strong> · ${r.saved.activityCount} actividades · ${r.saved.gearCount} equipos${r.saved.sourceDate?` · wellness ${r.saved.sourceDate}`:''}${r.partialErrors.length?' · parcial':''}`,'ok')}catch(e){setBridgeStatus(`<strong>Error</strong> · ${String(e?.message||e)}`,'error')}finally{btn.disabled=false}});
 $('.assistant-composer').addEventListener('submit',e=>e.preventDefault());
 /* ========================================================= 150. APP STATE ========================================================= */
 const AppState={view:'today',params:{},subpage:null,syncing:false,online:navigator.onLine,dbReady:false,localError:null,selfTest:null,garminReadReady:true};
@@ -386,7 +417,7 @@ async function boot(){
   }catch(err){reportLocalError(err)}
   navigate(TABS.includes(hash)?hash:'today');
 }
-window.ATLAS2={version:'2.0.0-H3',db:{name:DB_NAME,version:DB_VERSION,stores:Object.keys(STORE_SCHEMA),open:openAtlasDB},repositories:{AthleteRepository,MetricsRepository,ActivityRepository,GearRepository,WorkoutRepository,PlanRepository,SyncRepository},garmin:{config:GarminBridgeConfig,adapter:GarminAdapter,read:GarminReadService},normalizers:{normalizeAthletePayload,normalizeDailyMetricsPayload,normalizeTrainingStatusPayload,normalizeThresholdPayload,normalizeActivityPayload,normalizeGearPayload},state:AppState,runIndexedDBSelfTest};
+window.ATLAS2={version:'2.0.0-H3.1',db:{name:DB_NAME,version:DB_VERSION,stores:Object.keys(STORE_SCHEMA),open:openAtlasDB},repositories:{AthleteRepository,MetricsRepository,ActivityRepository,GearRepository,WorkoutRepository,PlanRepository,SyncRepository},garmin:{config:GarminBridgeConfig,adapter:GarminAdapter,read:GarminReadService},normalizers:{normalizeAthletePayload,normalizeDailyMetricsFromWellness,normalizeTrainingStatusFromLegacy,normalizeThresholdFromSportSetting,normalizeActivityPayload,normalizeGearPayload},state:AppState,runIndexedDBSelfTest};
 boot();
 </script>
 </body></html>

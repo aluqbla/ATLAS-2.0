@@ -86,8 +86,9 @@ body.atlas-subpage-open .nav{display:none!important}body.atlas-subpage-open .ass
 .profile-atlas-section .profile-dashboard-shoes-row{display:grid!important;width:100%!important;min-height:50px!important;margin:0!important;padding:8px 3px!important;grid-template-columns:27px minmax(0,1fr) auto!important;background:transparent!important}
 @media(max-width:390px){.profile-dashboard-performance-five .profile-dashboard-performance-label{font-size:7.2px!important}.profile-dashboard-performance-five .profile-dashboard-performance-main{font-size:14px!important}.profile-dashboard-performance-five .profile-dashboard-performance-unit{font-size:6.8px!important}}
 
-/* H3 · Garmin Read Bridge settings */
+/* H4 · Garmin Sync / Bridge settings */
 .bridge-sheet{position:fixed;z-index:2600;inset:0;background:#000;overflow-y:auto;-webkit-overflow-scrolling:touch}.bridge-sheet-inner{width:100%;max-width:430px;min-height:100%;margin:0 auto;padding:max(12px,calc(env(safe-area-inset-top) + 10px)) 12px 28px;background:#000}.bridge-top{display:grid;grid-template-columns:52px minmax(0,1fr) 52px;align-items:center}.bridge-title{text-align:center;font-size:22px;font-weight:830;color:#fff}.bridge-form{margin-top:18px}.bridge-label{display:block;margin:14px 2px 6px;color:var(--muted2);font-size:12px;font-weight:760}.bridge-input{width:100%;height:52px;padding:0 12px;border:0;border-radius:13px;background:#1c1c1e;color:#fff;font-size:16px;outline:none}.bridge-input:focus{background:#252529}.bridge-note{margin:8px 2px 0;color:var(--muted);font-size:10.5px;line-height:1.45}.bridge-actions{display:grid;gap:8px;margin-top:18px}.bridge-action{appearance:none;width:100%;min-height:48px;border:0;border-radius:14px;background:rgba(29,155,240,.12);color:var(--blue);font-size:14px;font-weight:820}.bridge-action.primary{background:var(--blue);color:#fff}.bridge-action:disabled{opacity:.45}.bridge-status{margin-top:16px;padding:12px 2px;border-top:2px solid var(--line);font-size:12px;line-height:1.5;color:var(--muted2);white-space:pre-wrap}.bridge-status strong{color:#fff}.bridge-contract{margin-top:18px}.bridge-contract-row{position:relative;padding:10px 2px}.bridge-contract-row+.bridge-contract-row::before{content:"";position:absolute;left:6px;right:6px;top:0;height:2px;background:var(--line)}.bridge-contract-row strong{display:block;font-size:12px;color:#fff}.bridge-contract-row span{display:block;margin-top:3px;font-size:10px;color:var(--muted);overflow-wrap:anywhere}.h3-sync-state{font-size:10px;color:var(--muted);margin:2px 3px 10px}.h3-sync-state.ok{color:var(--green)}.h3-sync-state.error{color:var(--red)}
+@keyframes atlasSpin{to{transform:rotate(360deg)}}.sync-quick.syncing{animation:atlasSpin .85s linear infinite}.h3-sync-state.degraded{color:var(--yellow)}.h3-sync-state.offline{color:var(--muted2)}
 </style>
 </head>
 <body>
@@ -97,7 +98,7 @@ body.atlas-subpage-open .nav{display:none!important}body.atlas-subpage-open .ass
 <header class="atlas-header"><img alt="ɅTLɅS" class="atlas-title" src="data:image/webp;base64,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"/></header>
 <div class="section-bar"><div class="section-name" id="todayDate">Hoy</div><button class="sync-quick" type="button" aria-label="Sincronizar">↻</button></div>
 <div class="today-hero-card">
-  <button class="training-state" type="button" data-open-subpage="readiness"><div class="state-score" style="--score-pct:0%"><span class="state-score-main">—</span></div><div class="state-copy"><div class="state-kicker">Predisposición para entrenar</div><div class="state-word">Sin datos</div><div class="state-note">Garmin se conectará en H3.</div></div></button>
+  <button class="training-state" type="button" data-open-subpage="readiness"><div class="state-score" style="--score-pct:0%"><span class="state-score-main">—</span></div><div class="state-copy"><div class="state-kicker">Predisposición para entrenar</div><div class="state-word">Sin datos</div><div class="state-note">Datos Garmin preparados en local.</div></div></button>
   <div class="metric-strip">
     <button class="metric-card" type="button"><span class="metric-emoji">💤</span><span class="metric-label">Sueño</span><span class="metric-value">—</span><span class="metric-meta">—</span></button>
     <button class="metric-card" type="button"><span class="metric-emoji">🫀</span><span class="metric-label">VFC</span><span class="metric-value">—</span><span class="metric-meta">—</span></button>
@@ -162,11 +163,11 @@ body.atlas-subpage-open .nav{display:none!important}body.atlas-subpage-open .ass
       <div class="bridge-note">El token de Garmin nunca se guarda en este HTML. Sólo se usa el token cliente que autoriza a ATLAS frente al Bridge.</div>
       <div class="bridge-actions">
         <button class="bridge-action" id="bridgeTest" type="button">Probar conexión</button>
-        <button class="bridge-action primary" id="bridgeRead" type="button">Leer Garmin ahora</button>
+        <button class="bridge-action primary" id="bridgeRead" type="button">Sincronizar Garmin ahora</button>
       </div>
       <div class="bridge-status" id="bridgeStatus">Sin conexión configurada.</div>
       <div class="bridge-contract">
-        <div class="subpage-section-title">Contrato H3</div>
+        <div class="subpage-section-title">Contrato H4</div>
         <div class="bridge-contract-row"><strong>Estado del Bridge</strong><span>/api/status</span></div>
         <div class="bridge-contract-row"><strong>Perfil</strong><span>/api/profile</span></div>
         <div class="bridge-contract-row"><strong>Atleta y equipamiento</strong><span>/api/bootstrap</span></div>
@@ -180,7 +181,7 @@ body.atlas-subpage-open .nav{display:none!important}body.atlas-subpage-open .ass
 
 <script>
 /* ========================================================= 10. CONSTANTS ========================================================= */
-const APP_VERSION='2.0.0-H3.1';
+const APP_VERSION='2.0.0-H4';
 const TABS=['today','activities','assistant','plan','data'];
 /* ========================================================= 20. UTILITIES ========================================================= */
 const $=(s,r=document)=>r.querySelector(s); const $$=(s,r=document)=>[...r.querySelectorAll(s)];
@@ -200,7 +201,9 @@ const STORE_SCHEMA={
   syncState:{keyPath:'key'}
 };
 const nowISO=()=>new Date().toISOString();
-const todayISO=()=>new Date().toISOString().slice(0,10);
+function localDateISO(d=new Date()){const y=d.getFullYear(),m=String(d.getMonth()+1).padStart(2,'0'),day=String(d.getDate()).padStart(2,'0');return `${y}-${m}-${day}`}
+const todayISO=()=>localDateISO();
+function addDaysISO(iso,days){const [y,m,d]=String(iso).split('-').map(Number),x=new Date(y,m-1,d);x.setDate(x.getDate()+days);return localDateISO(x)}
 const emptyAthlete=()=>({id:'primary',name:'Perfil',heightCm:null,weightKg:null,primaryDevice:null,updatedAt:null});
 const emptyDailyMetrics=date=>({date,restingHr:null,hrv:null,sleep:null,bodyBattery:null,trainingReadiness:null,stress:null,spo2:null,sourceDate:date,syncedAt:null});
 const emptyTrainingStatus=date=>({date,vo2Max:null,maxHr:null,status:null,acuteLoad:null,chronicLoad:null,acuteChronicRatio:null,loadFocus:{lowAerobic:null,highAerobic:null,anaerobic:null},syncedAt:null});
@@ -290,7 +293,7 @@ const GarminAdapter={
   activityVo2Max:id=>bridgeRequest(`/api/activity-vo2max?id=${encodeURIComponent(id)}`,{timeoutMs:20000})
 };
 /* ========================================================= 70. NORMALIZERS ========================================================= */
-const nnum=v=>{const n=Number(v);return Number.isFinite(n)?n:null};
+const nnum=v=>{if(v==null||v==='')return null;const n=Number(v);return Number.isFinite(n)?n:null};
 const nstr=v=>v==null?null:String(v);
 const narr=v=>Array.isArray(v)?v:[];
 const pick=(o,...keys)=>{for(const k of keys)if(o&&o[k]!=null)return o[k];return null};
@@ -356,7 +359,140 @@ const GarminReadService={
   }
 };
 /* ========================================================= 80. SYNC ENGINE ========================================================= */
-/* H4 */
+const SYNC_STATUS=Object.freeze({IDLE:'IDLE',SYNCING:'SYNCING',OFFLINE:'OFFLINE',DEGRADED:'DEGRADED',ERROR:'ERROR',AUTH_REQUIRED:'AUTH_REQUIRED'});
+const H4_PROFILE_TTL_MS=12*60*60*1000;
+const H4_BOOTSTRAP_TTL_MS=24*60*60*1000;
+const H4_STARTUP_DAYS=14;
+const H4_MANUAL_DAYS=30;
+let atlasSyncPromise=null;
+let atlasOnlineTimer=null;
+function sleepMs(ms){return new Promise(resolve=>setTimeout(resolve,ms))}
+function isRetryableSyncError(error){const s=Number(error?.status)||0;return error?.name==='NetworkError'||error?.name==='TimeoutError'||s===408||s===429||s>=500}
+function isAuthSyncError(error){const s=Number(error?.status)||0;return s===401||s===403}
+function stripVolatile(value){
+  if(Array.isArray(value))return value.map(stripVolatile);
+  if(value&&typeof value==='object'){
+    const out={};for(const [k,v] of Object.entries(value)){if(['updatedAt','syncedAt','lastSyncedAt'].includes(k))continue;out[k]=stripVolatile(v)}return out;
+  }
+  return value;
+}
+function deepMergeKnown(previous,incoming){
+  if(incoming==null)return previous;
+  if(Array.isArray(incoming))return incoming.length?incoming:(Array.isArray(previous)?previous:incoming);
+  if(incoming&&typeof incoming==='object'){
+    const out={...(previous&&typeof previous==='object'&&!Array.isArray(previous)?previous:{})};
+    for(const [k,v] of Object.entries(incoming))out[k]=deepMergeKnown(out[k],v);
+    return out;
+  }
+  return incoming;
+}
+function sameCanonical(a,b){return JSON.stringify(stripVolatile(a))===JSON.stringify(stripVolatile(b))}
+async function syncUpsert(storeName,key,incoming){
+  if(!incoming)return{changed:false,value:null};
+  const current=await dbGet(storeName,key);let merged=deepMergeKnown(current,incoming);
+  if(current&&sameCanonical(current,merged))return{changed:false,value:current};
+  const stamp=nowISO();
+  if(Object.prototype.hasOwnProperty.call(merged,'updatedAt'))merged.updatedAt=stamp;
+  if(Object.prototype.hasOwnProperty.call(merged,'syncedAt'))merged.syncedAt=stamp;
+  await dbPut(storeName,merged);return{changed:true,value:merged};
+}
+function wellnessDate(row){return String(pick(row,'id','date','calendarDate')||'').slice(0,10)}
+function rawWellnessMeaningful(row){
+  if(!row)return false;
+  const keys=['restingHR','resting_hr','restingHr','hrv','sleepSecs','sleep_secs','sleepScore','sleep_score','bodyBattery','bodyBatteryMostRecentValue','trainingReadiness','readiness','stress','avgStress','averageStress','spo2','averageSpO2','avgSleepSpO2'];
+  return keys.some(k=>row[k]!=null&&row[k]!=='');
+}
+function chooseWellnessTodayYesterday(rows,today=todayISO()){
+  const yesterday=addDaysISO(today,-1),all=narr(rows);
+  const todayRow=all.find(r=>wellnessDate(r)===today);if(rawWellnessMeaningful(todayRow))return{row:todayRow,sourceDate:today,fallback:false};
+  const yesterdayRow=all.find(r=>wellnessDate(r)===yesterday);if(rawWellnessMeaningful(yesterdayRow))return{row:yesterdayRow,sourceDate:yesterday,fallback:true};
+  return{row:null,sourceDate:null,fallback:false};
+}
+function freshnessFor(sourceDate,syncedAt){
+  if(!sourceDate)return{sourceDate:null,syncedAt:syncedAt||null,state:'MISSING',stale:true};
+  const today=todayISO(),yesterday=addDaysISO(today,-1),state=sourceDate===today?'TODAY':sourceDate===yesterday?'YESTERDAY':'STALE';
+  return{sourceDate,syncedAt:syncedAt||null,state,stale:state==='STALE'};
+}
+function auxDue(lastAt,ttlMs,force=false){if(force||!lastAt)return true;const t=Date.parse(lastAt);return !Number.isFinite(t)||Date.now()-t>=ttlMs}
+function syncRange(days){const newest=todayISO(),oldest=addDaysISO(newest,-Math.max(1,days));return{oldest,newest}}
+async function retrySync(fn,{retries=2}={}){
+  let last;for(let i=0;i<=retries;i++){try{return await fn()}catch(error){last=error;if(i>=retries||!isRetryableSyncError(error))throw error;await sleepMs(i===0?800:2200)}}throw last;
+}
+async function latestRunForVo2(remoteActivities){
+  const remote=mostRecentRun(remoteActivities);if(remote?.id!=null)return remote;
+  const local=await ActivityRepository.getRecent(40);return mostRecentRun(local);
+}
+async function h4PersistSnapshot({date,profile,bootstrap,sync,vo2Payload}){
+  const boot=unwrapBridgePayload(bootstrap)||{},syncData=unwrapBridgePayload(sync)||{};
+  const changed=new Set();
+  if(profile||bootstrap){const athlete=normalizeAthletePayload(profile,bootstrap);if((await syncUpsert('athlete','primary',athlete)).changed)changed.add('athlete')}
+  const wellness=narr(syncData?.wellness),selected=chooseWellnessTodayYesterday(wellness,date);
+  if(selected.row){const daily=normalizeDailyMetricsFromWellness(selected.row,selected.sourceDate);daily.sourceDate=selected.sourceDate;if((await syncUpsert('dailyMetrics',selected.sourceDate,daily)).changed)changed.add('dailyMetrics')}
+  const sport=runningSportSetting(boot?.sportSettings||[]);
+  const status=normalizeTrainingStatusFromLegacy({wellnessRow:selected.row,sport,vo2Payload,date});
+  if((await syncUpsert('trainingStatus',date,status)).changed)changed.add('trainingStatus');
+  if(sport){const threshold=normalizeThresholdFromSportSetting(sport);if((await syncUpsert('thresholds','running',threshold)).changed)changed.add('thresholds')}
+  let activityCount=0,activityChanges=0;
+  for(const a of narr(syncData?.activities)){const n=normalizeActivityPayload(a);if(!n)continue;activityCount++;if((await syncUpsert('activities',String(n.id),n)).changed)activityChanges++}
+  if(activityChanges)changed.add('activities');
+  let gearCount=0,gearChanges=0;
+  for(const g of narr(boot?.gear)){const n=normalizeGearPayload(g);if(!n)continue;gearCount++;if((await syncUpsert('gear',String(n.id),n)).changed)gearChanges++}
+  if(gearChanges)changed.add('gear');
+  return{changed:[...changed],activityCount,activityChanges,gearCount,gearChanges,wellnessCount:wellness.length,sourceDate:selected.sourceDate,fallbackToYesterday:selected.fallback};
+}
+function setSyncVisualState(state,detail=''){
+  AppState.syncing=state===SYNC_STATUS.SYNCING;AppState.online=navigator.onLine;AppState.syncStatus=state;
+  const btn=$('.sync-quick');if(btn){btn.classList.toggle('syncing',AppState.syncing);btn.disabled=AppState.syncing;btn.setAttribute('aria-label',AppState.syncing?'Sincronizando':'Sincronizar')}
+  const cls=state===SYNC_STATUS.ERROR||state===SYNC_STATUS.AUTH_REQUIRED?'error':state===SYNC_STATUS.DEGRADED?'degraded':state===SYNC_STATUS.OFFLINE?'offline':state===SYNC_STATUS.IDLE?'ok':'';
+  const labels={SYNCING:'Sincronizando Garmin…',OFFLINE:'Garmin · sin conexión',DEGRADED:'Garmin · sincronización parcial',ERROR:'Garmin · error de sincronización',AUTH_REQUIRED:'Garmin · autorización requerida',IDLE:'Garmin · sincronizado'};
+  const text=detail||labels[state]||'Garmin';const el=$('#h3SyncState');if(el){el.className='h3-sync-state '+cls;el.textContent=text}
+}
+async function refreshViewsAfterSync(changed){
+  const set=new Set(changed||[]);if(AppState.view==='data'&&['athlete','trainingStatus','thresholds','gear'].some(k=>set.has(k)))await renderProfileFromLocal();
+}
+const SyncEngine={
+  async state(){return await SyncRepository.get('garminSync')||{key:'garminSync',status:SYNC_STATUS.IDLE}},
+  async run({manual=false,trigger='manual'}={}){
+    if(atlasSyncPromise)return atlasSyncPromise;
+    atlasSyncPromise=(async()=>{
+      const started=nowISO(),previous=await SyncEngine.state();
+      if(!navigator.onLine){const next={...previous,status:SYNC_STATUS.OFFLINE,lastAttemptAt:started};await SyncRepository.save('garminSync',next);setSyncVisualState(SYNC_STATUS.OFFLINE);return{ok:false,offline:true}}
+      const cfg=GarminBridgeConfig.load();if(!cfg.url||!cfg.token)return{ok:false,skipped:true,reason:'not-configured'};
+      setSyncVisualState(SYNC_STATUS.SYNCING);await SyncRepository.save('garminSync',{...previous,status:SYNC_STATUS.SYNCING,lastAttemptAt:started,lastError:null});
+      try{
+        const {oldest,newest}=syncRange(manual?H4_MANUAL_DAYS:H4_STARTUP_DAYS);
+        const forceAux=manual,profileDue=auxDue(previous.lastProfileSync,H4_PROFILE_TTL_MS,forceAux),bootstrapDue=auxDue(previous.lastBootstrapSync,H4_BOOTSTRAP_TTL_MS,forceAux);
+        const sync=await retrySync(()=>GarminAdapter.sync(oldest,newest));
+        const [profileR,bootstrapR]=await Promise.all([
+          profileDue?optionalRead('profile',retrySync(()=>GarminAdapter.profile(),{retries:1})):Promise.resolve({ok:true,label:'profile',skipped:true,value:null}),
+          bootstrapDue?optionalRead('bootstrap',retrySync(()=>GarminAdapter.bootstrap(),{retries:1})):Promise.resolve({ok:true,label:'bootstrap',skipped:true,value:null})
+        ]);
+        const syncData=unwrapBridgePayload(sync)||{},run=await latestRunForVo2(syncData.activities);let vo2R={ok:true,label:'vo2',skipped:true,value:null};
+        if(run?.id!=null)vo2R=await optionalRead('vo2',retrySync(()=>GarminAdapter.activityVo2Max(run.id),{retries:1}));
+        const vo2Payload=vo2R.ok&&!vo2R.skipped?unwrapBridgePayload(vo2R.value):null;
+        const saved=await h4PersistSnapshot({date:newest,profile:profileR.ok?profileR.value:null,bootstrap:bootstrapR.ok?bootstrapR.value:null,sync,vo2Payload});
+        const partialErrors=[profileR,bootstrapR,vo2R].filter(r=>!r.ok&&r.error).map(r=>({part:r.label,status:r.error?.status||null,message:String(r.error?.message||r.error)}));
+        const stamp=nowISO(),status=partialErrors.length?SYNC_STATUS.DEGRADED:SYNC_STATUS.IDLE,freshness=freshnessFor(saved.sourceDate,stamp);
+        const next={status,lastAttemptAt:started,lastSuccessfulSync:stamp,lastDataSync:stamp,lastProfileSync:profileR.ok&&!profileR.skipped?stamp:previous.lastProfileSync||null,lastBootstrapSync:bootstrapR.ok&&!bootstrapR.skipped?stamp:previous.lastBootstrapSync||null,sourceDate:saved.sourceDate||null,freshness,partialErrors,retryCount:0,lastError:null,activityCount:saved.activityCount,activityChanges:saved.activityChanges,gearCount:saved.gearCount,gearChanges:saved.gearChanges,wellnessCount:saved.wellnessCount,fallbackToYesterday:saved.fallbackToYesterday,range:{oldest,newest},trigger,workerContract:'0.8.6-compat'};
+        await SyncRepository.save('garminSync',next);await SyncRepository.save('garminRead',{lastSuccessfulSync:stamp,sourceDate:saved.sourceDate||newest,activityCount:saved.activityCount,gearCount:saved.gearCount,wellnessCount:saved.wellnessCount,partialErrors,workerContract:'0.8.6-compat'});
+        await refreshViewsAfterSync(saved.changed);
+        const freshnessText=saved.sourceDate?` · wellness ${saved.sourceDate}${saved.fallbackToYesterday?' (ayer)':''}`:'';
+        setSyncVisualState(status,status===SYNC_STATUS.DEGRADED?`Garmin · parcial${freshnessText}`:`Garmin · sincronizado${freshnessText}`);
+        return{ok:true,status,saved,partialErrors,freshness,range:{oldest,newest}};
+      }catch(error){
+        const auth=isAuthSyncError(error),offline=!navigator.onLine,state=offline?SYNC_STATUS.OFFLINE:auth?SYNC_STATUS.AUTH_REQUIRED:SYNC_STATUS.ERROR;
+        const retryCount=(Number(previous.retryCount)||0)+1;await SyncRepository.save('garminSync',{...previous,status,lastAttemptAt:started,retryCount,lastError:{status:error?.status||null,message:String(error?.message||error),at:nowISO()}});
+        setSyncVisualState(state,state===SYNC_STATUS.AUTH_REQUIRED?'Garmin · autorización requerida':state===SYNC_STATUS.OFFLINE?'Garmin · sin conexión':`Garmin · error · ${String(error?.message||error)}`);
+        throw error;
+      }finally{atlasSyncPromise=null;AppState.syncing=false;const btn=$('.sync-quick');if(btn){btn.classList.remove('syncing');btn.disabled=false}}
+    })();return atlasSyncPromise;
+  },
+  startup(){return SyncEngine.run({manual:false,trigger:'startup'})},
+  manual(){return SyncEngine.run({manual:true,trigger:'manual'})},
+  scheduleStartup(){const cfg=GarminBridgeConfig.load();if(!cfg.url||!cfg.token||!navigator.onLine)return;const task=()=>SyncEngine.startup().catch(error=>reportLocalError(error));if('requestIdleCallback'in window)requestIdleCallback(task,{timeout:1600});else setTimeout(task,500)},
+  onOnline(){clearTimeout(atlasOnlineTimer);atlasOnlineTimer=setTimeout(()=>SyncEngine.run({manual:false,trigger:'online'}).catch(error=>reportLocalError(error)),1200)},
+  async onOffline(){clearTimeout(atlasOnlineTimer);const prev=await SyncEngine.state();await SyncRepository.save('garminSync',{...prev,status:SYNC_STATUS.OFFLINE,lastAttemptAt:nowISO()});setSyncVisualState(SYNC_STATUS.OFFLINE)}
+};
 /* ========================================================= 90. DOMAIN ENGINES ========================================================= */
 /* H5–H7 */
 /* ========================================================= 100. SELECTORS ========================================================= */
@@ -384,7 +520,7 @@ async function renderProfileFromLocal(){
   setText('loadAnaerobicValue',Number.isFinite(s.loadFocus?.anaerobic)?Math.round(s.loadFocus.anaerobic):'—');setText('loadHighValue',Number.isFinite(s.loadFocus?.highAerobic)?Math.round(s.loadFocus.highAerobic):'—');setText('loadLowValue',Number.isFinite(s.loadFocus?.lowAerobic)?Math.round(s.loadFocus.lowAerobic):'—');
   setBar('loadAnaerobicBar',vm.loadPerc.anaerobic);setBar('loadHighBar',vm.loadPerc.high);setBar('loadLowBar',vm.loadPerc.low);setText('profileGearLabel',vm.gear.length?`${vm.gear.length} zapatilla${vm.gear.length===1?'':'s'} activa${vm.gear.length===1?'':'s'}`:'Equipamiento Garmin');
 }
-function reportLocalError(err){console.error('[ATLAS H3]',err);AppState.localError=String(err?.message||err)}
+function reportLocalError(err){console.error('[ATLAS H4]',err);AppState.localError=String(err?.message||err)}
 /* ========================================================= 130. ROUTER ========================================================= */
 function navigate(tab){if(!TABS.includes(tab))tab='today';AppState.view=tab;renderView(tab);history.replaceState(null,'','#'+tab)}
 function openSubpage(kind){const [icon,title]=SUBPAGES[kind]||['Ʌ','Detalle'];AppState.subpage=kind;$('#subpageIcon').textContent=icon;$('#subpageTitle').textContent=title;$('#subpage').classList.remove('hidden');$('#subpage').setAttribute('aria-hidden','false');document.body.classList.add('atlas-subpage-open');}
@@ -399,10 +535,12 @@ function loadBridgeForm(){const cfg=GarminBridgeConfig.load();$('#bridgeUrl').va
 function saveBridgeForm(){return GarminBridgeConfig.save({url:$('#bridgeUrl').value,token:$('#bridgeToken').value})}
 $('#bridgeSettingsOpen').addEventListener('click',()=>{loadBridgeForm();setBridgeSheet(true)});$('#bridgeBack').addEventListener('click',()=>setBridgeSheet(false));
 $('#bridgeTest').addEventListener('click',async()=>{const btn=$('#bridgeTest');try{saveBridgeForm();btn.disabled=true;setBridgeStatus('Probando Garmin Bridge…');const p=await GarminReadService.test();setBridgeStatus(`<strong>Conectado</strong> · ${p?.version||p?.workerVersion||'Bridge disponible'}`,'ok')}catch(e){setBridgeStatus(`<strong>Error</strong> · ${String(e?.message||e)}`,'error')}finally{btn.disabled=false}});
-$('#bridgeRead').addEventListener('click',async()=>{const btn=$('#bridgeRead');try{saveBridgeForm();btn.disabled=true;setBridgeStatus('Leyendo Garmin…');const r=await GarminReadService.readNow();await renderProfileFromLocal();setBridgeStatus(`<strong>Lectura completada</strong> · ${r.saved.activityCount} actividades · ${r.saved.gearCount} equipos${r.saved.sourceDate?` · wellness ${r.saved.sourceDate}`:''}${r.partialErrors.length?' · parcial':''}`,'ok')}catch(e){setBridgeStatus(`<strong>Error</strong> · ${String(e?.message||e)}`,'error')}finally{btn.disabled=false}});
+$('#bridgeRead').addEventListener('click',async()=>{const btn=$('#bridgeRead');try{saveBridgeForm();btn.disabled=true;setBridgeStatus('Sincronizando Garmin…');const r=await SyncEngine.manual();if(r?.ok){const suffix=r.saved.sourceDate?` · wellness ${r.saved.sourceDate}${r.saved.fallbackToYesterday?' (ayer)':''}`:'';setBridgeStatus(`<strong>Sincronización completada</strong> · ${r.saved.activityCount} actividades · ${r.saved.activityChanges} cambios · ${r.saved.gearCount} equipos${suffix}${r.partialErrors.length?' · parcial':''}`,r.status===SYNC_STATUS.DEGRADED?'degraded':'ok')}}catch(e){setBridgeStatus(`<strong>Error</strong> · ${String(e?.message||e)}`,'error')}finally{btn.disabled=false}});
+$('.sync-quick').addEventListener('click',()=>SyncEngine.manual().catch(error=>reportLocalError(error)));
+window.addEventListener('online',()=>SyncEngine.onOnline());window.addEventListener('offline',()=>SyncEngine.onOffline().catch(reportLocalError));
 $('.assistant-composer').addEventListener('submit',e=>e.preventDefault());
 /* ========================================================= 150. APP STATE ========================================================= */
-const AppState={view:'today',params:{},subpage:null,syncing:false,online:navigator.onLine,dbReady:false,localError:null,selfTest:null,garminReadReady:true};
+const AppState={view:'today',params:{},subpage:null,syncing:false,syncStatus:SYNC_STATUS.IDLE,online:navigator.onLine,dbReady:false,localError:null,selfTest:null,garminReadReady:true};
 /* ========================================================= 160. BOOT ========================================================= */
 async function boot(){
   const hash=location.hash.replace('#','');
@@ -412,12 +550,15 @@ async function boot(){
     AppState.selfTest=await runIndexedDBSelfTest();
     AppState.dbReady=true;
     await renderProfileFromLocal();
-    const cfg=GarminBridgeConfig.load();const last=await SyncRepository.get('garminRead');
-    if(last?.lastSuccessfulSync)setBridgeStatus(`Garmin · última lectura ${new Date(last.lastSuccessfulSync).toLocaleString('es-ES')}`,'ok');else setBridgeStatus(cfg.url?'Garmin Bridge · configurado':'Garmin Bridge · sin configurar');
+    const cfg=GarminBridgeConfig.load(),last=await SyncRepository.get('garminSync');
+    if(!navigator.onLine)setSyncVisualState(SYNC_STATUS.OFFLINE);
+    else if(last?.lastSuccessfulSync){const f=last.freshness?.sourceDate?` · wellness ${last.freshness.sourceDate}${last.fallbackToYesterday?' (ayer)':''}`:'';setSyncVisualState(last.status===SYNC_STATUS.DEGRADED?SYNC_STATUS.DEGRADED:SYNC_STATUS.IDLE,`Garmin · última sync ${new Date(last.lastSuccessfulSync).toLocaleString('es-ES')}${f}`)}
+    else setBridgeStatus(cfg.url?'Garmin Bridge · configurado':'Garmin Bridge · sin configurar');
   }catch(err){reportLocalError(err)}
   navigate(TABS.includes(hash)?hash:'today');
+  SyncEngine.scheduleStartup();
 }
-window.ATLAS2={version:'2.0.0-H3.1',db:{name:DB_NAME,version:DB_VERSION,stores:Object.keys(STORE_SCHEMA),open:openAtlasDB},repositories:{AthleteRepository,MetricsRepository,ActivityRepository,GearRepository,WorkoutRepository,PlanRepository,SyncRepository},garmin:{config:GarminBridgeConfig,adapter:GarminAdapter,read:GarminReadService},normalizers:{normalizeAthletePayload,normalizeDailyMetricsFromWellness,normalizeTrainingStatusFromLegacy,normalizeThresholdFromSportSetting,normalizeActivityPayload,normalizeGearPayload},state:AppState,runIndexedDBSelfTest};
+window.ATLAS2={version:'2.0.0-H4',db:{name:DB_NAME,version:DB_VERSION,stores:Object.keys(STORE_SCHEMA),open:openAtlasDB},repositories:{AthleteRepository,MetricsRepository,ActivityRepository,GearRepository,WorkoutRepository,PlanRepository,SyncRepository},garmin:{config:GarminBridgeConfig,adapter:GarminAdapter,read:GarminReadService,sync:SyncEngine},normalizers:{normalizeAthletePayload,normalizeDailyMetricsFromWellness,normalizeTrainingStatusFromLegacy,normalizeThresholdFromSportSetting,normalizeActivityPayload,normalizeGearPayload},state:AppState,runIndexedDBSelfTest};
 boot();
 </script>
 </body></html>

@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html data-theme="dark" lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"/>
+<meta name="theme-color" content="#000000"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="ɅTLɅS"/>
+<title>ɅTLɅS 2.0 · H3</title>
+<style>
+/* =========================================================
+   01–03. ATLAS 2.0 · VISUAL SYSTEM — parity with v1.6.68-M8.3
+   ========================================================= */
+:root{
+  color-scheme:dark;
+  --bg:#000;--text:#f5f7f9;--muted:#71767b;--muted2:#aab0b4;
+  --blue:#1d9bf0;--green:#00ba7c;--yellow:#ffd400;--orange:#ff9f0a;--red:#f4212e;--purple:#bf5af2;
+  --line:rgba(255,255,255,.22);--line-strong:rgba(255,255,255,.31);
+  --nav-bottom:calc(10px + env(safe-area-inset-bottom));
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;width:100%;min-height:100%;background:#000;color:var(--text);overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch}
+body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text",system-ui,sans-serif;line-height:1.25}
+button,input,select,textarea{font:inherit;color:inherit}button{cursor:pointer}
+.hidden{display:none!important}
+.app{width:100%;max-width:430px;min-height:100dvh;margin:0 auto;padding:max(10px,calc(env(safe-area-inset-top) + 8px)) 10px calc(106px + env(safe-area-inset-bottom));background:#000}
+.view{display:none;min-height:0;background:#000}.view.active{display:block}
+.atlas-header{padding:2px 2px 0;display:flex;justify-content:center}
+.atlas-title{display:block;width:100%;height:auto;object-fit:contain}
+.section-bar,.page-header{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 2px}
+.section-name,.page-title{font-size:32px;line-height:1.18;font-weight:760;letter-spacing:-.95px;color:#fff}
+.sync-quick,.profile-header-settings,.plan-add-quick{appearance:none;width:46px;height:46px;flex:0 0 46px;border:0;background:transparent;color:var(--blue);display:grid;place-items:center;font-size:35px;line-height:1;padding:0}
+.sync-quick:active,.profile-header-settings:active,.plan-add-quick:active{transform:scale(.94)}
+/* TODAY */
+.today-hero-card{margin:4px 2px 10px;border:0;border-radius:22px;background:#000;overflow:hidden}
+.training-state{--state-color:#7f8b94;appearance:none;width:100%;display:grid;grid-template-columns:82px minmax(0,1fr);align-items:center;gap:14px;padding:12px 13px 7px;margin:0;border:0;background:#000;color:var(--text);text-align:left}
+.state-score{--score-pct:50%;position:relative;width:80px;height:80px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--state-color) var(--score-pct),#151a1f 0);box-shadow:0 9px 20px rgba(0,0,0,.52),0 0 0 2px rgba(255,255,255,.08)}
+.state-score::before{content:"";position:absolute;inset:7px;border-radius:50%;background:#000}.state-score-main{position:relative;z-index:1;font-size:33px;line-height:1;font-weight:770;color:#fff}
+.state-copy{min-width:0}.state-kicker{font-size:10.8px;color:var(--muted2);font-weight:650}.state-word{margin-top:2px;font-size:24px;line-height:1.15;font-weight:790;letter-spacing:-.65px;color:#fff}.state-note{margin-top:4px;color:var(--muted2);font-size:10.8px;line-height:1.38;font-weight:600}
+.metric-strip{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));width:100%;gap:0;margin:5px 0 0;background:#000}
+.metric-card{appearance:none;position:relative;min-width:0;min-height:96px;padding:5px 2px 7px;border:0;background:#000;color:var(--text);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px;text-align:center}
+.metric-card:not(:last-child)::after{content:"";position:absolute;right:-1px;top:10px;bottom:10px;width:2px;background:var(--line);border-radius:2px}
+.metric-emoji{font-size:15px;line-height:1.15;min-height:18px;display:grid;place-items:center}.metric-label{font-size:8.1px;line-height:1.1;font-weight:700;color:var(--muted2);white-space:nowrap}.metric-value{font-size:13px;line-height:1.12;font-weight:770;letter-spacing:-.35px;white-space:nowrap}.metric-meta{font-size:8.8px;line-height:1.12;color:var(--muted);font-weight:650;white-space:nowrap;overflow:hidden;max-width:100%}
+.today-last-heading{margin:12px 3px 7px;font-size:17px;line-height:1.15;font-weight:790;color:#fff}.today-upcoming-heading{margin-top:14px}
+/* Shared rows */
+.activity-list{border:0;border-radius:18px;background:#000;overflow:hidden}
+.activity-row{appearance:none;position:relative;width:100%;min-height:62px;margin:0;padding:0;border:0;background:#000;color:inherit;display:grid;grid-template-columns:48px 2px minmax(0,1fr);align-items:stretch;text-align:left}
+.activity-row+.activity-row::before{content:"";position:absolute;left:10px;right:10px;top:0;height:2px;background:var(--line);border-radius:2px;z-index:3}
+.activity-row-date{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:0;padding:4px 3px;gap:1px}.activity-row-weekday{font-size:8.2px;line-height:1;text-transform:uppercase;color:var(--muted2);font-weight:760}.activity-row-day{font-size:21px;line-height:1;font-weight:830;color:#fff;letter-spacing:-.45px}.activity-row-month{font-size:8.8px;line-height:1;color:var(--muted);font-weight:700;text-transform:uppercase}.activity-row-sep{width:2px;align-self:stretch;margin:8px 0;background:var(--line);border-radius:2px}
+.activity-row-copy{min-width:0;padding:6px 10px;display:flex;flex-direction:column;justify-content:center;gap:5px}.activity-row-title{display:flex;align-items:center;gap:6px;min-width:0}.activity-row-title-emoji{font-size:14px;flex:0 0 auto}.activity-row-title-text{min-width:0;font-size:12.2px;line-height:1.12;font-weight:770;color:#fff;white-space:nowrap;overflow:hidden}.activity-row-main{display:flex;align-items:center;gap:10px;min-width:0;color:var(--muted2);font-variant-numeric:tabular-nums}.activity-row-stat{font-size:10.8px;line-height:1.05;font-weight:680;white-space:nowrap}.activity-row-pipe{flex:0 0 2px;width:2px;height:15px;background:var(--line);border-radius:2px}
+.empty-copy{padding:12px 10px;color:var(--muted);font-size:12px}
+/* ACTIVITIES */
+.activities-toolbar{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:3px 2px 8px}.activities-search{grid-column:1/-1}.activities-select,.activities-search{appearance:none;min-height:42px;padding:8px 10px;border:1px solid rgba(255,255,255,.12);border-radius:13px;background:#1c1c1e;color:#fff;font-size:11.5px;outline:none}.activities-summary{margin:0 2px 15px;padding:9px 11px;border-radius:13px;font-size:10.8px;color:var(--muted2);font-weight:650}
+/* PLAN */
+.page-header-actions{display:flex;align-items:center;gap:2px}.plan-toolbar{display:grid;grid-template-columns:48px minmax(0,1fr) 48px;align-items:center;margin:0 2px 3px}.plan-nav-btn{appearance:none;width:48px;height:48px;border:0;background:transparent;color:var(--blue);font-size:31px;font-weight:800}.plan-range{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center}.plan-range-main{font-size:21px;line-height:1.05;font-weight:845;color:#fff;letter-spacing:-.42px}.plan-range-sub{font-size:9px;color:var(--muted);font-weight:680}.plan-today-btn{border:0;background:transparent;color:var(--blue);font-size:9.5px;font-weight:760}
+.plan-summary{position:relative;display:grid;grid-template-columns:repeat(3,1fr);margin:0 0 4px}.plan-summary-item{position:relative;padding:5px 4px;text-align:center}.plan-summary-item+.plan-summary-item::before{content:"";position:absolute;left:-1px;top:5px;bottom:5px;width:2px;background:var(--line)}.plan-summary-value{font-size:18px;font-weight:820;color:#fff}.plan-summary-unit{font-size:10px;color:var(--muted)}.plan-summary-label{font-size:11px;color:var(--muted);font-weight:700;margin-top:2px}.plan-days{display:flex;flex-direction:column;border-radius:18px;overflow:hidden}
+/* PROFILE */
+.profile-dashboard-card{display:grid;grid-template-columns:92px minmax(0,1fr);align-items:center;gap:15px;padding:13px 14px;border-radius:20px;margin:0 0 9px;background:#000}.profile-dashboard-avatar{width:92px;height:92px;border-radius:50%;background:#000;display:grid;place-items:center;font-size:24px;font-weight:800;color:#fff;border:1px solid rgba(255,255,255,.08)}.profile-dashboard-name{font-size:24px;line-height:1.08;font-weight:820;color:#fff;letter-spacing:-.5px}.profile-dashboard-location{margin-top:5px;font-size:11.5px;color:var(--muted2);font-weight:620}
+.profile-dashboard-body-metrics{width:100%;display:grid;grid-template-columns:1fr 1fr;gap:0;margin:4px 0 9px}.profile-dashboard-body-chip{position:relative;display:grid;grid-template-columns:26px minmax(0,1fr);grid-template-rows:auto auto;column-gap:8px;row-gap:2px;align-items:center;min-height:52px;padding:7px 10px}.profile-dashboard-body-chip+.profile-dashboard-body-chip::before{content:"";position:absolute;left:-1px;top:8px;bottom:8px;width:2px;background:var(--line)}.profile-dashboard-body-icon{grid-row:1/3;font-size:20px;text-align:center}.profile-dashboard-body-label{align-self:end;color:var(--muted);font-size:9.5px;font-weight:720}.profile-dashboard-body-value{align-self:start;color:#fff;font-size:18px;font-weight:840;white-space:nowrap}
+.profile-atlas-section{margin:7px 0 0}.profile-atlas-section-head{appearance:none;width:100%;min-height:52px;padding:0 2px;border:0;background:transparent;color:inherit;display:flex;align-items:center;justify-content:space-between;gap:12px;text-align:left}.profile-atlas-section-title{display:flex;align-items:center;gap:10px;font-size:21px;line-height:1.15;font-weight:820;color:#fff}.profile-atlas-section-chevron{color:var(--blue);font-size:28px;font-weight:700}
+.profile-dashboard-performance{position:relative;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));overflow:hidden}.profile-dashboard-performance-cell{position:relative;min-width:0;padding:9px 3px 10px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px}.profile-dashboard-performance-cell:not(:last-child)::after{content:"";position:absolute;right:-1px;top:10px;bottom:10px;width:2px;background:var(--line)}.profile-dashboard-performance-emoji{font-size:17px}.profile-dashboard-performance-label{font-size:10px;color:var(--muted);font-weight:730;white-space:nowrap}.profile-dashboard-performance-main{font-size:18px;color:#fff;font-weight:840;white-space:nowrap}.profile-dashboard-performance-unit{font-size:8px;color:var(--muted2)}
+/* CHAT */
+#view-assistant.active{position:relative;min-height:calc(100dvh - 120px);padding-bottom:116px}.assistant-chat-canvas{position:relative;min-height:calc(100dvh - 145px);background:#000}.assistant-chat-topbar{display:flex;align-items:center;justify-content:space-between;padding:4px 2px 9px}.assistant-top-action{appearance:none;width:48px;height:48px;border:0;border-radius:15px;background:#000;color:var(--blue);display:grid;place-items:center;font-size:25px;font-weight:800}.assistant-messages{padding:7px 2px 128px;display:flex;flex-direction:column;gap:8px}.assistant-empty{min-height:45vh;display:grid;place-items:center;color:var(--muted)}
+.assistant-composer{position:fixed;z-index:1900;left:50%;transform:translateX(-50%);bottom:calc(var(--nav-bottom) + 68px + 8px);width:min(calc(100% - 12px),424px);min-height:54px;padding:5px 6px;display:grid;grid-template-columns:38px minmax(0,1fr) 38px;align-items:end;gap:5px;border:0;border-radius:22px;background:rgba(18,20,23,.80);box-shadow:0 5px 12px rgba(0,0,0,.22);-webkit-backdrop-filter:blur(26px) saturate(180%);backdrop-filter:blur(26px) saturate(180%)}.assistant-composer-plus,.assistant-send{appearance:none;width:38px;height:38px;border:0;border-radius:14px;background:rgba(255,255,255,.055);color:var(--blue);display:grid;place-items:center;font-size:19px;font-weight:800}.assistant-send{background:var(--blue);color:#fff}.assistant-input{width:100%;min-height:38px;max-height:120px;resize:none;padding:9px 8px;border:0;border-radius:14px;background:rgba(0,0,0,.48);color:#fff;outline:none;font-size:12px;line-height:1.35}
+/* NAV — exact ATLAS language */
+.nav{position:fixed;z-index:2000;left:50%;bottom:var(--nav-bottom);transform:translateX(-50%);width:min(calc(100% - 20px),410px);height:68px;min-height:68px;padding:7px 9px;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));align-items:center;border-radius:30px;background:rgba(39,39,46,.42);border:1px solid rgba(255,255,255,.24);-webkit-backdrop-filter:blur(46px) saturate(210%);backdrop-filter:blur(46px) saturate(210%);box-shadow:0 20px 58px rgba(0,0,0,.66),inset 0 1px 0 rgba(255,255,255,.21),inset 0 -1px 0 rgba(255,255,255,.04);overflow:visible}
+.nav-btn{appearance:none;position:relative;min-width:0;height:54px;padding:4px 2px;gap:3px;border:0;border-radius:18px;background:transparent;color:var(--muted);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:background .2s ease,color .2s ease,transform .16s ease}.nav-btn:active{transform:scale(.94)}.nav-btn.active{color:#fff;background:rgba(255,255,255,.075)}.nav-icon{font-size:1.24rem;line-height:1;filter:saturate(.7)}.nav-btn.active .nav-icon{filter:none}.nav-label{font-size:.65rem;font-weight:500;line-height:1}
+.ai-btn{overflow:visible}.ai-mark{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;background:rgba(10,132,255,.68);border:1px solid rgba(140,210,255,.48);position:absolute;left:50%;top:50%;transform:translate(-50%,-50%)}.ai-mark img{width:38px;height:30px;object-fit:contain;display:block}
+body.atlas-subpage-open .nav{display:none!important}body.atlas-subpage-open .assistant-composer{display:none!important}
+/* SUBPAGE */
+.subpage{position:fixed;z-index:2200;inset:0;background:#000;overflow-y:auto;-webkit-overflow-scrolling:touch}.subpage-inner{width:100%;max-width:430px;min-height:100%;margin:0 auto;padding:max(12px,calc(env(safe-area-inset-top) + 10px)) 12px 28px;background:#000}.subpage-top{display:grid;grid-template-columns:52px minmax(0,1fr) 52px;align-items:center;min-height:52px}.back-btn{appearance:none;width:52px;height:52px;border:0;background:transparent;color:var(--blue);font-size:43px;line-height:1;font-weight:800}.subpage-date{text-align:center;font-size:13.5px;color:var(--muted2);font-weight:760}.subpage-title-wrap{display:flex;flex-direction:column;align-items:center;text-align:center;gap:5px;margin:8px 4px 16px}.subpage-icon{font-size:31px}.subpage-title{font-size:28px;line-height:1.08;font-weight:840;letter-spacing:-.55px;color:#fff}.subpage-summary{position:relative;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));margin:0 0 19px}.subpage-stat{position:relative;display:flex;flex-direction:column;align-items:center;padding:7px 4px 9px;min-width:0}.subpage-stat+.subpage-stat::before{content:"";position:absolute;left:-1px;top:9px;bottom:9px;width:2px;background:var(--line)}.subpage-label{font-size:12.4px;color:var(--muted);font-weight:740}.subpage-value{margin-top:5px;font-size:23px;font-weight:840;color:#fff}.subpage-unit{margin-top:4px;font-size:11.5px;color:var(--muted);font-weight:700}.subpage-section{margin-top:16px}.subpage-section-title{font-size:21px;font-weight:820;color:#fff;margin-bottom:8px}.subpage-copy{font-size:15px;line-height:1.55;color:#d4d9de}.bottom-back{display:block;margin:22px auto 0;min-height:56px;padding:10px 18px;border:0;background:transparent;color:var(--blue);font-size:20px;font-weight:800}
+@media(max-width:390px){.app{padding-left:8px;padding-right:8px}.nav{width:calc(100% - 20px)}.nav-icon{font-size:1.12rem}.nav-label{font-size:.59rem}.ai-mark{width:54px;height:54px}.ai-mark img{width:35px;height:28px}.training-state{grid-template-columns:76px minmax(0,1fr);gap:11px;padding-left:10px;padding-right:10px}.state-score{width:74px;height:74px}.state-score-main{font-size:30px}}
+
+/* H1.2 · Perfil visual parity refinements */
+.profile-dashboard-performance-five{grid-template-columns:repeat(5,minmax(0,1fr))!important}
+.profile-dashboard-performance-five .profile-dashboard-performance-cell{padding-left:2px!important;padding-right:2px!important}
+.profile-dashboard-performance-five .profile-dashboard-performance-label{font-size:8px!important}
+.profile-dashboard-performance-five .profile-dashboard-performance-main{font-size:16px!important}
+.profile-dashboard-performance-five .profile-dashboard-performance-unit{font-size:7.5px!important}
+.profile-load-focus{margin-top:1px!important;padding:0 12px 4px!important}
+.profile-load-focus-row{padding:8px 0!important}
+.profile-load-focus-row-head{font-size:14px!important}
+.profile-load-focus-row-head strong{font-size:15px!important}
+.profile-load-focus-track{height:7px!important;margin-top:7px!important}
+.profile-atlas-section .profile-dashboard-shoes-row{display:grid!important;width:100%!important;min-height:50px!important;margin:0!important;padding:8px 3px!important;grid-template-columns:27px minmax(0,1fr) auto!important;background:transparent!important}
+@media(max-width:390px){.profile-dashboard-performance-five .profile-dashboard-performance-label{font-size:7.2px!important}.profile-dashboard-performance-five .profile-dashboard-performance-main{font-size:14px!important}.profile-dashboard-performance-five .profile-dashboard-performance-unit{font-size:6.8px!important}}
+
+/* H3 · Garmin Read Bridge settings */
+.bridge-sheet{position:fixed;z-index:2600;inset:0;background:#000;overflow-y:auto;-webkit-overflow-scrolling:touch}.bridge-sheet-inner{width:100%;max-width:430px;min-height:100%;margin:0 auto;padding:max(12px,calc(env(safe-area-inset-top) + 10px)) 12px 28px;background:#000}.bridge-top{display:grid;grid-template-columns:52px minmax(0,1fr) 52px;align-items:center}.bridge-title{text-align:center;font-size:22px;font-weight:830;color:#fff}.bridge-form{margin-top:18px}.bridge-label{display:block;margin:14px 2px 6px;color:var(--muted2);font-size:12px;font-weight:760}.bridge-input{width:100%;height:52px;padding:0 12px;border:0;border-radius:13px;background:#1c1c1e;color:#fff;font-size:16px;outline:none}.bridge-input:focus{background:#252529}.bridge-note{margin:8px 2px 0;color:var(--muted);font-size:10.5px;line-height:1.45}.bridge-actions{display:grid;gap:8px;margin-top:18px}.bridge-action{appearance:none;width:100%;min-height:48px;border:0;border-radius:14px;background:rgba(29,155,240,.12);color:var(--blue);font-size:14px;font-weight:820}.bridge-action.primary{background:var(--blue);color:#fff}.bridge-action:disabled{opacity:.45}.bridge-status{margin-top:16px;padding:12px 2px;border-top:2px solid var(--line);font-size:12px;line-height:1.5;color:var(--muted2);white-space:pre-wrap}.bridge-status strong{color:#fff}.bridge-contract{margin-top:18px}.bridge-contract-row{position:relative;padding:10px 2px}.bridge-contract-row+.bridge-contract-row::before{content:"";position:absolute;left:6px;right:6px;top:0;height:2px;background:var(--line)}.bridge-contract-row strong{display:block;font-size:12px;color:#fff}.bridge-contract-row span{display:block;margin-top:3px;font-size:10px;color:var(--muted);overflow-wrap:anywhere}.h3-sync-state{font-size:10px;color:var(--muted);margin:2px 3px 10px}.h3-sync-state.ok{color:var(--green)}.h3-sync-state.error{color:var(--red)}
+</style>
+</head>
+<body>
+<main class="app">
+<!-- ========================================================= 04. HTML SHELL ========================================================= -->
+<section class="view active" id="view-today" data-view="today">
+<header class="atlas-header"><img alt="ɅTLɅS" class="atlas-title" src="data:image/webp;base64,UklGRpAOAABXRUJQVlA4IIQOAABwUACdASqAAm0APjEYi0OiIaEhJJXJ8EAGCWltvR81S2yZUZ22dvaA/aP2s/kD2a/q//J+w/MHWt+xP3b+s/uP+Rv383AL8T/jX+T/n37QceOAD5nfyu/qvyF/QedfiAfxP+c/5nypvDY+3/8T2APz16sf9F/s/8f/j/2Q91X0H/vv7p8A38r/p/+w/vf+I/8vxDetT9rP//7nX68//8iHLi9HueX51ifeqUMUqlDUtKVKGpSc1haTtrvI/8b3TCqTkL6r+hxdH+LiFxh2d7B3XX4wpyOZe4i8BHexnKH/za4awkAYZscoSqbtwOLXWa+I+ipQLBIZxgPH0Iv8gSeI8PDu6c4NV4lsCZkLkiCI1/hvF4aXP3sHabeD/MVo638xvJvxG7R3d5iaWScIFa0gM/Nqq5f+wely/6Lxif7qEH0wboTDHAzKnG97MKC3W6hJuteZO4A2xC0vebw7ngmqEmJqf72U2jsejnD7nJt0GL1usDOvPki5ydGBmvADKS1jcnwnikB9wjEk3wnBOAvxv1XiGzpC7OBz9CMVlUQNdofOq2I+ksoMCUzz4G6LKqvyqrlUrUtggXNmkOl87koqf90sCMi5JV8P60eqVqrgYOWQ1XnGFMWLVzOz/UvFRmU9T94SHOsIoJ0remMy6SOzPcFZ8GZGf+3QvMatLwmiBbGRnocrj9waD4AZLeplPdrLZqVnY0AO+47Cl1x/55Cm/TqZxyGdkSff/hhazZ84v7DeL9w9wXwZxMMey3eriK1A9u8qoDe8A0rHv9vHZQmQSvOh9HxhiDSFCAfeGh/1g17h3O/C1+xBtgx758Ufa63qZFoamXXd5Ai1ZyWYuZmN9aeuIshJiHDqLY8AAP7+nzi/gXHBsbq/vO9rN/yaBE6SD9xLNnhgrBJuZMWZ12+LRYrGAdSc+YzlkkMUPMolv9N/7ooU2aoQamSEoJAjhIWxh10ZG+mnAvqnmy1Hr+sx7o3q3cVqYCxdTrikTgRFP0XMiAg+ITtpTc8V8Dv4K4TLKYAX6AJAdkBf8hc8fB+WTzmxK5Bdq+Zblr58/Uk9ybbtNr28ccwHSs1GxK1gvrOT/+maoljEJtrMdiLmxXgaalckPso3b6e0u41D1IT4YiTq6q65ThNUTKd2P34kXvIzd8TEMVVgeYGbnUoUxoFgBKG7u4pSBt+Mon+4wP+h7HoshyWsQuUsyWpb1TK36BhUq3d/A+/+FV2qnUMO05Gzw3G7I4aKoYQt1spX5pXQipln5WRQl9/+rUf7JZC9e5s0tZlMdvxakSSiPnSF8Gfln66Ym54aUolUH90cwEQXSIjAgI+A3inJED/9ebZed4ju8ocvdm6E84sFLCzcTDCHAJ7DeIDT2HzO+xDDPRreumwnM9eLSNpPvvpU/WH1SRtHr68FwcgZVnakGLAsQdQ/Ltk1SOT/09RMDdPYBU18mrR/biB0hmNGJ7VPOIJzx2+71GiXGKuPYAQlpwUr/0YeyFDLHV8q1PwLdZpHha7q+t4naLNFXzGTigu2fygnYj1I5hLi1l3Vx5N6hoUpjLKYjR293ZLlt9nfSGExNKEQTFwimAUxTIvYjH0qdzDi+3MD9+6fcDslLzEWo6dfMj8AbcYdO0Bk/C46PXxjb/s/sICIrhxJp9mV4oUVspaPoaMW4ylt531vteUBwbP+bWZvA8LtEMeEkeJsu82mUfggg43iIp5WayG/CjkKSlj3R0WhQLA3H7RK9qoxMZFuOXCnW5IOW1RC3Ern2QVUSfOh+fpUAcwz3JTzH9kmKCqDrS99NtH5W99Nvoie+tMauiyjes4FieDUuaaJX7yqHAsLqjXO5qBXnhN6cKck+FySxG12im+DuaWJTsb2Vp8wM2V4zeJdynk9y/JaUy73AeuaN4PDWzfs/btM71krRAf/Roa9Dr8Bbj222I+urBJ2u9SvVUYUCSmQ/htUmlrjK9O7+BEIJhOjenseudLx0/GQ8gAz4UdMeDYbHtQVxkamack3NAvmjC9DMbuzBqKB+BZnybZ/Gz43mVJn+7G/D6ayesN4DQ5s16IDJ66NXYuO0hqtHRMc0HZ5yM73Smt3/3E611vdBAWGC6EXuK8/QLSG8mds9UAu/97PVQBBXt97fE5TCDJY0/eWDbrP5OknQneBu+waCEUIjbL+gJAXLRez73BvrQ9GagtYr20RwdQHecxLAjy+mznHsevYFUlsSEGNyXEKdeLKXEk42jz+QZ1fuSggyaBqwxH6KD8qGjXt8jvVHvFYeoEwLZb7/k+c0GRnaVe9Z+L91kV8KsrovC8C/haEkrUh+lgV55BFLyDr2KsfFUH6zIkFdl945mbD+OfwUj+4X6R8UL6+w2z+6spHNf6Xmn5dw9SkXBiB00uNfq60BsCCbq380AKiDzgw6nczPByNTHs0by7eHxdk6UA/aiTVpKwRxdVHOrkJdFV5+LcV3hW5twVBJbm3fjmI2QHyRMHbH7AQ4MxEAMaTyR0qQzY08sbLbV3l+VF3mDrqOe55DjGRwTBY+v0rksAm7xKiJogiS93orrhtddUOAzISpyFmvx4hF7z2fQKA/nnDpnTE98Qk7G8LMm7F40P8T3GiQpht6rPzfJsRs3iD07jua5cZP2Sxo4VLLwDnuZKBRRgvl1xeVq/wcPLZE2YvH02nfy45T3F9jxCDiCjJhjbpa5Hh0E57xdziyfU5dgk+5wZpdHJhY2SBP47X4HmIqPigpSG/ywks4N14AagJ4tEw6XDD32DB3uaOi2RZbuRphqOjqqkEz/6GAgr/CSWINDx8OEITzJHkqDRFNLLUYk/6JCDyCUf7OliIMHhKzY/HF2dlBSe00AxOVm/aFzGqJX0hMr6v5AWq1KrZ0M8at5h2FMwcTrejIhkpvkeDkezcGMKjBRxpPfpJExvbwiYbdtGNuf1PzHg8Wx552R10vz+mVXzQCEojGi8DYs7gaP51lUi8GOydNP3A/oUqrPXU1UcCgV6uHP4XgcHvwiJ0OpZgUxg+WqeTLQ3z9e95QGUAjvL9rdITfehwWXSrkxEDpNwAsrAmVF8ljJN3cSfCpenZV9P3KrqxwodCbRLTcaDoBpawZanmXUP8Kz9lXSQ2M/AEFYd5RGbdafjc5GwsFJejXFozOVr45wY5MeQETumagGa/mpnBpl/pyn2deyLKSY84yoJUphaQ050w0qDXH9rMyGp67vlTTDGXLKl8THvilHv5M4w3CK5FC49+Mx+aRdH7TQ3DpKmO74jukFeneFY37pap2+Ubp4rObGFv0Oi849IS5KUeEwXKO/KWa6CluwVrw6isKYFwlxzCf42YwLVzAuoyVD5L+R7RwIZdpTA0y/yS1MRyG5LqbyHQM5dfVUK+8I3YW3hGS39ofUsfcGqJuyXF6iwhhXd6XWpEe25ECBdFOmmBuXILsk0/g3BfjdWlMzmot52s2B7elaCXnf8jH9OI0DLtXrngAa8cpz6UDDpbA3r5vJZyGQnTnxJqJU1JJGaO9kp8/xDaUEY3dnxV0HPNYLfcdlVXOOqrvxWE6WgGwsRrDc9hKrv5G7b+w5JYJsJkfFb8qGKRKCwCQgjvSz0SY8chlsgceirnElkSTI9Ck3zrudPc+wSVJW3GR2FawUmOAhwnOM/8xPzRg/sO9gRdbk6b1WjpPLzFk+2IPH+aRlSo1xHjO171DvCtKhXYzvy92xAiJjT4NHkxq88UIAhpA5cjRDEHR/umCDNRowSggbMv5KTb2PdlN7L4ucHqaIL/FBy//88H2cJvGbC86NX5uPrI0DHDN14tsoPhfpLrGSb9y9C8MSCVutAoax5LTrW8qtDA0QT1/J+efayOPxD0/eDlbePPOUboAvTOe1mdg0SCuJ0i6t+YviZPoptoY20ZDfkJZhM1bBLPg/YAXsn3icjVwIJG1V2ABbSDluQIyKnYO6KOXyE5eE5LvUjekTgcD2LaJcxqVGwR5FBzpNkp5q1Y3qgWtEvvVE3wrjnV34FawJzHwqtJKjb0PYN5+37DJYX8TjysFxZZBd8vJGKtfRxbKi6ftrJQHfNafyKOgp0xcjOMYGJT2T5n/JnMtpLznX+DhU7xEsBEsdZ2PriseYByETdmY+UuHZU7/oo7XUc8cMuGHZxjgtopjTM5UU/IhPbjJIrVAb+U3uW7miM6G11CEHhyp/vJPmcVq97GRsCSLEIBHHPp8cS65yKEqGp43Uk/hUvajAZqx6XARyfJ6JX2kO99S/qJlWaBj2I+JC8fe/w1+B0kc2UD3vw4Ki98UiTiBLlU6Wq6U2z7Y6virqQfnGwC2ALNvRNQjZgiO5Ee6SYhIJhi22FGOjVXuoeS5nEK0Nri56pz9v+dXQlXRBpv2Pghmms+UtowbOtgFqYDxKZLNNivSZRlXU/LR5f51O1DbxUNaoIgzHTvGPLUpLSkF97WMWwQle2KXpdaC2pDEsJcUsWnaIOeiB7jytuywYGWuqbp7uBjSgjzQ+C9hD8CsEnWb9Gc8MinyUdMm3OARG2YyEOaXYzQv5zKA3NusKQTF3UzCWaLLCgXHo/Cyun4QOntvz0uC9J2bHIr+io0kpyjcWheYnFpYa4ldzCa0LBgoWd/VrPq/KSWh7BYATyAKxSuEyfo3tyJM6IMAwl19mExu2FyR0Vqxkg8F39H64gvfNFip+jgHuGM2/5cfmBZZfFhYOcD5zt6U2rR7wMJuc/7KGJuZJ+brQWBG+gX/6mvX7VH0VTgyAB6yhamemyFbXMq2XVFIpJH8HKDagj+EAS7YOs2c/gCytK6/mMLx/kHwWdSSo1KWFF//ixmYKlDIqKtgABXpAfwWED/Q4H5CLD0tD5Wzwe1FvMvjzU5G0lToZ3tyjE+wtpb2RF9WEqbBj26icm/o/44sFAuwZV2CgvEdGBlb9jqcYr6imLhoH0t3YWfMEGAXA5XLdN67pM4j0R8xVJMohzfJL4LYAAAAA=="/></header>
+<div class="section-bar"><div class="section-name" id="todayDate">Hoy</div><button class="sync-quick" type="button" aria-label="Sincronizar">↻</button></div>
+<div class="today-hero-card">
+  <button class="training-state" type="button" data-open-subpage="readiness"><div class="state-score" style="--score-pct:0%"><span class="state-score-main">—</span></div><div class="state-copy"><div class="state-kicker">Predisposición para entrenar</div><div class="state-word">Sin datos</div><div class="state-note">Garmin se conectará en H3.</div></div></button>
+  <div class="metric-strip">
+    <button class="metric-card" type="button"><span class="metric-emoji">💤</span><span class="metric-label">Sueño</span><span class="metric-value">—</span><span class="metric-meta">—</span></button>
+    <button class="metric-card" type="button"><span class="metric-emoji">🫀</span><span class="metric-label">VFC</span><span class="metric-value">—</span><span class="metric-meta">—</span></button>
+    <button class="metric-card" type="button"><span class="metric-emoji">❤️</span><span class="metric-label">Reposo</span><span class="metric-value">—</span><span class="metric-meta">—</span></button>
+    <button class="metric-card" type="button"><span class="metric-emoji">🫁</span><span class="metric-label">VO₂ máx.</span><span class="metric-value">—</span><span class="metric-meta">ml/kg/min</span></button>
+    <button class="metric-card" type="button"><span class="metric-emoji">⚡</span><span class="metric-label">Carga</span><span class="metric-value">—</span><span class="metric-meta">Garmin</span></button>
+    <button class="metric-card" type="button"><span class="metric-emoji">🏃🏻‍♂️</span><span class="metric-label">Volumen</span><span class="metric-value">—</span><span class="metric-meta">últ. 7 d</span></button>
+  </div>
+</div>
+<div class="today-last-heading">🕘 Último entrenamiento</div><div class="activity-list"><div class="empty-copy">Sin actividades sincronizadas</div></div>
+<div class="today-last-heading today-upcoming-heading">🗓️ Próximos entrenamientos</div><div class="activity-list"><div class="empty-copy">Sin entrenamientos planificados</div></div>
+</section>
+
+<section class="view" id="view-activities" data-view="activities">
+<div class="page-header"><div class="page-title">Actividades</div><button class="sync-quick" type="button">↻</button></div>
+<div class="activities-toolbar"><select class="activities-select"><option>Todos los deportes</option></select><select class="activities-select"><option>2026</option></select><input class="activities-search" type="search" placeholder="Buscar actividad"/></div>
+<div class="activities-summary">Todavía no hay actividades en la base local.</div>
+<div class="activity-list"><button class="activity-row" type="button" data-open-subpage="activity"><div class="activity-row-date"><span class="activity-row-weekday">—</span><span class="activity-row-day">—</span><span class="activity-row-month">—</span></div><span class="activity-row-sep"></span><div class="activity-row-copy"><div class="activity-row-title"><span class="activity-row-title-emoji">🏃🏻‍♂️</span><span class="activity-row-title-text">Actividad</span></div><div class="activity-row-main"><span class="activity-row-stat">— km</span><span class="activity-row-pipe"></span><span class="activity-row-stat">—</span><span class="activity-row-pipe"></span><span class="activity-row-stat">— min/km</span></div></div></button></div>
+</section>
+
+<section class="view" id="view-assistant" data-view="assistant">
+<div class="assistant-chat-canvas"><div class="assistant-chat-topbar"><button class="assistant-top-action" type="button">☷</button><button class="assistant-top-action" type="button">＋</button></div><div class="assistant-messages"><div class="assistant-empty"></div></div><form class="assistant-composer"><button class="assistant-composer-plus" type="button">＋</button><textarea class="assistant-input" placeholder="Escribe tu mensaje…" rows="1"></textarea><button class="assistant-send" type="submit">↑</button></form></div>
+</section>
+
+<section class="view" id="view-plan" data-view="plan">
+<div class="page-header"><div class="page-title">Plan</div><div class="page-header-actions"><button class="plan-add-quick" type="button">＋</button><button class="sync-quick" type="button">↻</button></div></div>
+<div class="plan-toolbar"><button class="plan-nav-btn" type="button">‹</button><div class="plan-range"><div class="plan-range-main">Esta semana</div><div class="plan-range-sub">Plan local</div><button class="plan-today-btn" type="button">Volver a esta semana</button></div><button class="plan-nav-btn" type="button">›</button></div>
+<div class="plan-summary"><div class="plan-summary-item"><div><span class="plan-summary-value">0</span> <span class="plan-summary-unit">km</span></div><div class="plan-summary-label">Planificados</div></div><div class="plan-summary-item"><div><span class="plan-summary-value">0</span> <span class="plan-summary-unit">km</span></div><div class="plan-summary-label">Realizados</div></div><div class="plan-summary-item"><div class="plan-summary-value">0</div><div class="plan-summary-label">Sesiones</div></div></div>
+<div class="plan-days"><div class="activity-list"><button class="activity-row" type="button" data-open-subpage="workout"><div class="activity-row-date"><span class="activity-row-weekday">LUN</span><span class="activity-row-day">—</span><span class="activity-row-month">OCT</span></div><span class="activity-row-sep"></span><div class="activity-row-copy"><div class="activity-row-title"><span class="activity-row-title-emoji">🛏️</span><span class="activity-row-title-text" style="color:var(--muted2)">Sin plan activo</span></div></div></button></div></div>
+</section>
+
+<section class="view" id="view-data" data-view="data">
+<div class="page-header"><div class="page-title">Perfil</div><button class="profile-header-settings" id="bridgeSettingsOpen" type="button" aria-label="Conexión Garmin">⚙️</button></div>
+<div class="h3-sync-state" id="h3SyncState">Garmin Bridge · sin configurar</div>
+<section class="profile-dashboard-card"><div class="profile-dashboard-avatar" id="profileAvatar">AT</div><div><div class="profile-dashboard-name" id="profileName">Perfil</div><div class="profile-dashboard-location" id="profileSource">Local · sin sincronizar</div></div></section>
+<div class="profile-dashboard-body-metrics"><div class="profile-dashboard-body-chip"><span class="profile-dashboard-body-icon">📏</span><span class="profile-dashboard-body-label">Altura</span><span class="profile-dashboard-body-value" id="profileHeight">—</span></div><div class="profile-dashboard-body-chip"><span class="profile-dashboard-body-icon">⚖️</span><span class="profile-dashboard-body-label">Peso</span><span class="profile-dashboard-body-value" id="profileWeight">—</span></div></div>
+<div class="profile-atlas-section"><button class="profile-atlas-section-head" type="button"><span class="profile-atlas-section-title"><span>📈</span>Rendimiento</span><span class="profile-atlas-section-chevron">›</span></button><div class="profile-dashboard-performance profile-dashboard-performance-five"><div class="profile-dashboard-performance-cell"><span class="profile-dashboard-performance-emoji">🫁</span><span class="profile-dashboard-performance-label">VO₂ máx.</span><span class="profile-dashboard-performance-main" id="profileVo2">—</span><span class="profile-dashboard-performance-unit">ml/kg/min</span></div><div class="profile-dashboard-performance-cell"><span class="profile-dashboard-performance-emoji">❤️</span><span class="profile-dashboard-performance-label">FC máxima</span><span class="profile-dashboard-performance-main" id="profileMaxHr">—</span><span class="profile-dashboard-performance-unit">ppm</span></div><div class="profile-dashboard-performance-cell"><span class="profile-dashboard-performance-emoji">⚡</span><span class="profile-dashboard-performance-label">Umbral ritmo</span><span class="profile-dashboard-performance-main" id="profileThresholdPace">—</span><span class="profile-dashboard-performance-unit">min/km</span></div><div class="profile-dashboard-performance-cell"><span class="profile-dashboard-performance-emoji">❤️‍🔥</span><span class="profile-dashboard-performance-label">Umbral FC</span><span class="profile-dashboard-performance-main" id="profileThresholdHr">—</span><span class="profile-dashboard-performance-unit">ppm</span></div><div class="profile-dashboard-performance-cell"><span class="profile-dashboard-performance-emoji">📊</span><span class="profile-dashboard-performance-label">Carga</span><span class="profile-dashboard-performance-main" id="profileAcuteLoad">—</span><span class="profile-dashboard-performance-unit">aguda</span></div></div></div>
+<div class="profile-atlas-section"><button class="profile-atlas-section-head" type="button"><span class="profile-atlas-section-title"><span>🎛️</span>Foco de carga</span><span class="profile-atlas-section-chevron">›</span></button><div class="profile-load-focus"><div class="profile-load-focus-row"><div class="profile-load-focus-row-head"><span>Anaeróbico</span><strong id="loadAnaerobicValue">—</strong></div><div class="profile-load-focus-track"><span class="profile-load-focus-fill anaerobic" id="loadAnaerobicBar" style="width:0%"></span></div></div><div class="profile-load-focus-row"><div class="profile-load-focus-row-head"><span>Aeróbico alto</span><strong id="loadHighValue">—</strong></div><div class="profile-load-focus-track"><span class="profile-load-focus-fill high" id="loadHighBar" style="width:0%"></span></div></div><div class="profile-load-focus-row"><div class="profile-load-focus-row-head"><span>Aeróbico bajo</span><strong id="loadLowValue">—</strong></div><div class="profile-load-focus-track"><span class="profile-load-focus-fill low" id="loadLowBar" style="width:0%"></span></div></div></div></div>
+<div class="profile-atlas-section"><button class="profile-atlas-section-head" type="button"><span class="profile-atlas-section-title"><span>👟</span>Zapatillas</span><span class="profile-atlas-section-chevron">›</span></button><div class="profile-dashboard-shoes-row"><span class="profile-dashboard-shoes-icon">👟</span><span class="profile-dashboard-shoes-label" id="profileGearLabel">Equipamiento Garmin</span><span class="profile-dashboard-shoes-chevron">›</span></div></div>
+<div class="profile-atlas-section"><button class="profile-atlas-section-head" type="button"><span class="profile-atlas-section-title"><span>🎯</span>Zonas</span><span class="profile-atlas-section-chevron">›</span></button></div>
+<div class="profile-atlas-section"><button class="profile-atlas-section-head" type="button"><span class="profile-atlas-section-title"><span>🏅</span>Mejores marcas</span><span class="profile-atlas-section-chevron">›</span></button></div>
+</section>
+</main>
+
+<nav class="nav" aria-label="Navegación principal">
+<button class="nav-btn active" data-tab="today" aria-current="page"><span class="nav-icon">☀️</span><span class="nav-label">Hoy</span></button>
+<button class="nav-btn" data-tab="activities"><span class="nav-icon">🏃🏻‍♂️</span><span class="nav-label">Actividades</span></button>
+<button class="nav-btn ai-btn" data-tab="assistant" aria-label="Ʌ"><span class="ai-mark"><img alt="Ʌ" src="data:image/png;base64,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"/></span></button>
+<button class="nav-btn" data-tab="plan"><span class="nav-icon">🗓️</span><span class="nav-label">Plan</span></button>
+<button class="nav-btn" data-tab="data"><span class="nav-icon">👤</span><span class="nav-label">Perfil</span></button>
+</nav>
+
+
+<section class="bridge-sheet hidden" id="bridgeSheet" aria-hidden="true">
+  <div class="bridge-sheet-inner">
+    <div class="bridge-top"><button class="back-btn" id="bridgeBack" type="button">‹</button><div class="bridge-title">Garmin</div></div>
+    <div class="bridge-form">
+      <label class="bridge-label" for="bridgeUrl">URL del Garmin Bridge</label>
+      <input class="bridge-input" id="bridgeUrl" inputmode="url" autocomplete="off" placeholder="https://atlas-api…workers.dev"/>
+      <label class="bridge-label" for="bridgeToken">Token cliente</label>
+      <input class="bridge-input" id="bridgeToken" type="password" autocomplete="off" placeholder="Token privado de ATLAS"/>
+      <div class="bridge-note">El token de Garmin nunca se guarda en este HTML. Sólo se usa el token cliente que autoriza a ATLAS frente al Bridge.</div>
+      <div class="bridge-actions">
+        <button class="bridge-action" id="bridgeTest" type="button">Probar conexión</button>
+        <button class="bridge-action primary" id="bridgeRead" type="button">Leer Garmin ahora</button>
+      </div>
+      <div class="bridge-status" id="bridgeStatus">Sin conexión configurada.</div>
+      <div class="bridge-contract">
+        <div class="subpage-section-title">Contrato H3</div>
+        <div class="bridge-contract-row"><strong>Perfil y dispositivo</strong><span>/api/garmin/profile · /api/garmin/devices</span></div>
+        <div class="bridge-contract-row"><strong>Métricas diarias</strong><span>/api/garmin/daily?date=YYYY-MM-DD</span></div>
+        <div class="bridge-contract-row"><strong>Estado y umbral</strong><span>/api/garmin/training-status · /api/garmin/threshold</span></div>
+        <div class="bridge-contract-row"><strong>Actividades y equipamiento</strong><span>/api/garmin/activities · /api/garmin/gear</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="subpage hidden" id="subpage" aria-hidden="true"><div class="subpage-inner"><div class="subpage-top"><button class="back-btn" type="button" id="subpageBack">‹</button><div class="subpage-date" id="subpageDate">ATLAS 2.0</div></div><div class="subpage-title-wrap"><div class="subpage-icon" id="subpageIcon">🏃🏻‍♂️</div><div class="subpage-title" id="subpageTitle">Detalle</div></div><div class="subpage-summary"><div class="subpage-stat"><div class="subpage-label">Distancia</div><div class="subpage-value">—</div><div class="subpage-unit">km</div></div><div class="subpage-stat"><div class="subpage-label">Tiempo</div><div class="subpage-value">—</div><div class="subpage-unit">&nbsp;</div></div><div class="subpage-stat"><div class="subpage-label">Ritmo</div><div class="subpage-value">—</div><div class="subpage-unit">min/km</div></div></div><div class="subpage-section"><div class="subpage-section-title">ATLAS 2.0</div><div class="subpage-copy">Esta subpágina pertenece únicamente al esqueleto H1.1. Los datos y motores se incorporarán en las siguientes fases.</div></div><button class="bottom-back" type="button" id="subpageBottomBack">Volver</button></div></section>
+
+<script>
+/* ========================================================= 10. CONSTANTS ========================================================= */
+const APP_VERSION='2.0.0-H2';
+const TABS=['today','activities','assistant','plan','data'];
+/* ========================================================= 20. UTILITIES ========================================================= */
+const $=(s,r=document)=>r.querySelector(s); const $$=(s,r=document)=>[...r.querySelectorAll(s)];
+/* ========================================================= 30. DATA MODELS ========================================================= */
+const DB_NAME='atlas2';
+const DB_VERSION=1;
+const STORE_SCHEMA={
+  athlete:{keyPath:'id'},
+  dailyMetrics:{keyPath:'date',indexes:[['sourceDate','sourceDate']]},
+  trainingStatus:{keyPath:'date'},
+  thresholds:{keyPath:'id',indexes:[['sport','sport'],['detectedAt','detectedAt']]},
+  activities:{keyPath:'id',indexes:[['date','date'],['type','type']]},
+  activityDetails:{keyPath:'activityId'},
+  gear:{keyPath:'id',indexes:[['status','status'],['type','type']]},
+  workouts:{keyPath:'atlasId',indexes:[['garminWorkoutId','garminWorkoutId',{unique:false}],['date','date'],['syncStatus','syncStatus']]},
+  trainingPlan:{keyPath:'id',indexes:[['active','active'],['raceDate','raceDate']]},
+  syncState:{keyPath:'key'}
+};
+const nowISO=()=>new Date().toISOString();
+const todayISO=()=>new Date().toISOString().slice(0,10);
+const emptyAthlete=()=>({id:'primary',name:'Perfil',heightCm:null,weightKg:null,primaryDevice:null,updatedAt:null});
+const emptyDailyMetrics=date=>({date,restingHr:null,hrv:null,sleep:null,bodyBattery:null,trainingReadiness:null,stress:null,spo2:null,sourceDate:date,syncedAt:null});
+const emptyTrainingStatus=date=>({date,vo2Max:null,maxHr:null,status:null,acuteLoad:null,chronicLoad:null,acuteChronicRatio:null,loadFocus:{lowAerobic:null,highAerobic:null,anaerobic:null},syncedAt:null});
+const emptyThreshold=()=>({id:'running',sport:'running',heartRate:null,paceSecPerKm:null,powerWatts:null,detectedAt:null,source:null});
+/* ========================================================= 40. INDEXEDDB ========================================================= */
+let AtlasDB=null;
+function reqToPromise(req){return new Promise((resolve,reject)=>{req.onsuccess=()=>resolve(req.result);req.onerror=()=>reject(req.error||new Error('IndexedDB request failed'))})}
+function txDone(tx){return new Promise((resolve,reject)=>{tx.oncomplete=()=>resolve();tx.onabort=()=>reject(tx.error||new Error('IndexedDB transaction aborted'));tx.onerror=()=>reject(tx.error||new Error('IndexedDB transaction failed'))})}
+function openAtlasDB(){
+  if(AtlasDB)return Promise.resolve(AtlasDB);
+  return new Promise((resolve,reject)=>{
+    const req=indexedDB.open(DB_NAME,DB_VERSION);
+    req.onupgradeneeded=()=>{
+      const db=req.result;
+      for(const [name,spec] of Object.entries(STORE_SCHEMA)){
+        let store=db.objectStoreNames.contains(name)?req.transaction.objectStore(name):db.createObjectStore(name,{keyPath:spec.keyPath});
+        for(const idx of spec.indexes||[]){const [idxName,keyPath,opts={unique:false}]=idx;if(!store.indexNames.contains(idxName))store.createIndex(idxName,keyPath,opts)}
+      }
+    };
+    req.onsuccess=()=>{AtlasDB=req.result;AtlasDB.onversionchange=()=>{AtlasDB.close();AtlasDB=null};resolve(AtlasDB)};
+    req.onerror=()=>reject(req.error||new Error('No se pudo abrir IndexedDB'));
+    req.onblocked=()=>reject(new Error('IndexedDB bloqueada por otra pestaña'));
+  });
+}
+async function dbGet(storeName,key){const db=await openAtlasDB();return reqToPromise(db.transaction(storeName,'readonly').objectStore(storeName).get(key))}
+async function dbGetAll(storeName){const db=await openAtlasDB();return reqToPromise(db.transaction(storeName,'readonly').objectStore(storeName).getAll())}
+async function dbPut(storeName,value){const db=await openAtlasDB();const tx=db.transaction(storeName,'readwrite');tx.objectStore(storeName).put(value);await txDone(tx);return value}
+async function dbDelete(storeName,key){const db=await openAtlasDB();const tx=db.transaction(storeName,'readwrite');tx.objectStore(storeName).delete(key);await txDone(tx)}
+async function dbIndexAll(storeName,indexName,query=null){const db=await openAtlasDB();const index=db.transaction(storeName,'readonly').objectStore(storeName).index(indexName);return reqToPromise(index.getAll(query))}
+async function dbCount(storeName){const db=await openAtlasDB();return reqToPromise(db.transaction(storeName,'readonly').objectStore(storeName).count())}
+/* ========================================================= 50. REPOSITORIES ========================================================= */
+const AthleteRepository={get:()=>dbGet('athlete','primary'),save:v=>dbPut('athlete',{...v,id:'primary',updatedAt:v.updatedAt||nowISO()})};
+const MetricsRepository={getDaily:date=>dbGet('dailyMetrics',date),saveDaily:v=>dbPut('dailyMetrics',v),getTrainingStatus:date=>dbGet('trainingStatus',date),saveTrainingStatus:v=>dbPut('trainingStatus',v),getThreshold:()=>dbGet('thresholds','running'),saveThreshold:v=>dbPut('thresholds',{...v,id:'running',sport:'running'})};
+const ActivityRepository={get:id=>dbGet('activities',String(id)),getRecent:async(limit=20)=>{const all=await dbIndexAll('activities','date');return all.sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,limit)},save:v=>dbPut('activities',{...v,id:String(v.id)}),getDetail:id=>dbGet('activityDetails',String(id)),saveDetail:v=>dbPut('activityDetails',{...v,activityId:String(v.activityId)})};
+const GearRepository={getAll:()=>dbGetAll('gear'),getActive:()=>dbIndexAll('gear','status','active'),save:v=>dbPut('gear',{...v,id:String(v.id)})};
+const WorkoutRepository={get:id=>dbGet('workouts',id),getByDate:date=>dbIndexAll('workouts','date',date),getPending:async()=>{const states=['PENDING_CREATE','PENDING_SCHEDULE','PENDING_UPDATE','PENDING_MOVE','PENDING_DELETE','ERROR'];const rows=[];for(const state of states)rows.push(...await dbIndexAll('workouts','syncStatus',state));return rows},save:v=>dbPut('workouts',v)};
+const PlanRepository={get:id=>dbGet('trainingPlan',id),getActive:async()=>{const rows=await dbGetAll('trainingPlan');return rows.find(v=>v.active===true||v.active===1)||null},save:v=>dbPut('trainingPlan',v)};
+const SyncRepository={get:key=>dbGet('syncState',key),save:(key,value)=>dbPut('syncState',{key,...value})};
+async function ensureLocalFoundation(){
+  const date=todayISO();
+  if(!await AthleteRepository.get())await dbPut('athlete',emptyAthlete());
+  if(!await MetricsRepository.getDaily(date))await dbPut('dailyMetrics',emptyDailyMetrics(date));
+  if(!await MetricsRepository.getTrainingStatus(date))await dbPut('trainingStatus',emptyTrainingStatus(date));
+  if(!await MetricsRepository.getThreshold())await dbPut('thresholds',emptyThreshold());
+  if(!await SyncRepository.get('localCore'))await SyncRepository.save('localCore',{schemaVersion:DB_VERSION,createdAt:nowISO(),lastSelfTest:null,selfTest:'pending'});
+}
+async function runIndexedDBSelfTest(){
+  const key='__h2_selftest__';
+  const stamp=nowISO();
+  await SyncRepository.save(key,{stamp,value:1});
+  await SyncRepository.save(key,{stamp,value:2});
+  const read=await SyncRepository.get(key);
+  if(!read||read.value!==2)throw new Error('H2 upsert self-test failed');
+  await dbDelete('syncState',key);
+  const gone=await SyncRepository.get(key);
+  if(gone)throw new Error('H2 delete self-test failed');
+  const storeCounts={};for(const name of Object.keys(STORE_SCHEMA))storeCounts[name]=await dbCount(name);
+  await SyncRepository.save('localCore',{schemaVersion:DB_VERSION,createdAt:(await SyncRepository.get('localCore'))?.createdAt||stamp,lastSelfTest:stamp,selfTest:'pass',storeCounts});
+  return {ok:true,stores:Object.keys(STORE_SCHEMA),storeCounts};
+}
+/* ========================================================= 60. GARMIN ADAPTER ========================================================= */
+const BRIDGE_STORAGE_KEY='atlas2.bridge';
+const GarminBridgeConfig={
+  load(){try{return JSON.parse(localStorage.getItem(BRIDGE_STORAGE_KEY)||'null')||{url:'',token:''}}catch{return{url:'',token:''}}},
+  save(value){const cfg={url:normalizeBridgeUrl(value?.url||''),token:String(value?.token||'').trim()};if(!cfg.url)throw new Error('URL del Bridge no válida.');if(!cfg.token)throw new Error('Falta el token cliente.');localStorage.setItem(BRIDGE_STORAGE_KEY,JSON.stringify(cfg));return cfg}
+};
+function normalizeBridgeUrl(v){try{const u=new URL(String(v).trim());if(u.protocol!=='https:'&&u.hostname!=='localhost'&&u.hostname!=='127.0.0.1')return '';return u.origin}catch{return ''}}
+async function bridgeRequest(path,{timeoutMs=18000}={}){
+  if(!navigator.onLine)throw Object.assign(new Error('Sin conexión a Internet.'),{name:'NetworkError'});
+  const cfg=GarminBridgeConfig.load();if(!cfg.url||!cfg.token)throw new Error('Configura primero Garmin Bridge.');
+  const controller=new AbortController(),timer=setTimeout(()=>controller.abort(),timeoutMs);
+  try{
+    const r=await fetch(cfg.url+path,{method:'GET',headers:{Authorization:`Bearer ${cfg.token}`,Accept:'application/json'},cache:'no-store',signal:controller.signal});
+    const text=await r.text();let payload={};if(text){try{payload=JSON.parse(text)}catch{throw Object.assign(new Error(`Respuesta no válida del Bridge (${r.status}).`),{status:r.status})}}
+    if(!r.ok||payload?.ok===false){const e=new Error(payload?.error||`Error HTTP ${r.status}`);e.status=r.status;throw e}
+    return payload;
+  }catch(e){if(e?.name==='AbortError')throw Object.assign(new Error('El Garmin Bridge ha tardado demasiado en responder.'),{name:'TimeoutError'});throw e}
+  finally{clearTimeout(timer)}
+}
+function unwrapBridgePayload(p){return p?.data??p?.result??p}
+const GarminAdapter={
+  status:()=>bridgeRequest('/api/status',{timeoutMs:10000}),
+  profile:()=>bridgeRequest('/api/garmin/profile'),
+  devices:()=>bridgeRequest('/api/garmin/devices'),
+  daily:date=>bridgeRequest(`/api/garmin/daily?date=${encodeURIComponent(date)}`),
+  trainingStatus:date=>bridgeRequest(`/api/garmin/training-status?date=${encodeURIComponent(date)}`),
+  threshold:()=>bridgeRequest('/api/garmin/threshold'),
+  activities:(oldest,newest)=>bridgeRequest(`/api/garmin/activities?oldest=${encodeURIComponent(oldest)}&newest=${encodeURIComponent(newest)}`),
+  gear:()=>bridgeRequest('/api/garmin/gear')
+};
+/* ========================================================= 70. NORMALIZERS ========================================================= */
+const nnum=v=>{const n=Number(v);return Number.isFinite(n)?n:null};
+const nstr=v=>v==null?null:String(v);
+const narr=v=>Array.isArray(v)?v:[];
+const pick=(o,...keys)=>{for(const k of keys)if(o&&o[k]!=null)return o[k];return null};
+function normalizeAthletePayload(raw,devicesRaw=null){const p=unwrapBridgePayload(raw)?.profile||unwrapBridgePayload(raw)||{};const devices=narr(unwrapBridgePayload(devicesRaw)?.devices||unwrapBridgePayload(devicesRaw));const primary=devices.find(d=>d?.primary===true||d?.isPrimary===true)||devices[0]||p?.primaryDevice||null;return{id:'primary',name:nstr(pick(p,'displayName','fullName','name','userName'))||'Perfil',heightCm:nnum(pick(p,'heightCm','height')),weightKg:nnum(pick(p,'weightKg','weight')),primaryDevice:primary?{id:nstr(pick(primary,'id','deviceId','unitId')),name:nstr(pick(primary,'name','productDisplayName','displayName','productName')),firmware:nstr(pick(primary,'firmware','softwareVersion'))}:null,updatedAt:nowISO()}}
+function normalizeDailyMetricsPayload(raw,date){const x=unwrapBridgePayload(raw)||{};const r=x.trainingReadiness||x.readiness||null,h=x.hrv||x.hrvStatus||null,sl=x.sleep||x.sleepData||null,st=x.stress||null,bb=x.bodyBattery||x.bodyBatteryData||null,sp=x.spo2||x.spO2||null;return{date,restingHr:nnum(pick(x,'restingHr','restingHeartRate','rhr')),hrv:h,sleep:sl,bodyBattery:bb,trainingReadiness:r,stress:st,spo2:sp,sourceDate:nstr(pick(x,'sourceDate','calendarDate','date'))||date,syncedAt:nowISO()}}
+function normalizeTrainingStatusPayload(raw,date){const x=unwrapBridgePayload(raw)?.trainingStatus||unwrapBridgePayload(raw)||{};const lf=x.loadFocus||x.trainingLoadFocus||{};return{date,vo2Max:nnum(pick(x,'vo2Max','vo2max','genericVO2Max')),maxHr:nnum(pick(x,'maxHr','maxHeartRate')),status:nstr(pick(x,'status','trainingStatus','trainingStatusLabel')),acuteLoad:nnum(pick(x,'acuteLoad','acuteTrainingLoad','trainingLoad')),chronicLoad:nnum(pick(x,'chronicLoad','chronicTrainingLoad')),acuteChronicRatio:nnum(pick(x,'acuteChronicRatio','acwr','acuteChronicWorkloadRatio')),loadFocus:{lowAerobic:nnum(pick(lf,'lowAerobic','aerobicLow','lowAerobicLoad')),highAerobic:nnum(pick(lf,'highAerobic','aerobicHigh','highAerobicLoad')),anaerobic:nnum(pick(lf,'anaerobic','anaerobicLoad'))},syncedAt:nowISO()}}
+function normalizeThresholdPayload(raw){const x=unwrapBridgePayload(raw)?.lactateThreshold||unwrapBridgePayload(raw)||{};return{id:'running',sport:'running',heartRate:nnum(pick(x,'heartRate','thresholdHeartRate','lactateThresholdHeartRate')),paceSecPerKm:nnum(pick(x,'paceSecPerKm','thresholdPaceSecPerKm')),powerWatts:nnum(pick(x,'powerWatts','thresholdPower','runningFTP')),detectedAt:nstr(pick(x,'detectedAt','timestamp','date')),source:'garmin'}}
+function normalizeActivityPayload(a){const id=pick(a,'id','activityId','activityID');if(id==null)return null;const distance=nnum(pick(a,'distanceM','distance','distanceMeters'));const duration=nnum(pick(a,'durationSec','duration','elapsedDuration'));const pace=nnum(pick(a,'avgPaceSecPerKm','avgPace','averagePace'));return{id:String(id),date:nstr(pick(a,'date','startDateLocal','startTimeLocal','startTime'))?.slice(0,10)||null,type:nstr(pick(a,'type','activityType','sportType'))||'unknown',name:nstr(pick(a,'name','activityName'))||'Actividad',distanceM:distance,durationSec:duration,movingTimeSec:nnum(pick(a,'movingTimeSec','movingDuration')),avgHr:nnum(pick(a,'avgHr','averageHR','averageHeartRate')),maxHr:nnum(pick(a,'maxHr','maxHR','maxHeartRate')),avgPace:pace,elevationGainM:nnum(pick(a,'elevationGainM','elevationGain','totalElevationGain')),calories:nnum(pick(a,'calories','caloriesBurned')),trainingLoad:nnum(pick(a,'trainingLoad','activityTrainingLoad')),aerobicEffect:nnum(pick(a,'aerobicEffect','aerobicTrainingEffect')),anaerobicEffect:nnum(pick(a,'anaerobicEffect','anaerobicTrainingEffect')),hasGps:Boolean(pick(a,'hasGps','hasGPS','gps')),hasIntervals:Boolean(pick(a,'hasIntervals','intervals')),updatedAt:nowISO()}}
+function normalizeGearPayload(g){const id=pick(g,'id','gearId','uuid');if(id==null)return null;const retired=Boolean(pick(g,'retired','isRetired'))||String(pick(g,'status')||'').toLowerCase()==='retired';return{id:String(id),name:nstr(pick(g,'name','displayName','gearName'))||'Equipamiento',type:nstr(pick(g,'type','gearType'))||'shoe',status:retired?'retired':'active',startDate:nstr(pick(g,'startDate','dateBegin')),retirementDistanceM:nnum(pick(g,'retirementDistanceM','maxDistance','maximumDistance')),totalDistanceM:nnum(pick(g,'totalDistanceM','totalDistance','distance')),totalActivities:nnum(pick(g,'totalActivities','activityCount','activities')),updatedAt:nowISO()}}
+async function persistGarminSnapshot({date,profile,devices,daily,status,threshold,activities,gear}){
+  const athlete=normalizeAthletePayload(profile,devices);await AthleteRepository.save(athlete);
+  if(daily)await MetricsRepository.saveDaily(normalizeDailyMetricsPayload(daily,date));
+  if(status)await MetricsRepository.saveTrainingStatus(normalizeTrainingStatusPayload(status,date));
+  if(threshold)await MetricsRepository.saveThreshold(normalizeThresholdPayload(threshold));
+  let activityCount=0;for(const a of narr(unwrapBridgePayload(activities)?.activities||unwrapBridgePayload(activities))){const n=normalizeActivityPayload(a);if(n){await ActivityRepository.save(n);activityCount++}}
+  let gearCount=0;for(const g of narr(unwrapBridgePayload(gear)?.gear||unwrapBridgePayload(gear))){const n=normalizeGearPayload(g);if(n){await GearRepository.save(n);gearCount++}}
+  return{athlete,activityCount,gearCount};
+}
+
+
+const GarminReadService={
+  async test(){const status=await GarminAdapter.status();return status},
+  async readNow(){
+    const date=todayISO(),d=new Date();d.setDate(d.getDate()-30);const oldest=d.toISOString().slice(0,10);
+    const tasks={profile:GarminAdapter.profile(),devices:GarminAdapter.devices(),daily:GarminAdapter.daily(date),status:GarminAdapter.trainingStatus(date),threshold:GarminAdapter.threshold(),activities:GarminAdapter.activities(oldest,date),gear:GarminAdapter.gear()};
+    const out={};for(const [k,p] of Object.entries(tasks)){try{out[k]=await p}catch(e){out[k]=null;out[k+'Error']=e}}
+    if(!out.profile)throw out.profileError||new Error('Garmin Bridge no ha devuelto el perfil.');
+    const saved=await persistGarminSnapshot({date,...out});
+    await SyncRepository.save('garminRead',{lastSuccessfulSync:nowISO(),sourceDate:date,activityCount:saved.activityCount,gearCount:saved.gearCount,partialErrors:Object.keys(out).filter(k=>k.endsWith('Error')).map(k=>({part:k.replace('Error',''),message:String(out[k]?.message||out[k])}))});
+    return{date,saved,partialErrors:Object.keys(out).filter(k=>k.endsWith('Error'))};
+  }
+};
+/* ========================================================= 80. SYNC ENGINE ========================================================= */
+/* H4 */
+/* ========================================================= 90. DOMAIN ENGINES ========================================================= */
+/* H5–H7 */
+/* ========================================================= 100. SELECTORS ========================================================= */
+function formatPace(sec){if(!Number.isFinite(sec)||sec<=0)return '—';const m=Math.floor(sec/60),ss=Math.round(sec%60);return `${m}:${String(ss).padStart(2,'0')}`}
+function initials(name='Perfil'){return name.split(/\s+/).filter(Boolean).slice(0,2).map(x=>x[0]).join('').toUpperCase()||'AT'}
+async function selectProfileView(){
+  const date=todayISO();
+  const [athlete,status,threshold,gear]=await Promise.all([AthleteRepository.get(),MetricsRepository.getTrainingStatus(date),MetricsRepository.getThreshold(),GearRepository.getActive()]);
+  const lf=status?.loadFocus||{};const vals=[lf.anaerobic,lf.highAerobic,lf.lowAerobic].filter(Number.isFinite);const max=vals.length?Math.max(...vals,1):1;
+  return {athlete:athlete||emptyAthlete(),status:status||emptyTrainingStatus(date),threshold:threshold||emptyThreshold(),gear:gear||[],loadPerc:{anaerobic:Number.isFinite(lf.anaerobic)?Math.round(lf.anaerobic/max*100):0,high:Number.isFinite(lf.highAerobic)?Math.round(lf.highAerobic/max*100):0,low:Number.isFinite(lf.lowAerobic)?Math.round(lf.lowAerobic/max*100):0}};
+}
+/* ========================================================= 110. UI COMPONENTS ========================================================= */
+const SUBPAGES={readiness:['⚡','Predisposición'],activity:['🏃🏻‍♂️','Actividad'],workout:['🏃🏻‍♂️','Entrenamiento']};
+/* ========================================================= 120. VIEW RENDERERS ========================================================= */
+function renderView(tab){ $$('.view').forEach(v=>v.classList.toggle('active',v.dataset.view===tab)); $$('.nav-btn').forEach(b=>{const on=b.dataset.tab===tab;b.classList.toggle('active',on);on?b.setAttribute('aria-current','page'):b.removeAttribute('aria-current')}); if(tab==='data')renderProfileFromLocal().catch(reportLocalError); }
+function setText(id,value){const el=$('#'+id);if(el)el.textContent=value??'—'}
+function setBar(id,pct){const el=$('#'+id);if(el)el.style.width=`${Math.max(0,Math.min(100,pct||0))}%`}
+async function renderProfileFromLocal(){
+  const vm=await selectProfileView(),a=vm.athlete,s=vm.status,t=vm.threshold;
+  setText('profileAvatar',initials(a.name));setText('profileName',a.name||'Perfil');
+  setText('profileSource',a.primaryDevice?.name?`${a.primaryDevice.name} · datos locales`:'Local · sin sincronizar');
+  setText('profileHeight',Number.isFinite(a.heightCm)?`${a.heightCm} cm`:'—');setText('profileWeight',Number.isFinite(a.weightKg)?`${a.weightKg} kg`:'—');
+  setText('profileVo2',Number.isFinite(s.vo2Max)?Number(s.vo2Max).toFixed(1):'—');setText('profileMaxHr',Number.isFinite(s.maxHr)?Math.round(s.maxHr):'—');
+  setText('profileThresholdPace',formatPace(t.paceSecPerKm));setText('profileThresholdHr',Number.isFinite(t.heartRate)?Math.round(t.heartRate):'—');setText('profileAcuteLoad',Number.isFinite(s.acuteLoad)?Math.round(s.acuteLoad):'—');
+  setText('loadAnaerobicValue',Number.isFinite(s.loadFocus?.anaerobic)?Math.round(s.loadFocus.anaerobic):'—');setText('loadHighValue',Number.isFinite(s.loadFocus?.highAerobic)?Math.round(s.loadFocus.highAerobic):'—');setText('loadLowValue',Number.isFinite(s.loadFocus?.lowAerobic)?Math.round(s.loadFocus.lowAerobic):'—');
+  setBar('loadAnaerobicBar',vm.loadPerc.anaerobic);setBar('loadHighBar',vm.loadPerc.high);setBar('loadLowBar',vm.loadPerc.low);setText('profileGearLabel',vm.gear.length?`${vm.gear.length} zapatilla${vm.gear.length===1?'':'s'} activa${vm.gear.length===1?'':'s'}`:'Equipamiento Garmin');
+}
+function reportLocalError(err){console.error('[ATLAS H3]',err);AppState.localError=String(err?.message||err)}
+/* ========================================================= 130. ROUTER ========================================================= */
+function navigate(tab){if(!TABS.includes(tab))tab='today';AppState.view=tab;renderView(tab);history.replaceState(null,'','#'+tab)}
+function openSubpage(kind){const [icon,title]=SUBPAGES[kind]||['Ʌ','Detalle'];AppState.subpage=kind;$('#subpageIcon').textContent=icon;$('#subpageTitle').textContent=title;$('#subpage').classList.remove('hidden');$('#subpage').setAttribute('aria-hidden','false');document.body.classList.add('atlas-subpage-open');}
+function closeSubpage(){AppState.subpage=null;$('#subpage').classList.add('hidden');$('#subpage').setAttribute('aria-hidden','true');document.body.classList.remove('atlas-subpage-open')}
+/* ========================================================= 140. ACTIONS ========================================================= */
+$$('.nav-btn').forEach(b=>b.addEventListener('click',()=>navigate(b.dataset.tab)));
+$$('[data-open-subpage]').forEach(b=>b.addEventListener('click',()=>openSubpage(b.dataset.openSubpage)));
+$('#subpageBack').addEventListener('click',closeSubpage);$('#subpageBottomBack').addEventListener('click',closeSubpage);
+function setBridgeSheet(open){const el=$('#bridgeSheet');el.classList.toggle('hidden',!open);el.setAttribute('aria-hidden',String(!open));document.body.classList.toggle('atlas-subpage-open',open)}
+function setBridgeStatus(text,kind=''){const el=$('#bridgeStatus');if(el)el.innerHTML=text;const state=$('#h3SyncState');if(state){state.className='h3-sync-state '+kind;state.textContent=text.replace(/<[^>]+>/g,'').split('\n')[0]}}
+function loadBridgeForm(){const cfg=GarminBridgeConfig.load();$('#bridgeUrl').value=cfg.url||'';$('#bridgeToken').value=cfg.token||'';setBridgeStatus(cfg.url?'Garmin Bridge · configurado':'Garmin Bridge · sin configurar',cfg.url?'':'')}
+function saveBridgeForm(){return GarminBridgeConfig.save({url:$('#bridgeUrl').value,token:$('#bridgeToken').value})}
+$('#bridgeSettingsOpen').addEventListener('click',()=>{loadBridgeForm();setBridgeSheet(true)});$('#bridgeBack').addEventListener('click',()=>setBridgeSheet(false));
+$('#bridgeTest').addEventListener('click',async()=>{const btn=$('#bridgeTest');try{saveBridgeForm();btn.disabled=true;setBridgeStatus('Probando Garmin Bridge…');const p=await GarminReadService.test();setBridgeStatus(`<strong>Conectado</strong> · ${p?.version||p?.workerVersion||'Bridge disponible'}`,'ok')}catch(e){setBridgeStatus(`<strong>Error</strong> · ${String(e?.message||e)}`,'error')}finally{btn.disabled=false}});
+$('#bridgeRead').addEventListener('click',async()=>{const btn=$('#bridgeRead');try{saveBridgeForm();btn.disabled=true;setBridgeStatus('Leyendo Garmin…');const r=await GarminReadService.readNow();await renderProfileFromLocal();setBridgeStatus(`<strong>Garmin leído</strong> · ${r.saved.activityCount} actividades · ${r.saved.gearCount} equipos${r.partialErrors.length?' · lectura parcial':''}`,'ok')}catch(e){setBridgeStatus(`<strong>Error</strong> · ${String(e?.message||e)}`,'error')}finally{btn.disabled=false}});
+$('.assistant-composer').addEventListener('submit',e=>e.preventDefault());
+/* ========================================================= 150. APP STATE ========================================================= */
+const AppState={view:'today',params:{},subpage:null,syncing:false,online:navigator.onLine,dbReady:false,localError:null,selfTest:null,garminReadReady:true};
+/* ========================================================= 160. BOOT ========================================================= */
+async function boot(){
+  const hash=location.hash.replace('#','');
+  try{
+    await openAtlasDB();
+    await ensureLocalFoundation();
+    AppState.selfTest=await runIndexedDBSelfTest();
+    AppState.dbReady=true;
+    await renderProfileFromLocal();
+    const cfg=GarminBridgeConfig.load();const last=await SyncRepository.get('garminRead');
+    if(last?.lastSuccessfulSync)setBridgeStatus(`Garmin · última lectura ${new Date(last.lastSuccessfulSync).toLocaleString('es-ES')}`,'ok');else setBridgeStatus(cfg.url?'Garmin Bridge · configurado':'Garmin Bridge · sin configurar');
+  }catch(err){reportLocalError(err)}
+  navigate(TABS.includes(hash)?hash:'today');
+}
+window.ATLAS2={version:'2.0.0-H3',db:{name:DB_NAME,version:DB_VERSION,stores:Object.keys(STORE_SCHEMA),open:openAtlasDB},repositories:{AthleteRepository,MetricsRepository,ActivityRepository,GearRepository,WorkoutRepository,PlanRepository,SyncRepository},garmin:{config:GarminBridgeConfig,adapter:GarminAdapter,read:GarminReadService},normalizers:{normalizeAthletePayload,normalizeDailyMetricsPayload,normalizeTrainingStatusPayload,normalizeThresholdPayload,normalizeActivityPayload,normalizeGearPayload},state:AppState,runIndexedDBSelfTest};
+boot();
+</script>
+</body></html>

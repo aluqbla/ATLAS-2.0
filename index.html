@@ -7,7 +7,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
 <meta name="apple-mobile-web-app-title" content="ɅTLɅS"/>
-<title>ɅTLɅS 2.0 · H3</title>
+<title>ɅTLɅS</title>
 <style>
 /* =========================================================
    01–03. ATLAS 2.0 · VISUAL SYSTEM — parity with v1.6.68-M8.3
@@ -738,7 +738,7 @@ $('#activityHistoryBtn')?.addEventListener('click',async()=>{const state=await H
 
 
 /* ========================================================= H6.3 · TODAY + PROFILE ========================================================= */
-const ATLAS_VERSION='H6.4';
+const ATLAS_VERSION='H6.5';
 function h6DeepNumber(obj,keys){const wanted=new Set(keys.map(x=>String(x).toLowerCase()));const seen=new Set();function walk(v,depth=0){if(v==null||depth>7)return null;if(typeof v!=='object')return null;if(seen.has(v))return null;seen.add(v);for(const [k,val] of Object.entries(v)){if(wanted.has(String(k).toLowerCase())){const n=nnum(val);if(n!=null)return n}}for(const val of Object.values(v)){const n=walk(val,depth+1);if(n!=null)return n}return null}return walk(obj)}
 function h6DeepString(obj,keys){const wanted=new Set(keys.map(x=>String(x).toLowerCase()));const seen=new Set();function walk(v,depth=0){if(v==null||depth>7||typeof v!=='object')return null;if(seen.has(v))return null;seen.add(v);for(const [k,val] of Object.entries(v)){if(wanted.has(String(k).toLowerCase())&&val!=null&&typeof val!=='object')return String(val)}for(const val of Object.values(v)){const x=walk(val,depth+1);if(x)return x}return null}return walk(obj)}
 function h6DailyMeaningful(d){return !!d&&(Number.isFinite(d.trainingReadiness)||Number.isFinite(d.restingHr)||Number.isFinite(d.sleep?.durationSec)||Number.isFinite(d.sleep?.score)||Number.isFinite(d.hrv?.overnightAvg)||Number.isFinite(d.hrv?.weeklyAvg)||Number.isFinite(d.stress)||Number.isFinite(d.spo2))}
@@ -800,5 +800,50 @@ async function boot(){
 }
 window.ATLAS2={version:'H6.3',db:{name:DB_NAME,version:DB_VERSION,stores:Object.keys(STORE_SCHEMA),open:openAtlasDB},repositories:{AthleteRepository,MetricsRepository,ActivityRepository,GearRepository,WorkoutRepository,PlanRepository,SyncRepository},garmin:{config:GarminBridgeConfig,adapter:GarminAdapter,read:GarminReadService,sync:SyncEngine},normalizers:{normalizeAthletePayload,normalizeDailyMetricsGarmin,normalizeTrainingStatusGarmin,normalizeActivityPayload,normalizeGearPayload},activities:{render:renderActivitiesFromLocal,open:openActivityH5,history:HistoryImporterH5},state:AppState,runIndexedDBSelfTest};
 boot();
+
+/* ===== H6.5 · VO2 per activity + signed lap elevation ===== */
+const normalizeActivityPayloadH65Base = normalizeActivityPayload;
+normalizeActivityPayload = function(a){
+  const out = normalizeActivityPayloadH65Base(a);
+  const v = h6DeepNumber([a,a?.summaryDTO,a?.activitySummary],['vo2MaxPreciseValue','vO2MaxPreciseValue','vo2MaxValue','vO2MaxValue','vo2Max','vO2Max','vo2max','vo2_max']);
+  if(Number.isFinite(v) && v>10 && v<100) out.vo2Max=v;
+  return out;
+};
+function lapElevationH65(l,streams){
+  const gain=finite(pick(l,'elevationGain','elevationGainM','totalElevationGain','totalAscent','ascent','elevation_gain','total_elevation_gain','total_ascent'));
+  const loss=finite(pick(l,'elevationLoss','elevationLossM','totalElevationLoss','totalDescent','descent','elevation_loss','total_elevation_loss','total_descent'));
+  if(gain!==null || loss!==null) return (gain??0)-(loss??0);
+  const start=finite(pick(l,'startElevation','startElevationM','startAltitude','startAltitudeM','start_elevation','start_altitude'));
+  const end=finite(pick(l,'endElevation','endElevationM','endAltitude','endAltitudeM','end_elevation','end_altitude'));
+  if(start!==null && end!==null) return end-start;
+  const alt=streamValuesH5(streams,'altitude');
+  const si=finite(pick(l,'startIndex','start_index')),ei=finite(pick(l,'endIndex','end_index'));
+  if(alt.length&&Number.isInteger(si)&&Number.isInteger(ei)&&si>=0&&ei>=si&&ei<alt.length){
+    const a=finite(alt[si]),b=finite(alt[ei]);
+    if(a!==null&&b!==null)return b-a;
+  }
+  return null;
+}
+garminLapsH52 = function(splits,streams){
+  const rows=narr(splits?.lapDTOs||splits?.laps||splits?.splits);
+  return rows.map((l,i)=>{
+    const d=finite(pick(l,'distance','distanceM','totalDistance')),
+          t=finite(pick(l,'duration','elapsedDuration','movingDuration','durationSec')),
+          speed=finite(pick(l,'averageSpeed','avgSpeed')),
+          pace=(d>0&&t>0)?t/(d/1000):(speed>0?1000/speed:null),
+          elev=lapElevationH65(l,streams);
+    return{index:i,rawDistance:d,distanceM:snapIntervalDistanceH51(d),durationSec:t,paceSecPerKm:pace,avgHr:finite(pick(l,'averageHR','averageHeartRate','avgHr')),elev:Number.isFinite(elev)?elev:null,raw:l};
+  }).filter(x=>(x.rawDistance||0)>=30||(x.durationSec||0)>=10);
+};
+const normalizeActivityDetailH65Base = normalizeActivityDetailH52;
+normalizeActivityDetailH52 = function(activityId,summary,bundlePayload){
+  const out=normalizeActivityDetailH65Base(activityId,summary,bundlePayload);
+  const b=unwrapBridgePayload(bundlePayload)||{};
+  const v=h6DeepNumber([b,b.activity,b.details,b.splits,summary,out.activity],['vo2MaxPreciseValue','vO2MaxPreciseValue','vo2MaxValue','vO2MaxValue','vo2Max','vO2Max','vo2max','vo2_max']);
+  if(Number.isFinite(v)&&v>10&&v<100) out.vo2Max=v;
+  return out;
+};
+document.title='ɅTLɅS';
+
 </script>
 </body></html>

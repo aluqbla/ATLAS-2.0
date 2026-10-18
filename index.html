@@ -738,7 +738,7 @@ $('#activityHistoryBtn')?.addEventListener('click',async()=>{const state=await H
 
 
 /* ========================================================= H6.3 · TODAY + PROFILE ========================================================= */
-const ATLAS_VERSION='H6.6';
+const ATLAS_VERSION='H6.7';
 function h6DeepNumber(obj,keys){const wanted=new Set(keys.map(x=>String(x).toLowerCase()));const seen=new Set();function walk(v,depth=0){if(v==null||depth>7)return null;if(typeof v!=='object')return null;if(seen.has(v))return null;seen.add(v);for(const [k,val] of Object.entries(v)){if(wanted.has(String(k).toLowerCase())){const n=nnum(val);if(n!=null)return n}}for(const val of Object.values(v)){const n=walk(val,depth+1);if(n!=null)return n}return null}return walk(obj)}
 function h6DeepString(obj,keys){const wanted=new Set(keys.map(x=>String(x).toLowerCase()));const seen=new Set();function walk(v,depth=0){if(v==null||depth>7||typeof v!=='object')return null;if(seen.has(v))return null;seen.add(v);for(const [k,val] of Object.entries(v)){if(wanted.has(String(k).toLowerCase())&&val!=null&&typeof val!=='object')return String(val)}for(const val of Object.values(v)){const x=walk(val,depth+1);if(x)return x}return null}return walk(obj)}
 function h6DailyMeaningful(d){return !!d&&(Number.isFinite(d.trainingReadiness)||Number.isFinite(d.restingHr)||Number.isFinite(d.sleep?.durationSec)||Number.isFinite(d.sleep?.score)||Number.isFinite(d.hrv?.overnightAvg)||Number.isFinite(d.hrv?.weeklyAvg)||Number.isFinite(d.stress)||Number.isFinite(d.spo2))}
@@ -855,5 +855,70 @@ function formatVo2H66(value){
 }
 formatVo2H53 = formatVo2H66;
 
+
+
+/* ===== H6.7 · Activity VO2 deterministic date resolver (HTML-only) ===== */
+function atlasH67DeepExactNumbers(root, keyNames){
+  const wanted=new Set((keyNames||[]).map(k=>String(k).toLowerCase()));
+  const out=[],seen=new Set();
+  const walk=(node,depth=0)=>{
+    if(node==null||depth>9||typeof node!=='object'||seen.has(node))return;
+    seen.add(node);
+    for(const [k,v] of Object.entries(node)){
+      if(wanted.has(String(k).toLowerCase())&&v!=null&&v!==''){
+        const n=Number(v); if(Number.isFinite(n)&&n>10&&n<100)out.push(n);
+      }
+    }
+    if(Array.isArray(node)){for(const v of node)walk(v,depth+1)}
+    else for(const v of Object.values(node))walk(v,depth+1);
+  };
+  walk(root); return out;
+}
+function atlasH67Vo2FromPerformance(payload){
+  const p=unwrapBridgePayload(payload)||payload||{};
+  const scope=p.maxMetrics??p.maxMet??p;
+  const precise=atlasH67DeepExactNumbers(scope,['vo2MaxPreciseValue','vO2MaxPreciseValue']);
+  if(precise.length)return precise[0];
+  const rounded=atlasH67DeepExactNumbers(scope,['vo2MaxValue','vO2MaxValue','vo2Max','vO2Max','vo2max']);
+  return rounded.length?rounded[0]:null;
+}
+async function atlasH67ResolveActivityVo2(detail,summary){
+  const a=detail?.activity||summary||{};
+  const date=String(a?.date||a?.startTimeLocal||a?.startTimeGMT||a?.startDateLocal||a?.start_date_local||summary?.date||'').slice(0,10);
+  let best=null;
+  if(/^\d{4}-\d{2}-\d{2}$/.test(date)){
+    try{
+      const perf=await GarminAdapter.performance(date);
+      const n=atlasH67Vo2FromPerformance(perf);
+      if(Number.isFinite(n)&&n>10&&n<100)best=n;
+    }catch{}
+  }
+  if(!(best>0)){
+    try{
+      const v=unwrapBridgePayload(await GarminAdapter.activityVo2(String(summary?.id||detail?.activityId||a?.id||a?.activityId||'')))||{};
+      const n=finite(v.vo2max??v.vo2Max??h6DeepNumber(v,['vo2MaxPreciseValue','vO2MaxPreciseValue','vo2MaxValue','vO2MaxValue','vo2Max','vO2Max']));
+      if(n>10&&n<100)best=n;
+    }catch{}
+  }
+  if(!(best>0)){
+    const n=finite(detail?.vo2Max??h6DeepNumber([a,summary],['vo2MaxPreciseValue','vO2MaxPreciseValue','vo2MaxValue','vO2MaxValue','vo2Max','vO2Max','vo2max','vo2_max']));
+    if(n>10&&n<100)best=n;
+  }
+  return best;
+}
+const atlasH67OpenActivityBase=openActivityH5;
+openActivityH5=async function(id){
+  await atlasH67OpenActivityBase(id);
+  const summary=await ActivityRepository.get(id).catch(()=>null);
+  if(!summary||!activityIsRun(summary)||!navigator.onLine||!GarminBridgeConfig.load().url)return;
+  const detail=(AppState.activityId===String(id)&&AppState.activityDetail)?AppState.activityDetail:await ActivityRepository.getDetail(id).catch(()=>null);
+  if(!detail)return;
+  const vo2=await atlasH67ResolveActivityVo2(detail,summary);
+  if(vo2>10&&vo2<100){
+    detail.vo2Max=vo2;
+    await ActivityRepository.saveDetail(detail);
+    if(AppState.activityId===String(id))renderActivityDetailH5(detail);
+  }
+};
 </script>
 </body></html>

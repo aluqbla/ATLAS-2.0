@@ -1950,7 +1950,7 @@ html{color-scheme:dark!important}
 </style>
 
 <style id="atlas-h76-style">
-/* ===== ɅTLɅS 2.0-H7.9 · canonical state / activity / pace UI ===== */
+/* ===== ɅTLɅS 2.0-H7.10 · canonical state / activity / pace UI ===== */
 .state-factor{--factor-color:var(--muted2);padding:11px 12px!important}.state-factor.factor-purple{--factor-color:var(--purple)}.state-factor.factor-blue{--factor-color:var(--blue)}.state-factor.factor-green{--factor-color:var(--green)}.state-factor.factor-orange{--factor-color:var(--orange)}.state-factor.factor-red{--factor-color:var(--red)}
 .state-factor-title{display:flex;align-items:center;gap:7px;min-width:0}.state-factor-icon{font-size:18px}.state-factor-name{font-size:15px!important;line-height:1.1;font-weight:800;color:#fff!important}.state-factor-track{height:7px;margin:8px 0 6px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}.state-factor-fill{height:100%;border-radius:inherit;background:var(--factor-color)!important}.state-factor-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px}.state-factor-status{font-size:11px;line-height:1.1;font-weight:800;color:var(--factor-color)!important}.state-factor-points{font-size:12px;line-height:1.1;font-weight:790;color:#fff!important;font-variant-numeric:tabular-nums}
 /* Carga: acute + chronic + Garmin optimal tunnel. */
@@ -1985,6 +1985,17 @@ html{color-scheme:dark!important}
 .shoe-max-label{font-size:8.5px;color:var(--muted);font-weight:690}
 </style>
 
+
+<style id="atlas-h710-shoes-style">
+.shoe-card.retired{opacity:.62}
+.shoe-card .shoe-status-badge{display:inline-flex;align-items:center;justify-content:center;margin-top:4px;padding:3px 7px;border-radius:999px;font-size:9px;line-height:1;font-weight:800;color:var(--muted2);background:rgba(255,255,255,.06)}
+.shoe-bar-fill.good{background:var(--green)!important}
+.shoe-bar-fill.mid{background:var(--yellow)!important}
+.shoe-bar-fill.high{background:var(--orange)!important}
+.shoe-bar-fill.over{background:var(--red)!important}
+.shoe-group-title.retired{margin-top:20px!important;color:var(--muted2)!important}
+.shoe-card.retired .shoe-name,.shoe-card.retired .shoe-bar-scale{color:var(--muted2)!important}
+</style>
 </head>
 <body>
 <main class="app">
@@ -2208,7 +2219,7 @@ html{color-scheme:dark!important}
 <input accept="application/json,.json" id="fileInput" type="file"/>
 </div>
 <div class="data-detail-section-title atlas-i7-section-title"><span>Versión</span></div>
-<div class="data-system-card atlas-i7-version-card"><div class="atlas-i7-version-brand"><span class="atlas-i7-version-glyph">Ʌ</span><div><strong>ɅTLɅS</strong><span id="atlasI7VersionText">2.0-H7.9</span></div></div></div>
+<div class="data-system-card atlas-i7-version-card"><div class="atlas-i7-version-brand"><span class="atlas-i7-version-glyph">Ʌ</span><div><strong>ɅTLɅS</strong><span id="atlasI7VersionText">2.0-H7.10</span></div></div></div>
 <div aria-hidden="true" class="hidden" id="atlasRuntimeDiagnosticsInternal">
 <div id="runtimeDiagVersion">—</div><div id="runtimeDiagSync">—</div><div id="runtimeDiagLogs">—</div><div id="runtimeDiagHealth">—</div><div id="runtimeDiagReading"></div><div id="runtimeDiagEvents"></div>
 <button id="runtimeDiagRefresh" type="button"></button><button id="runtimeDiagExport" type="button"></button><button id="runtimeDiagClear" type="button"></button>
@@ -2421,7 +2432,7 @@ const AtlasHrv=(()=>{
 /* ===== ɅTLɅS v1.6.33 · K2.3 canonical Plan / Publication / Sync bindings =====
    Historical public overrides removed where the final implementation was self-contained.
    Golden K2.1 contracts remain the behavioral authority. */
-const APP_VERSION="2.0-H7.9",SCHEMA_VERSION=11,DB_NAME="atlas2",DB_VERSION=4;
+const APP_VERSION="2.0-H7.10",SCHEMA_VERSION=11,DB_NAME="atlas2",DB_VERSION=4;
 const ATLAS_RUNTIME=Object.freeze({appVersion:APP_VERSION,schemaVersion:SCHEMA_VERSION,dbName:DB_NAME,dbVersion:DB_VERSION,contractVersion:1});
 const atlasDiagnosticsRegistry=Object.create(null);
 function registerAtlasDiagnostic(name,value){if(!name)return value;atlasDiagnosticsRegistry[String(name)]=value;return value;}
@@ -3915,9 +3926,14 @@ function renderShoesPanel(gear=currentGear){
   const shoes=(Array.isArray(gear)?gear:[]).filter(gearIsShoes).sort((a,b)=>Boolean(a.retired)-Boolean(b.retired)||(gearDistanceKm(b)||0)-(gearDistanceKm(a)||0));
   if(ui.gearState)ui.gearState.textContent="";if(ui.shoesTileNote)ui.shoesTileNote.textContent="";
   if(!shoes.length){ui.shoesList.innerHTML='<div class="records-empty">No hay zapatillas disponibles.</div>';return;}
-  const card=g=>{const km=gearDistanceKm(g),acts=Number(g.activities),limit=shoeRecommendedMaxKm(g),rawPct=Number.isFinite(km)&&Number.isFinite(limit)&&limit>0?km/limit*100:0,pct=clamp(rawPct,0,100),tone=rawPct>100?" over":rawPct>=90?" warn":"",first=g.purchased?gearDateLabel(g.purchased):"—",img=String(g.imageUrl||"").trim();return`<div class="shoe-card"><div class="shoe-head-h75">${img?`<img class="shoe-thumb-h75" src="${esc(img)}" alt="">`:""}<div class="shoe-main-h75"><div class="shoe-name">${esc(g.name||"Zapatillas")}</div><div class="shoe-meta-line">${Number.isFinite(acts)?`${formatNatural(acts,0)} actividades · `:""}${esc(first)}</div></div></div><div class="shoe-bar"><div class="shoe-bar-fill${tone}" style="width:${pct.toFixed(1)}%"></div></div><div class="shoe-bar-scale"><span><strong>${Number.isFinite(km)?`${formatNatural(km,0)} km`:"—"}</strong> recorridos</span><span>${Number.isFinite(limit)?`máx. <strong>${formatNatural(limit,0)} km</strong>`:"máx. —"}</span></div></div>`;};
-  const active=shoes.filter(x=>!x.retired),retired=shoes.filter(x=>x.retired),group=(title,rows)=>rows.length?`<div class="shoe-group-title"><span>${title}</span><span class="shoe-group-count">${rows.length}</span></div>${rows.map(card).join("")}`:"";
-  ui.shoesList.innerHTML=group("Activas",active)+group("Retiradas",retired);requestAnimationFrame(fitShoePanelTypography);
+  const card=g=>{
+    const km=gearDistanceKm(g),acts=Number(g.activities),limit=shoeRecommendedMaxKm(g),rawPct=Number.isFinite(km)&&Number.isFinite(limit)&&limit>0?km/limit*100:null,pct=Number.isFinite(rawPct)?clamp(rawPct,0,100):0,
+      tone=!Number.isFinite(rawPct)?"":rawPct>=100?" over":rawPct>=90?" high":rawPct>=75?" mid":" good",
+      first=g.purchased?gearDateLabel(g.purchased):"—",img=String(g.imageUrl||"").trim(),retired=Boolean(g.retired);
+    return`<div class="shoe-card${retired?" retired":""}"><div class="shoe-head-h75">${img?`<img class="shoe-thumb-h75" src="${esc(img)}" alt="">`:""}<div class="shoe-main-h75"><div class="shoe-name">${esc(g.name||"Zapatillas")}</div><div class="shoe-meta-line">${Number.isFinite(acts)?`${formatNatural(acts,0)} actividades · `:""}${esc(first)}</div>${retired?'<span class="shoe-status-badge">Retirada</span>':""}</div></div><div class="shoe-bar"><div class="shoe-bar-fill${tone}" style="width:${pct.toFixed(1)}%"></div></div><div class="shoe-bar-scale"><span><strong>${Number.isFinite(km)?`${formatNatural(km,0)} km`:"—"}</strong> recorridos</span><span>${Number.isFinite(limit)?`máx. <strong>${formatNatural(limit,0)} km</strong>`:"máx. —"}</span></div></div>`;
+  };
+  const active=shoes.filter(x=>!x.retired),retired=shoes.filter(x=>x.retired),group=(title,rows,isRetired=false)=>rows.length?`<div class="shoe-group-title${isRetired?" retired":""}"><span>${title}</span><span class="shoe-group-count">${rows.length}</span></div>${rows.map(card).join("")}`:"";
+  ui.shoesList.innerHTML=group("Activas",active)+group("Retiradas",retired,true);requestAnimationFrame(fitShoePanelTypography);
 }
 function atlasPaceZones(thresholdSec){
   const t=Number(thresholdSec);if(!(t>=150&&t<=600))return[];
@@ -15551,7 +15567,7 @@ const ATLAS_H75=Object.freeze({version:"H7.5",source:"garmin_connect_direct",bas
 function atlasH74Finite(v){const n=Number(v);return Number.isFinite(n)?n:null}
 function atlasH74Date(v){const m=String(v??"").match(/\d{4}-\d{2}-\d{2}/);return m?m[0]:null}
 function atlasH74CompatActivity(a){if(!a||typeof a!=="object")return a;const date=atlasH74Date(a.start_date_local??a.startTimeLocal??a.date),distance=atlasH74Finite(a.distance??a.distanceM),moving=atlasH74Finite(a.moving_time??a.movingSec??a.movingTimeSec??a.durationSec),elapsed=atlasH74Finite(a.elapsed_time??a.elapsedSec??a.durationSec??moving),pace=atlasH74Finite(a.movingPaceSecPerKm??a.avgPace),speed=atlasH74Finite(a.average_speed??a?.speed?.averageMps)??(pace>0?1000/pace:null),avgHr=atlasH74Finite(a.average_heartrate??a.avgHr??a?.heartRate?.averageBpm),maxHr=atlasH74Finite(a.max_heartrate??a.maxHr??a?.heartRate?.maxBpm),gain=atlasH74Finite(a.total_elevation_gain??a.elevationGainM??a?.elevation?.gainM),loss=atlasH74Finite(a.total_elevation_loss??a.elevationLossM??a?.elevation?.lossM),cad=atlasH74Finite(a.average_cadence??a?.runningDynamics?.averageCadenceSpm),power=atlasH74Finite(a.average_watts??a.avgPower??a?.power?.averageWatts),cal=atlasH74Finite(a.calories??a.caloriesKcal),rawType=String(a.type??a.sport??"Workout"),type=/paddleball|padel|paddle/i.test(rawType)?"Padel":rawType,name=String(a.name??a.title??(/padel/i.test(type)?"Pádel":type));return{...a,id:String(a.id??a.activityId??""),name,title:name,type,sport:a.sport||type,date,start_date_local:a.start_date_local||date,start_date:a.start_date||date,distance,distanceM:distance,moving_time:moving,elapsed_time:elapsed,movingSec:moving,elapsedSec:elapsed,average_speed:speed,speed:{...(a.speed||{}),averageMps:speed},average_heartrate:avgHr,max_heartrate:maxHr,heartRate:{...(a.heartRate||{}),averageBpm:avgHr,maxBpm:maxHr},total_elevation_gain:gain,total_elevation_loss:loss,elevation:{...(a.elevation||{}),gainM:gain,lossM:loss},average_cadence:cad,average_watts:power,power:{...(a.power||{}),averageWatts:power},runningDynamics:{...(a.runningDynamics||{}),averageCadenceSpm:cad},calories:cal,caloriesKcal:cal,source:"garmin_connect_direct"};}
-function atlasH74CompatGear(g){if(!g||typeof g!=="object")return g;const d=atlasH74Finite(g.distance??g.totalDistanceM),acts=atlasH74Finite(g.activities??g.totalActivities),retired=g.retired===true||String(g.status||"").toLowerCase()==="retired";return{...g,id:String(g.id??""),name:g.name||"Equipamiento",type:g.type||"Shoe",distance:d,activities:acts,maximumMeters:atlasH74Finite(g.maximumMeters),imageUrl:g.imageUrl||null,retired,purchased:g.purchased||g.startDate||null,source:"garmin_connect_direct"}}
+function atlasH74CompatGear(g){if(!g||typeof g!=="object")return g;const d=atlasH74Finite(g.distance??g.totalDistance??g.totalDistanceM),acts=atlasH74Finite(g.activities??g.totalActivities??g.activityCount),status=String(g.gearStatusName??g.status??"").toLowerCase(),retired=g.retired===true||g.isRetired===true||/retir|inactive|archiv/.test(status)||Boolean(g.dateEnd),maximumMeters=atlasH74Finite(g.maximumMeters??g.maxUsageDistanceMeters??g.maximumDistanceMeters??g.maximumDistance);return{...g,id:String(g.id??g.uuid??g.gearUuid??""),name:g.name||g.customMakeModel||g.gearName||"Equipamiento",type:g.type||g.gearTypeName||g.gearType||"Shoe",distance:d,activities:acts,maximumMeters,imageUrl:g.imageUrl||null,retired,purchased:g.purchased||g.dateBegin||g.startDate||null,source:"garmin_connect_direct"}}
 const atlasH74StoreGetAllBase=storeGetAll;
 storeGetAll=async function(store){const rows=await atlasH74StoreGetAllBase(store);if(store==="activities")return(rows||[]).map(atlasH74CompatActivity);if(store==="gear")return(rows||[]).map(atlasH74CompatGear);return rows;};
 
@@ -15596,7 +15612,7 @@ registerAtlasDiagnostic("h75",Object.freeze({version:ATLAS_H75.version,source:AT
 
 
 /* ===== ɅTLɅS 2.0-H7.6 · Garmin-native truth layer ===== */
-const ATLAS_H76=Object.freeze({version:"H7.9",source:"garmin_connect_direct",garminNativeState:true,completeWellnessBackfill:true,truthFirstActivityDetail:true,loadModel:"acute_chronic_tunnel",remoteTrainingWrites:false});
+const ATLAS_H76=Object.freeze({version:"H7.10",source:"garmin_connect_direct",garminNativeState:true,completeWellnessBackfill:true,truthFirstActivityDetail:true,loadModel:"acute_chronic_tunnel",remoteTrainingWrites:false});
 
 /* ---------- Estado ATLAS: Garmin-native, comparable at a glance ---------- */
 function atlasH76FactorTone(score){const n=Number(score);if(!Number.isFinite(n))return"gray";if(n>=90)return"purple";if(n>=75)return"blue";if(n>=50)return"green";if(n>=25)return"orange";return"red";}
@@ -15660,7 +15676,7 @@ activityStreamSeries=function(key){const time=streamValues(currentActivityStream
 
 
 registerAtlasDiagnostic("h76",Object.freeze({version:ATLAS_H76.version,source:ATLAS_H76.source,loadModel:ATLAS_H76.loadModel,truthFirstActivityDetail:true,remoteTrainingWrites:false}));
-const ATLAS_H79=Object.freeze({version:"H7.9",canonicalActivityMeta:true,canonicalStateFactors:true,canonicalPaces:true,canonicalShoes:true});
+const ATLAS_H79=Object.freeze({version:"H7.10",canonicalActivityMeta:true,canonicalStateFactors:true,canonicalPaces:true,canonicalShoes:true});
 registerAtlasDiagnostic("h79",ATLAS_H79);
 
 })();

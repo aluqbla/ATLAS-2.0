@@ -756,7 +756,7 @@ html{color-scheme:dark!important}#dataSystemDetail .data-detail-inner{padding-bo
 @media(max-width:390px){#trainingPlanIntelligence{width:calc(100% + 8px);margin-left:-4px}.atlas-m7-card{padding-left:11px;padding-right:11px}.atlas-m7-card-value{font-size:19px}.atlas-m7-card-value.compact{font-size:16.2px}}
 </style>
 
-<style id="atlas-h76-style">/* ===== ɅTLɅS 2.0-H8.2 · canonical state / activity / pace UI ===== */
+<style id="atlas-h76-style">/* ===== ɅTLɅS 2.0-H8.3 · canonical state / activity / pace UI ===== */
 .state-factor{--factor-color:var(--muted2);padding:11px 12px!important}.state-factor.factor-purple{--factor-color:var(--purple)}.state-factor.factor-blue{--factor-color:var(--blue)}.state-factor.factor-green{--factor-color:var(--green)}.state-factor.factor-orange{--factor-color:var(--orange)}.state-factor.factor-red{--factor-color:var(--red)}.state-factor-title{display:flex;align-items:center;gap:7px;min-width:0}.state-factor-icon{font-size:18px}.state-factor-name{font-size:15px!important;line-height:1.1;font-weight:800;color:#fff!important}.state-factor-track{height:7px;margin:8px 0 6px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}.state-factor-fill{height:100%;border-radius:inherit;background:var(--factor-color)!important}.state-factor-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px}.state-factor-status{font-size:11px;line-height:1.1;font-weight:800;color:var(--factor-color)!important}.state-factor-points{font-size:12px;line-height:1.1;font-weight:790;color:#fff!important;font-variant-numeric:tabular-nums}/* Carga: acute + chronic + Garmin optimal tunnel. */
 .chart-load-acute{fill:none;stroke:var(--orange);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}.chart-load-chronic{fill:none;stroke:var(--blue);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}.chart-load-tunnel{fill:rgba(48,209,88,.10);stroke:none}.chart-load-tunnel-edge{fill:none;stroke:rgba(48,209,88,.40);stroke-width:.8;stroke-dasharray:3 3;vector-effect:non-scaling-stroke}.legend-load-acute{background:var(--orange)}.legend-load-chronic{background:var(--blue)}.legend-load-tunnel{background:var(--green)}/* Activity detail: one definitive render after Garmin detail is ready. */
 #activityDetail[aria-busy="true"] .metric-title-row, #activityDetail[aria-busy="true"] .activity-detail-datetime, #activityDetail[aria-busy="true"] .activity-top-perception, #activityDetail[aria-busy="true"] .activity-map, #activityDetail[aria-busy="true"] .activity-equipment, #activityDetail[aria-busy="true"] .activity-primary, #activityDetail[aria-busy="true"] .activity-ai-result, #activityDetail[aria-busy="true"] .activity-laps, #activityDetail[aria-busy="true"] .activity-analysis, #activityDetail[aria-busy="true"] #activityRunningDynamics, #activityDetail[aria-busy="true"] #activityDescription, #activityDetail[aria-busy="true"] #activityDetailBottomBack, #activityDetail[aria-busy="true"] .atlas-local-analysis, #activityDetail[aria-busy="true"] .activity-local-analysis, #activityDetail[aria-busy="true"] .activity-strength-done{display:none!important}#activityDetail[aria-busy="true"] .activity-detail-loading.active{margin:54px 2px 0!important}.activity-detail-datetime{display:block;width:100%;margin:5px 0 8px;padding:0 2px;color:#d8dee5;font-size:12px;line-height:1.2;font-weight:780;font-variant-numeric:tabular-nums}.activity-top-perception{display:flex;align-items:center;gap:6px;flex-wrap:wrap;width:100%;margin:0 0 8px}.activity-top-perception.hidden{display:none!important}.activity-perception-chip{display:inline-flex!important;width:auto!important;padding:6px 9px!important;border-radius:999px!important;background:rgba(255,255,255,.055)!important;border:1px solid rgba(255,255,255,.075)!important;color:#e8edf2!important;font-size:10.5px!important;line-height:1!important;font-weight:760!important;white-space:nowrap!important}.activity-equipment-km{font-size:11px!important;color:#d5dbe0!important;font-variant-numeric:tabular-nums}.activity-lap-elev:not(.elev-pos):not(.elev-neg){color:#fff!important}/* Activity chart controls use the same visual contract as Today period filters. */
@@ -1001,7 +1001,7 @@ html{color-scheme:dark!important}#dataSystemDetail .data-detail-inner{padding-bo
 <input accept="application/json,.json" id="fileInput" type="file"/>
 </div>
 <div class="data-detail-section-title atlas-i7-section-title"><span>Versión</span></div>
-<div class="data-system-card atlas-i7-version-card"><div class="atlas-i7-version-brand"><span class="atlas-i7-version-glyph">Ʌ</span><div><strong>ɅTLɅS</strong><span id="atlasI7VersionText">2.0-H8.2</span></div></div></div>
+<div class="data-system-card atlas-i7-version-card"><div class="atlas-i7-version-brand"><span class="atlas-i7-version-glyph">Ʌ</span><div><strong>ɅTLɅS</strong><span id="atlasI7VersionText">2.0-H8.3</span></div></div></div>
 <div aria-hidden="true" class="hidden" id="atlasRuntimeDiagnosticsInternal">
 <div id="runtimeDiagVersion">—</div><div id="runtimeDiagSync">—</div><div id="runtimeDiagLogs">—</div><div id="runtimeDiagHealth">—</div><div id="runtimeDiagReading"></div><div id="runtimeDiagEvents"></div>
 <button id="runtimeDiagRefresh" type="button"></button><button id="runtimeDiagExport" type="button"></button><button id="runtimeDiagClear" type="button"></button>
@@ -1214,7 +1214,7 @@ const AtlasHrv=(()=>{
 /* ===== ɅTLɅS v1.6.33 · K2.3 canonical Plan / Publication / Sync bindings =====
    Historical public overrides removed where the final implementation was self-contained.
    Golden K2.1 contracts remain the behavioral authority. */
-const APP_VERSION="2.0-H8.2",SCHEMA_VERSION=11,DB_NAME="atlas2",DB_VERSION=4;
+const APP_VERSION="2.0-H8.3",SCHEMA_VERSION=11,DB_NAME="atlas2",DB_VERSION=4;
 const ATLAS_RUNTIME=Object.freeze({appVersion:APP_VERSION,schemaVersion:SCHEMA_VERSION,dbName:DB_NAME,dbVersion:DB_VERSION,contractVersion:1});
 const atlasDiagnosticsRegistry=Object.create(null);
 function registerAtlasDiagnostic(name,value){if(!name)return value;atlasDiagnosticsRegistry[String(name)]=value;return value;}
@@ -6500,9 +6500,8 @@ async function atlasV094PublishDiffInBatches(plan,diff){
       deletes:deleteChunks[i]||[]
     };
 
-    const result=await apiRequest("/api/garmin/workouts/publish",{
-      method:"POST",body:payload,timeoutMs:60000,retries:0
-    });
+    const auth=await atlasH83AuthorizeWrite(plan.id,"publish");
+    const result=await atlasH83Write("/api/garmin/workouts/publish",payload,auth);
 
     if(Array.isArray(result?.events))aggregate.events.push(...result.events);
     aggregate.upserted+=Number(result?.upserted)||0;
@@ -6603,15 +6602,7 @@ async function atlasV095DeletePlanEverywhere(){
       const chunks=atlasV094Chunk(future);
       for(let i=0;i<chunks.length;i++){
         toast(`Eliminando plan · ${i+1}/${chunks.length}…`);
-        await apiRequest("/api/garmin/workouts/unpublish",{
-          method:"POST",
-          body:{
-            schema:"ATLAS_WORKOUT_PUBLICATION_V1",
-            planId:plan.id,
-            events:chunks[i].map(e=>({external_id:e.externalId,date:e.date}))
-          },
-          timeoutMs:60000,retries:0
-        });
+        {const auth=await atlasH83AuthorizeWrite(plan.id,"unpublish");await atlasH83Write("/api/garmin/workouts/unpublish",{schema:"ATLAS_WORKOUT_PUBLICATION_V3",planId:plan.id,events:chunks[i].map(e=>({external_id:e.externalId,date:e.date}))},auth);}
       }
     }
 
@@ -8411,7 +8402,7 @@ async function atlasV152VerifyPublish(plan,diff,initialResult){
   const details=[audit?.missing?.length?`${audit.missing.length} ausentes`:"",audit?.mismatched?.length?`${audit.mismatched.length} desactualizados`:"",audit?.stale?.length?`${audit.stale.length} sobrantes`:""].filter(Boolean).join(" · ");
   throw new Error(`Garmin Connect no ha confirmado completamente el plan${details?` (${details})`:""}. ATLAS lo mantiene pendiente.`);
 }
-async function atlasV152DeleteChunk(plan,chunk){return apiRequest("/api/garmin/workouts/unpublish",{method:"POST",body:{schema:"ATLAS_WORKOUT_PUBLICATION_V1",planId:plan.id,events:chunk,explicitUserAction:true},timeoutMs:60000,retries:0});}
+async function atlasV152DeleteChunk(plan,chunk){const auth=await atlasH83AuthorizeWrite(plan.id,"unpublish");return atlasH83Write("/api/garmin/workouts/unpublish",{schema:"ATLAS_WORKOUT_PUBLICATION_V3",planId:plan.id,events:chunk},auth);}
 async function atlasV152VerifyUnpublish(plan,candidates,initial={deleted:0,missing:[]}){
   let deleted=Number(initial.deleted)||0,missing=[...(initial.missing||[])],audit=null,remaining=[...(candidates||[])];
   const waits=[250,700,1400,2200];
@@ -11486,21 +11477,8 @@ function atlasK25ExecutionCompletedKeys(plan){const records=plan?.adaptiveEngine
 function atlasK25UpcomingEventCompleted(event,plan,completedKeys,todayPairs,todayEvents){const paired=event?.paired_activity_id;if(paired!=null&&currentActivities.some(a=>String(a?.id??a?.activity_id??'')===String(paired)))return true;if(plan){const key=atlasV160SessionKeyFromExternal(plan,atlasV160ExternalId(event));if(key&&completedKeys.has(String(key)))return true;}if(planEventDate(event)===fmtDate(new Date())){const idx=todayEvents.indexOf(event);if(idx>=0&&todayPairs.has(idx))return true;}return false;}
 renderUpcomingTrainings=function(){if(!ui.upcomingTrainingList)return;atlasV136ClearUnapprovedCardClasses();const today=fmtDate(new Date()),plan=activeTrainingPlan(),all=[...(currentEvents||[])].filter(e=>planEventDate(e)>=today).sort((a,b)=>planEventDate(a).localeCompare(planEventDate(b))),todayEvents=all.filter(e=>planEventDate(e)===today),todayActivities=(currentActivities||[]).filter(a=>activityDate(a)===today),todayPairs=atlasV093PairDay(todayEvents,todayActivities).pairs,completedKeys=atlasK25ExecutionCompletedKeys(plan),items=all.filter(e=>!atlasK25UpcomingEventCompleted(e,plan,completedKeys,todayPairs,todayEvents)).slice(0,3);if(!items.length){ui.upcomingTrainingList.innerHTML='<div class="activity-row-copy" style="padding:10px 12px;color:var(--muted)">Sin entrenamientos planificados</div>';return;}ui.upcomingTrainingList.innerHTML=items.map(event=>{const id=planEventId(event,currentEvents.indexOf(event)),date=compactActivityDate(planEventDate(event)),meta=(planEventMeta(event)||"").split(" · ").filter(Boolean);return`<button class="activity-row" type="button" data-plan-event-id="${esc(id)}"><div class="activity-row-date"><span class="activity-row-weekday">${date.weekday}</span><span class="activity-row-day">${date.day}</span><span class="activity-row-month">${date.month}</span></div><span class="activity-row-sep" aria-hidden="true"></span><div class="activity-row-copy"><div class="activity-row-title"><span class="activity-row-title-emoji">${sportMeta(planEventType(event)).emoji}</span><span class="activity-row-title-text">${esc(planEventName(event))}</span></div><div class="activity-row-main">${meta.length?activityStatsHtml(meta):'<span class="activity-row-stat">—</span>'}</div></div></button>`;}).join("");if(plan?.publication?.status==="published"&&!atlasI1PublicationPending(plan))atlasV150UnifyCards(ui.upcomingTrainingList);requestAnimationFrame(fitActivityTitles);};
 
-/* Hard gate remoto: incluso una llamada interna accidental no puede escribir ni borrar
-   workouts en Garmin Connect sin atravesar una acción explícita ya confirmada por usuario. */
-let atlasK25RemoteWriteConsent=0;
-async function atlasK25WithRemoteWriteConsent(fn){atlasK25RemoteWriteConsent++;try{return await fn();}finally{atlasK25RemoteWriteConsent=Math.max(0,atlasK25RemoteWriteConsent-1);}}
-function atlasK25RequireRemoteWriteConsent(){if(atlasK25RemoteWriteConsent>0)return;throw new Error("La escritura de entrenamientos en Garmin Connect requiere una acción explícita del usuario.");}
-const atlasK25SyncPlanNowBase=atlasV150SyncPlanNow;
-atlasV150SyncPlanNow=async function(plan,options={}){if(atlasK25RemoteWriteConsent<=0){recordRuntimeAudit("garmin-write-blocked",new Error("Remote workout write requires explicit user action"),{planId:plan?.id||null}).catch(()=>{});return false;}return atlasK25SyncPlanNowBase(plan,options);};
-const atlasK25UnpublishPlanBase=atlasV090UnpublishPlan;
-atlasV090UnpublishPlan=async function(){return atlasK25WithRemoteWriteConsent(()=>atlasK25UnpublishPlanBase.apply(this,arguments));};
-const atlasK25DeletePlanBase=deleteActiveTrainingPlan;
-deleteActiveTrainingPlan=async function(){return atlasK25WithRemoteWriteConsent(()=>atlasK25DeletePlanBase.apply(this,arguments));};
-const atlasK25ResolveConflictsLocalBase=atlasK243ResolveConflictsLocal;
-atlasK243ResolveConflictsLocal=async function(){return atlasK25WithRemoteWriteConsent(()=>atlasK25ResolveConflictsLocalBase.apply(this,arguments));};
-
 atlasDomReadyInitializers.push(()=>{atlasK25EnsureAdvisoryBox();});
+
 
 
 
@@ -14234,7 +14212,7 @@ registerAtlasDiagnostic("h75",Object.freeze({version:ATLAS_H75.version,source:AT
 
 
 /* ===== ɅTLɅS 2.0-H7.6 · Garmin-native truth layer ===== */
-const ATLAS_H76=Object.freeze({version:"H8.2",source:"garmin_connect_direct",garminNativeState:true,completeWellnessBackfill:true,truthFirstActivityDetail:true,loadModel:"acute_chronic_tunnel",remoteTrainingWrites:true});
+const ATLAS_H76=Object.freeze({version:"H8.3",source:"garmin_connect_direct",garminNativeState:true,completeWellnessBackfill:true,truthFirstActivityDetail:true,loadModel:"acute_chronic_tunnel",remoteTrainingWrites:true});
 
 /* ---------- Estado ATLAS: Garmin-native, comparable at a glance ---------- */
 function atlasH76FactorTone(score){const n=Number(score);if(!Number.isFinite(n))return"gray";if(n>=90)return"purple";if(n>=75)return"blue";if(n>=50)return"green";if(n>=25)return"orange";return"red";}
@@ -14298,18 +14276,18 @@ activityStreamSeries=function(key){const time=streamValues(currentActivityStream
 
 
 registerAtlasDiagnostic("h76",Object.freeze({version:ATLAS_H76.version,source:ATLAS_H76.source,loadModel:ATLAS_H76.loadModel,truthFirstActivityDetail:true,remoteTrainingWrites:true,remoteWriteMode:"manual_only"}));
-const ATLAS_H79=Object.freeze({version:"H8.2",canonicalActivityMeta:true,canonicalStateFactors:true,canonicalPaces:true});
+const ATLAS_H79=Object.freeze({version:"H8.3",canonicalActivityMeta:true,canonicalStateFactors:true,canonicalPaces:true});
 registerAtlasDiagnostic("h79",ATLAS_H79);
-registerAtlasDiagnostic("h711",Object.freeze({version:"H8.2",shoesSource:"garmin_connect_direct",shoeLimits:"garmin_only",shoeLifecycle:"active_retired",legacyShoePrefs:false}));
+registerAtlasDiagnostic("h711",Object.freeze({version:"H8.3",shoesSource:"garmin_connect_direct",shoeLimits:"garmin_only",shoeLifecycle:"active_retired",legacyShoePrefs:false}));
 atlasDomReadyInitializers.push(()=>{try{localStorage.removeItem("atlas:profile-preferences:v1");for(let i=localStorage.length-1;i>=0;i--){const key=localStorage.key(i);if(key&&key.startsWith("atlas:shoe-max-km:"))localStorage.removeItem(key);}}catch{}});
 
 
 })();
 
 
-/* ===== ɅTLɅS 2.0-H8.2 · Garmin Write canonical =====
+/* ===== ɅTLɅS 2.0-H8.3 · Garmin Write canonical =====
    Single unit contract: metres, seconds and m/s. Manual writes only. */
-const ATLAS_H82=Object.freeze({version:"H8.2",schema:"ATLAS_GARMIN_NATIVE_WORKOUT_V2",manualOnly:true,upsertBatchSize:6,deleteBatchSize:12});
+const ATLAS_H82=Object.freeze({version:"H8.3",schema:"ATLAS_GARMIN_NATIVE_WORKOUT_V2",manualOnly:true,upsertBatchSize:6,deleteBatchSize:12});
 function atlasH82Finite(v){const n=Number(v);return Number.isFinite(n)?n:null;}
 function atlasH82Metres(v){const n=atlasH82Finite(v);if(!(n>0&&n<=100000))throw new Error(`Distancia Garmin fuera de rango: ${v}`);return Math.round(n*10)/10;}
 function atlasH82Seconds(v){const n=atlasH82Finite(v);if(!(n>0&&n<=86400))throw new Error(`Duración Garmin fuera de rango: ${v}`);return Math.round(n*10)/10;}
@@ -14348,23 +14326,45 @@ function atlasH82Validate(workout){if(!workout?.workoutName||!Array.isArray(work
 const atlasH82RemoteEventBase=atlasV090RemoteEvent;
 atlasV090RemoteEvent=function(plan,session){const event=atlasH82RemoteEventBase(plan,session),native=atlasH82Workout(session,event.external_id);atlasH82Validate(native);event.garmin_workout=native;event._atlas={...(event._atlas||{}),nativeWorkoutVersion:ATLAS_H82.schema};return event;};
 atlasV090EventDigest=function(event){return trainingEngineDigest({external_id:event.external_id,start_date_local:event.start_date_local,type:event.type,name:event.name,description:event.description,garmin_workout:event.garmin_workout||null});};
-async function atlasH82WriteRequest(path,body){atlasK25RequireRemoteWriteConsent();return apiRequest(`${path}?manual=1`,{method:"POST",body:{...body,explicitUserAction:true,writeIntent:"USER_CONFIRMED",clientRequestId:`h82-${Date.now()}-${Math.random().toString(36).slice(2,10)}`},timeoutMs:60000,retries:0});}
-atlasV094PublishDiffInBatches=async function(plan,diff){atlasK25RequireRemoteWriteConsent();const upsertChunks=atlasV094Chunk(diff.upserts,ATLAS_H82.upsertBatchSize),deleteChunks=atlasV094Chunk(diff.deletes,ATLAS_H82.deleteBatchSize),total=Math.max(1,upsertChunks.length,deleteChunks.length),aggregate={ok:true,version:ATLAS_PUBLICATION_VERSION,revision:0,events:[],upserted:0,deleted:0,missing:[],garmin:{enabled:false,trainingConnected:false}};for(let i=0;i<total;i++){atlasV094PublicationProgress={current:i+1,total};atlasV094ApplyProgress();const payload={schema:"ATLAS_WORKOUT_PUBLICATION_V2",publicationVersion:ATLAS_PUBLICATION_VERSION,planId:plan.id,planName:plan.name,manifestDigest:diff.desired.digest,upserts:(upsertChunks[i]||[]).map(({_atlas,...event})=>event),deletes:deleteChunks[i]||[]};const result=await atlasH82WriteRequest("/api/garmin/workouts/publish",payload);if(Array.isArray(result?.events))aggregate.events.push(...result.events);aggregate.upserted+=Number(result?.upserted)||0;aggregate.deleted+=Number(result?.deleted)||0;if(Array.isArray(result?.missing))aggregate.missing.push(...result.missing);aggregate.revision=Math.max(aggregate.revision,Number(result?.revision)||0);aggregate.garmin.enabled=aggregate.garmin.enabled||result?.garmin?.enabled===true;aggregate.garmin.trainingConnected=aggregate.garmin.trainingConnected||result?.garmin?.trainingConnected===true;}return aggregate;};
-atlasV152DeleteChunk=async function(plan,chunk){return atlasH82WriteRequest("/api/garmin/workouts/unpublish",{schema:"ATLAS_WORKOUT_PUBLICATION_V2",planId:plan.id,events:chunk});};
+/* H8.3 · protocolo único de escritura ATLAS → Worker → Garmin.
+   El consentimiento no depende de contadores globales: el Worker emite una autorización
+   efímera firmada para el plan y la operación inmediatamente antes de cada mutación. */
+const ATLAS_H83_WRITE=Object.freeze({protocol:"SIGNED_WRITE_TICKET_V1",ttlMs:300000});
+function atlasH83RequestId(){try{return `h83-${crypto.randomUUID()}`;}catch{return `h83-${Date.now()}-${Math.random().toString(36).slice(2,14)}`;}}
+async function atlasH83AuthorizeWrite(planId,operation){
+  const requestId=atlasH83RequestId();
+  const auth=await apiRequest("/api/garmin/workouts/authorize",{method:"POST",body:{planId,operation,requestId},timeoutMs:20000,retries:0});
+  if(!auth?.writeAuthorization||auth?.writeProtocol!==ATLAS_H83_WRITE.protocol)throw new Error("El Worker no ha emitido una autorización de escritura válida.");
+  return Object.freeze({requestId,writeAuthorization:String(auth.writeAuthorization),operation:String(operation),planId:String(planId),expiresAt:Number(auth.expiresAt)||0});
+}
+async function atlasH83Write(path,body,authorization){
+  if(!authorization?.writeAuthorization||!authorization?.requestId)throw new Error("Falta la autorización temporal de escritura Garmin.");
+  return apiRequest(path,{method:"POST",body:{...body,writeRequestId:authorization.requestId,writeAuthorization:authorization.writeAuthorization},timeoutMs:60000,retries:0});
+}
+atlasV094PublishDiffInBatches=async function(plan,diff){
+  const authorization=await atlasH83AuthorizeWrite(plan.id,"publish"),upsertChunks=atlasV094Chunk(diff.upserts,ATLAS_H82.upsertBatchSize),deleteChunks=atlasV094Chunk(diff.deletes,ATLAS_H82.deleteBatchSize),total=Math.max(1,upsertChunks.length,deleteChunks.length),aggregate={ok:true,version:ATLAS_PUBLICATION_VERSION,revision:0,events:[],upserted:0,deleted:0,missing:[],garmin:{enabled:false,trainingConnected:false}};
+  for(let i=0;i<total;i++){
+    atlasV094PublicationProgress={current:i+1,total};atlasV094ApplyProgress();
+    const payload={schema:"ATLAS_WORKOUT_PUBLICATION_V3",publicationVersion:ATLAS_PUBLICATION_VERSION,planId:plan.id,planName:plan.name,manifestDigest:diff.desired.digest,upserts:(upsertChunks[i]||[]).map(({_atlas,...event})=>event),deletes:deleteChunks[i]||[]};
+    const result=await atlasH83Write("/api/garmin/workouts/publish",payload,authorization);
+    if(Array.isArray(result?.events))aggregate.events.push(...result.events);aggregate.upserted+=Number(result?.upserted)||0;aggregate.deleted+=Number(result?.deleted)||0;if(Array.isArray(result?.missing))aggregate.missing.push(...result.missing);aggregate.revision=Math.max(aggregate.revision,Number(result?.revision)||0);aggregate.garmin.enabled=aggregate.garmin.enabled||result?.garmin?.enabled===true;aggregate.garmin.trainingConnected=aggregate.garmin.trainingConnected||result?.garmin?.trainingConnected===true;
+  }
+  return aggregate;
+};
+atlasV152DeleteChunk=async function(plan,chunk){const authorization=await atlasH83AuthorizeWrite(plan.id,"unpublish");return atlasH83Write("/api/garmin/workouts/unpublish",{schema:"ATLAS_WORKOUT_PUBLICATION_V3",planId:plan.id,events:chunk},authorization);};
 atlasV094PublicationCapabilities=async function(){return atlasV090WorkerCapabilities();};
 async function atlasH82DeleteProposedSession(sessionId){const plan=activeTrainingPlan(),session=findEffectiveSession(sessionId);if(!plan||!session||atlasV0814IsCompetition(session))return;if(!confirm(`¿Eliminar “${atlasV0814SessionShortName(session)}” del plan?\n\nSi ya está publicado en Garmin Connect, quedará pendiente de retirar hasta que pulses «Publicar cambios».`))return;const key=atlasV0814SessionKey(session),prior=atlasV157LatestEdit(plan,key),now=new Date().toISOString(),record={id:prior?.id||`edit:${key}`,sessionKey:key,type:"EDIT",mode:"REMOVE_SESSION",deleted:false,createdAt:prior?.createdAt||now,updatedAt:now,deviceRevision:Date.now()},list=atlasV157PlanEdits(plan),idx=list.findIndex(e=>String(e.sessionKey)===String(key));if(idx>=0)list[idx]=record;else list.push(record);plan.updatedAt=now;trainingPlanMarkPublicationDirty(plan);await persistTrainingPlans();closePlanDetail();renderTrainingPlanWorkouts(atlasV0814RawSchedule(plan));renderPlan();renderUpcomingTrainings();await renderTrainingPlanPublication();toast("Entrenamiento eliminado del plan.");}
-/* Publicación H8.2: una sola entrada manual canónica. El consentimiento nace aquí, después del confirm. */
 atlasV090PublishPlan=async function(){
   if(atlasV090PublicationBusy||atlasV150RemoteSyncBusy)return;
   const plan=activeTrainingPlan();if(!plan)return;
-  const truth=await refreshPublicationTruth(plan,{force:true,persist:true});
-  if(!truth?.verified){await renderTrainingPlanPublication();toast("⚠️ No se ha podido verificar Garmin Connect. No se publicará ningún cambio.",true);return;}
+  const truth=await refreshPublicationTruth(plan,{force:true,persist:true});if(!truth?.verified){await renderTrainingPlanPublication();toast("⚠️ No se ha podido verificar Garmin Connect. No se publicará ningún cambio.",true);return;}
   const diff=computePublicationDiff(plan);if(diff.conflicts?.length){await renderTrainingPlanPublication();toast("⚠️ Revisa los cambios externos antes de actualizar Garmin Connect.",true);return;}
-  const first=diff.remoteVerified?diff.remoteCount===0:plan.publication?.status!=="published",pending=diff.upserts.length+diff.deletes.length;
-  if(!diff.desired.events.length){toast("⚠️ No hay sesiones futuras para publicar.",true);return;}if(!first&&!pending){toast("El calendario ya está actualizado.");return;}
+  const first=diff.remoteVerified?diff.remoteCount===0:plan.publication?.status!=="published",pending=diff.upserts.length+diff.deletes.length;if(!diff.desired.events.length){toast("⚠️ No hay sesiones futuras para publicar.",true);return;}if(!first&&!pending){toast("El calendario ya está actualizado.");return;}
   const action=first?`Publicar ${diff.desired.events.length} entrenamientos en Garmin Connect`:`Actualizar ${pending} cambio${pending===1?"":"s"} en Garmin Connect`;
-  if(!confirm(`${action}?\n\nATLAS enviará metros, segundos y velocidad m/s con validación previa y posterior.`))return;
-  return atlasK25WithRemoteWriteConsent(async()=>{atlasV090PublicationBusy=true;atlasI5SetProgress("publish",first?"Preparando publicación…":"Preparando actualización…",5);await renderTrainingPlanPublication();try{return await atlasV150SyncPlanNow(plan,{toastSuccess:true});}finally{atlasV090PublicationBusy=false;atlasI5ClearProgress();await refreshPublicationTruth(plan,{force:true,persist:true});await renderTrainingPlanPublication();}});
+  if(!confirm(`${action}?\n\nATLAS solicitará una autorización temporal al Worker y la usará únicamente para esta publicación.`))return;
+  atlasV090PublicationBusy=true;atlasI5SetProgress("publish",first?"Autorizando publicación…":"Autorizando cambios…",5);await renderTrainingPlanPublication();
+  try{return await atlasV150SyncPlanNow(plan,{toastSuccess:true});}
+  finally{atlasV090PublicationBusy=false;atlasI5ClearProgress();await refreshPublicationTruth(plan,{force:true,persist:true});await renderTrainingPlanPublication();}
 };
 
 function atlasH82Audit(){

@@ -2242,7 +2242,7 @@ html{color-scheme:dark!important}
 <input accept="application/json,.json" id="fileInput" type="file"/>
 </div>
 <div class="data-detail-section-title atlas-i7-section-title"><span>Versión</span></div>
-<div class="data-system-card atlas-i7-version-card"><div class="atlas-i7-version-brand"><span class="atlas-i7-version-glyph">Ʌ</span><div><strong>ɅTLɅS</strong><span id="atlasI7VersionText">2.0-H7.7</span></div></div></div>
+<div class="data-system-card atlas-i7-version-card"><div class="atlas-i7-version-brand"><span class="atlas-i7-version-glyph">Ʌ</span><div><strong>ɅTLɅS</strong><span id="atlasI7VersionText">2.0-H7.8</span></div></div></div>
 <div aria-hidden="true" class="hidden" id="atlasRuntimeDiagnosticsInternal">
 <div id="runtimeDiagVersion">—</div><div id="runtimeDiagSync">—</div><div id="runtimeDiagLogs">—</div><div id="runtimeDiagHealth">—</div><div id="runtimeDiagReading"></div><div id="runtimeDiagEvents"></div>
 <button id="runtimeDiagRefresh" type="button"></button><button id="runtimeDiagExport" type="button"></button><button id="runtimeDiagClear" type="button"></button>
@@ -2455,7 +2455,7 @@ const AtlasHrv=(()=>{
 /* ===== ɅTLɅS v1.6.33 · K2.3 canonical Plan / Publication / Sync bindings =====
    Historical public overrides removed where the final implementation was self-contained.
    Golden K2.1 contracts remain the behavioral authority. */
-const APP_VERSION="2.0-H7.7",SCHEMA_VERSION=11,DB_NAME="atlas2",DB_VERSION=4;
+const APP_VERSION="2.0-H7.8",SCHEMA_VERSION=11,DB_NAME="atlas2",DB_VERSION=4;
 const ATLAS_RUNTIME=Object.freeze({appVersion:APP_VERSION,schemaVersion:SCHEMA_VERSION,dbName:DB_NAME,dbVersion:DB_VERSION,contractVersion:1});
 const atlasDiagnosticsRegistry=Object.create(null);
 function registerAtlasDiagnostic(name,value){if(!name)return value;atlasDiagnosticsRegistry[String(name)]=value;return value;}
@@ -15603,7 +15603,7 @@ registerAtlasDiagnostic("h75",Object.freeze({version:ATLAS_H75.version,source:AT
 
 
 /* ===== ɅTLɅS 2.0-H7.6 · Garmin-native truth layer ===== */
-const ATLAS_H76=Object.freeze({version:"H7.7",source:"garmin_connect_direct",garminNativeState:true,completeWellnessBackfill:true,truthFirstActivityDetail:true,loadModel:"acute_chronic_tunnel",remoteTrainingWrites:false});
+const ATLAS_H76=Object.freeze({version:"H7.8",source:"garmin_connect_direct",garminNativeState:true,completeWellnessBackfill:true,truthFirstActivityDetail:true,loadModel:"acute_chronic_tunnel",remoteTrainingWrites:false});
 
 /* ---------- Estado ATLAS: Garmin-native, comparable at a glance ---------- */
 function atlasH76FactorTone(score){const n=Number(score);if(!Number.isFinite(n))return"gray";if(n>=90)return"purple";if(n>=75)return"blue";if(n>=50)return"green";if(n>=25)return"orange";return"red";}
@@ -15724,6 +15724,58 @@ registerAtlasDiagnostic("h76",Object.freeze({version:ATLAS_H76.version,source:AT
 
 })();
 
+
+
+/* ===== ɅTLɅS 2.0-H7.8 · state/detail polish + profile shoes hard fix ===== */
+const ATLAS_H78=Object.freeze({version:"H7.8",activityDateHardFix:true,garminPerceptionChips:true,profileShoesHardFetch:true});
+(function atlasH78InjectStyle(){
+  const css=`
+  .activity-top-meta{display:flex!important;flex-wrap:wrap!important;justify-content:flex-start!important;align-items:center!important;gap:6px 8px!important}
+  .activity-detail-date{display:flex!important;align-items:center!important;justify-content:flex-start!important;flex:1 0 100%!important;width:100%!important;text-align:left!important;padding:0 2px 3px!important;font-size:12.6px!important;line-height:1.15!important;font-weight:800!important;color:#eaf1f7!important;overflow:visible!important}
+  .activity-top-perception{display:flex!important;flex-wrap:wrap!important;gap:6px!important;width:100%!important}
+  .activity-top-perception.hidden{display:none!important}
+  .activity-perception-chip{display:inline-flex!important;align-items:center!important;justify-content:center!important;width:auto!important;max-width:100%!important;padding:7px 10px!important;border-radius:999px!important;background:rgba(255,255,255,.06)!important;border:1px solid rgba(255,255,255,.08)!important;text-align:center!important;font-size:11.2px!important;line-height:1.1!important;color:#eaf1f7!important}
+  .activity-top-meta>.activity-detail-date::after,.activity-top-meta>.activity-top-perception>.activity-perception-chip::after{display:none!important}
+  .state-factor.compact{padding:12px!important}
+  .state-factor-name{font-size:15.5px!important;color:#fff!important}
+  .state-factor-name span:last-child{color:#fff!important}
+  .state-factor-track{margin:7px 0 6px!important}
+  .state-factor-meta{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:11px;line-height:1.15}
+  .state-factor-status{font-weight:800}
+  .state-factor-status.factor-purple{color:#bf5af2}
+  .state-factor-status.factor-blue{color:#1d9bf0}
+  .state-factor-status.factor-green{color:#00c48c}
+  .state-factor-status.factor-orange{color:#ff9f0a}
+  .state-factor-status.factor-red{color:#ff2d55}
+  .state-factor-points{font-weight:760;color:#f5f7fa}
+  .state-detail-explanation{display:none!important}
+  .training-plan-pace-card{min-height:72px!important;padding:10px 10px 9px!important}
+  .training-plan-pace-label{font-size:12.4px!important;line-height:1.16!important;font-weight:780!important}
+  .training-plan-pace-value{font-size:18px!important;line-height:1.06!important;font-weight:820!important;white-space:nowrap!important}
+  .training-plan-pace-value small{font-size:.7em!important;font-weight:780!important}
+  .shoe-panel-loading,.shoe-panel-empty{font-size:12px;color:var(--muted);padding:8px 0}
+  `;
+  const style=document.createElement('style');
+  style.id='atlas-h78-style';style.textContent=css;document.head.appendChild(style);
+})();
+function atlasH78ActivityDateLabel(a){const raw=String(a?.start_date_local||a?.start_date||a?.date||a?.startTimeLocal||a?.startTimeGMT||"");if(!raw)return"🗓️ —";const d=new Date(/^\d{4}-\d{2}-\d{2}$/.test(raw)?`${raw}T12:00:00`:raw);if(Number.isNaN(d.getTime()))return`🗓️ ${raw}`;const months=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];return`🗓️ ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()} · ${String(d.getHours()).padStart(2,"0")}:${String(d.getMinutes()).padStart(2,"0")}`;}
+function atlasH78RpeVisual(n){const v=Math.round(Number(n));if(!(v>=1&&v<=10))return null;const label=activityRpeLabel(v)||`RPE ${v}`;const dot=v<=2?"🔵":v<=4?"🟢":v<=6?"🟡":v<=8?"🟠":"🔴";return `${dot} ${label}`;}
+function atlasH78FeelVisual(raw){if(raw==null||raw==="")return null;const v=typeof raw==="number"?raw:Number(raw);const num=Number.isFinite(v)?Math.round(v):null;const map={0:["😵","Muy débil"],1:["😄","Fuerte"],2:["🙂","Bien"],3:["😐","Normal"],4:["😕","Flojo"],5:["😣","Débil"],25:["😣","Débil"],50:["😐","Normal"],75:["🙂","Fuerte"],100:["😄","Muy fuerte"]};
+  if(num!=null&&map[num])return `${map[num][0]} ${map[num][1]}`;
+  const text=String(raw).trim();const low=text.toLowerCase();if(/muy\s*fuerte/.test(low))return"😄 Muy fuerte";if(/fuerte|bien/.test(low))return`🙂 ${atlasH77Cap(text)}`;if(/normal/.test(low))return`😐 ${atlasH77Cap(text)}`;if(/flojo|debil|débil/.test(low))return`😕 ${atlasH77Cap(text)}`;return `🙂 ${atlasH77Cap(text)}`;
+}
+fitActivityTopMeta=function(){const box=document.querySelector('.activity-top-meta');if(!box)return;box.style.setProperty('display','flex','important');box.style.setProperty('flex-wrap','wrap','important');box.style.setProperty('justify-content','flex-start','important');if(ui.activityDetailDate){ui.activityDetailDate.style.setProperty('flex','1 0 100%','important');ui.activityDetailDate.style.setProperty('width','100%','important');ui.activityDetailDate.style.setProperty('text-align','left','important');ui.activityDetailDate.style.setProperty('font-size','12.6px','important');}qsa('.activity-perception-chip',ui.activityPerception).forEach(el=>{el.style.setProperty('flex','0 0 auto','important');el.style.setProperty('font-size','11.2px','important');});};
+renderStateDetail=function(){const s=currentAtlasState;if(!s){ui.stateDetailHero.className="state-detail-card";ui.stateDetailRing.style.setProperty("--score-pct","0%");ui.stateDetailScore.textContent="—";ui.stateDetailWord.textContent="Sin datos";ui.stateDetailNote.textContent="Garmin no ha devuelto Training Readiness";ui.stateDetailMeta.textContent=fullTodayDate();ui.stateFactors.className="state-factors compact-grid";ui.stateFactors.innerHTML='<div class="state-factor"><div class="state-factor-name">Sin histórico Garmin disponible.</div></div>';return;}ui.stateDetailHero.className=`state-detail-card state-${s.band.tone}`;ui.stateDetailRing.style.setProperty("--score-pct",`${s.score}%`);ui.stateDetailScore.textContent=String(s.score);ui.stateDetailWord.textContent=atlasH77Cap(s.band.label);ui.stateDetailNote.textContent=atlasStateTrainingInsight(s);ui.stateDetailMeta.textContent=s.healthDate?atlasDateLabel(s.healthDate):fullTodayDate();const defs=[["sleep","💤","Sueño"],["sleepHistory","🛌","Sueño 7 días"],["hrv","🫀","VFC"],["recovery","⏳","Recuperación"],["load","📈","Carga"],["stress","🧠","Estrés"]];ui.stateFactors.className="state-factors compact-grid";ui.stateFactors.innerHTML=defs.map(([key,icon,name])=>{const score=Number(s.components?.[key]),ok=Number.isFinite(score),tone=atlasH76FactorTone(score),grade=atlasH77Cap(atlasH76FactorGrade(score));return`<div class="state-factor compact factor-${tone}"><div class="state-factor-top"><div class="state-factor-name"><span class="state-factor-icon">${icon}</span><span>${name}</span></div></div><div class="state-factor-track"><div class="state-factor-fill" style="width:${ok?clamp(score,0,100):0}%"></div></div><div class="state-factor-meta"><span class="state-factor-status factor-${tone}">${ok?grade:"Sin dato"}</span><span class="state-factor-points">${ok?`${Math.round(score)}/100`:"—"}</span></div></div>`;}).join("");if(ui.stateBaseScore)ui.stateBaseScore.textContent="Garmin";if(ui.stateRecoveryPenalty)ui.stateRecoveryPenalty.textContent=Number.isFinite(s.loadRatio)?formatNatural(s.loadRatio,2):"—";if(ui.stateLimiter)ui.stateLimiter.textContent=s.trainingStatus?`Estado de entrenamiento · ${atlasH77Cap(s.trainingStatus)}`:"";const expl=document.querySelector('.state-detail-explanation');if(expl)expl.textContent="";requestAnimationFrame(atlasI2FitStateTypography);};
+const atlasH78RenderActivityDetailBase=renderActivityDetail;
+renderActivityDetail=function(a){const out=atlasH78RenderActivityDetailBase.apply(this,arguments);if(ui.activityDetailDate)ui.activityDetailDate.textContent=atlasH78ActivityDateLabel(a);const temp=activityTemperature(a),rpe=activityRpe(a),feelRaw=pick(a,["feel","feel_label"])??a?.perception?.feelLabel??a?.perception?.feel,perception=[];if(Number.isFinite(temp))perception.push(`🌡️ ${formatNatural(temp,1)} °C`);const rpeChip=atlasH78RpeVisual(rpe);if(rpeChip)perception.push(rpeChip);const feelChip=atlasH78FeelVisual(feelRaw);if(feelChip)perception.push(feelChip);if(ui.activityPerception){ui.activityPerception.classList.toggle('hidden',!perception.length);ui.activityPerception.innerHTML=perception.map(x=>`<span class="activity-perception-chip">${esc(x)}</span>`).join('');}requestAnimationFrame(fitActivityTopMeta);return out;};
+const atlasH78RenderTrainingPlanPacesBase=renderTrainingPlanPaces;
+renderTrainingPlanPaces=function(){const out=atlasH78RenderTrainingPlanPacesBase.apply(this,arguments);const box=$("trainingPlanPaces");if(box)qsa('.training-plan-pace-value',box).forEach(el=>{el.style.setProperty('font-size','18px','important');el.style.setProperty('white-space','nowrap','important');});return out;};
+let atlasH78GearFetchPromise=null;
+async function atlasH78EnsureShoes(){if((currentGear||[]).filter(gearIsShoes).length)return currentGear;if(atlasH78GearFetchPromise)return atlasH78GearFetchPromise;atlasH78GearFetchPromise=(async()=>{try{const resp=await api('/api/garmin/gear');currentGear=(Array.isArray(resp?.gear)?resp.gear:[]).map(atlasH74CompatGear);}catch(error){recordRuntimeAudit('h78-gear-fetch',error).catch(()=>{});}finally{atlasH78GearFetchPromise=null;}return currentGear;})();return atlasH78GearFetchPromise;}
+const atlasH78RenderProfilePanelBase=renderProfilePanel;
+renderProfilePanel=function(athlete){const out=atlasH78RenderProfilePanelBase.apply(this,arguments);const expl=document.querySelector('.state-detail-explanation');if(expl)expl.textContent='';if(!(currentGear||[]).filter(gearIsShoes).length&&hasAtlasConnectionConfig()&&atlasOnline()){if(ui.shoesList)ui.shoesList.innerHTML='<div class="shoe-panel-loading">Cargando zapatillas…</div>';atlasH78EnsureShoes().then(()=>{if((currentGear||[]).filter(gearIsShoes).length)atlasH77RenderShoesPanelBase.call(this,currentGear);else if(ui.shoesList)ui.shoesList.innerHTML='<div class="shoe-panel-empty">No hay zapatillas registradas en Garmin Connect.</div>';});}return out;};
+renderShoesPanel=function(gear=currentGear){const shoes=(Array.isArray(gear)?gear:[]).filter(gearIsShoes);if(shoes.length)return atlasH77RenderShoesPanelBase.call(this,gear);if(ui.shoesList)ui.shoesList.innerHTML='<div class="shoe-panel-loading">Cargando zapatillas…</div>';if(hasAtlasConnectionConfig()&&atlasOnline())atlasH78EnsureShoes().then(g=>{const list=(Array.isArray(g)?g:[]).filter(gearIsShoes);if(list.length)atlasH77RenderShoesPanelBase.call(this,g);else if(ui.shoesList)ui.shoesList.innerHTML='<div class="shoe-panel-empty">No hay zapatillas registradas en Garmin Connect.</div>';});else if(ui.shoesList)ui.shoesList.innerHTML='<div class="shoe-panel-empty">No hay zapatillas registradas en Garmin Connect.</div>';};
+registerAtlasDiagnostic("h78",Object.freeze({version:ATLAS_H78.version,activityDateHardFix:ATLAS_H78.activityDateHardFix,garminPerceptionChips:ATLAS_H78.garminPerceptionChips,profileShoesHardFetch:ATLAS_H78.profileShoesHardFetch}));
 
 </script></body>
 </html>

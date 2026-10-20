@@ -714,7 +714,7 @@ html{color-scheme:dark!important}#dataSystemDetail .data-detail-inner{padding-bo
 .atlas-action-btn{appearance:none;width:100%;min-height:44px;border:0;border-radius:13px;background:rgba(29,155,240,.12);color:var(--blue);font-size:13px;font-weight:800}
 </style>
 
-<style id="atlas-h76-style">/* ===== ɅTLɅS 2.0-H8.5 · canonical state / activity / pace UI ===== */
+<style id="atlas-h76-style">/* ===== ɅTLɅS 2.0-H8.6 · canonical state / activity / pace UI ===== */
 .state-factor{--factor-color:var(--muted2);padding:11px 12px!important}.state-factor.factor-purple{--factor-color:var(--purple)}.state-factor.factor-blue{--factor-color:var(--blue)}.state-factor.factor-green{--factor-color:var(--green)}.state-factor.factor-orange{--factor-color:var(--orange)}.state-factor.factor-red{--factor-color:var(--red)}.state-factor-title{display:flex;align-items:center;gap:7px;min-width:0}.state-factor-icon{font-size:18px}.state-factor-name{font-size:15px!important;line-height:1.1;font-weight:800;color:#fff!important}.state-factor-track{height:7px;margin:8px 0 6px;border-radius:999px;background:rgba(255,255,255,.08);overflow:hidden}.state-factor-fill{height:100%;border-radius:inherit;background:var(--factor-color)!important}.state-factor-bottom{display:flex;align-items:center;justify-content:space-between;gap:8px}.state-factor-status{font-size:11px;line-height:1.1;font-weight:800;color:var(--factor-color)!important}.state-factor-points{font-size:12px;line-height:1.1;font-weight:790;color:#fff!important;font-variant-numeric:tabular-nums}/* Carga: acute + chronic + Garmin optimal tunnel. */
 .chart-load-acute{fill:none;stroke:var(--orange);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}.chart-load-chronic{fill:none;stroke:var(--blue);stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;vector-effect:non-scaling-stroke}.chart-load-tunnel{fill:rgba(48,209,88,.10);stroke:none}.chart-load-tunnel-edge{fill:none;stroke:rgba(48,209,88,.40);stroke-width:.8;stroke-dasharray:3 3;vector-effect:non-scaling-stroke}.legend-load-acute{background:var(--orange)}.legend-load-chronic{background:var(--blue)}.legend-load-tunnel{background:var(--green)}/* Activity detail: one definitive render after Garmin detail is ready. */
 #activityDetail[aria-busy="true"] .metric-title-row, #activityDetail[aria-busy="true"] .activity-detail-datetime, #activityDetail[aria-busy="true"] .activity-top-perception, #activityDetail[aria-busy="true"] .activity-map, #activityDetail[aria-busy="true"] .activity-equipment, #activityDetail[aria-busy="true"] .activity-primary, #activityDetail[aria-busy="true"] .activity-ai-result, #activityDetail[aria-busy="true"] .activity-laps, #activityDetail[aria-busy="true"] .activity-analysis, #activityDetail[aria-busy="true"] #activityRunningDynamics, #activityDetail[aria-busy="true"] #activityDescription, #activityDetail[aria-busy="true"] #activityDetailBottomBack, #activityDetail[aria-busy="true"] .atlas-local-analysis, #activityDetail[aria-busy="true"] .activity-local-analysis, #activityDetail[aria-busy="true"] .activity-strength-done{display:none!important}#activityDetail[aria-busy="true"] .activity-detail-loading.active{margin:54px 2px 0!important}.activity-detail-datetime{display:block;width:100%;margin:5px 0 8px;padding:0 2px;color:#d8dee5;font-size:12px;line-height:1.2;font-weight:780;font-variant-numeric:tabular-nums}.activity-top-perception{display:flex;align-items:center;gap:6px;flex-wrap:wrap;width:100%;margin:0 0 8px}.activity-top-perception.hidden{display:none!important}.activity-perception-chip{display:inline-flex!important;width:auto!important;padding:6px 9px!important;border-radius:999px!important;background:rgba(255,255,255,.055)!important;border:1px solid rgba(255,255,255,.075)!important;color:#e8edf2!important;font-size:10.5px!important;line-height:1!important;font-weight:760!important;white-space:nowrap!important}.activity-equipment-km{font-size:11px!important;color:#d5dbe0!important;font-variant-numeric:tabular-nums}.activity-lap-elev:not(.elev-pos):not(.elev-neg){color:#fff!important}/* Activity chart controls use the same visual contract as Today period filters. */
@@ -959,7 +959,7 @@ html{color-scheme:dark!important}#dataSystemDetail .data-detail-inner{padding-bo
 <input accept="application/json,.json" id="fileInput" type="file"/>
 </div>
 <div class="data-detail-section-title atlas-i7-section-title"><span>Versión</span></div>
-<div class="data-system-card atlas-i7-version-card"><div class="atlas-i7-version-brand"><span class="atlas-i7-version-glyph">Ʌ</span><div><strong>ɅTLɅS</strong><span id="atlasI7VersionText">2.0-H8.5</span></div></div></div>
+<div class="data-system-card atlas-i7-version-card"><div class="atlas-i7-version-brand"><span class="atlas-i7-version-glyph">Ʌ</span><div><strong>ɅTLɅS</strong><span id="atlasI7VersionText">2.0-H8.6</span></div></div></div>
 <div aria-hidden="true" class="hidden" id="atlasRuntimeDiagnosticsInternal">
 <div id="runtimeDiagVersion">—</div><div id="runtimeDiagSync">—</div><div id="runtimeDiagLogs">—</div><div id="runtimeDiagHealth">—</div><div id="runtimeDiagReading"></div><div id="runtimeDiagEvents"></div>
 <button id="runtimeDiagRefresh" type="button"></button><button id="runtimeDiagExport" type="button"></button><button id="runtimeDiagClear" type="button"></button>
@@ -1170,7 +1170,7 @@ const AtlasHrv=(()=>{
 
 
 
-const APP_VERSION="2.0-H8.5",SCHEMA_VERSION=11,DB_NAME="atlas2",DB_VERSION=4;
+const APP_VERSION="2.0-H8.6",SCHEMA_VERSION=11,DB_NAME="atlas2",DB_VERSION=4;
 const ATLAS_RUNTIME=Object.freeze({appVersion:APP_VERSION,schemaVersion:SCHEMA_VERSION,dbName:DB_NAME,dbVersion:DB_VERSION,contractVersion:1});
 const atlasDiagnosticsRegistry=Object.create(null);
 function registerAtlasDiagnostic(name,value){if(!name)return value;atlasDiagnosticsRegistry[String(name)]=value;return value;}
@@ -3147,7 +3147,6 @@ async function collectTrainingEngineInput(plan,asOfDate=fmtDate(new Date())){
     engine.version=TRAINING_ENGINE_VERSION;
     engine=atlasV091RefreshDigests(engine);
   }finally{atlasV091AvailabilityContext=previousContext;}
-  engine=atlasV092NormalizeEngineWarmCool(engine,plan);
   engine.strengthPrescriptionVersion=ATLAS_STRENGTH_PRESCRIPTION_VERSION;
   if(engine?.weeklySkeleton?.policy)engine.weeklySkeleton.policy.strengthRule="Preparación/desarrollo: hasta 2 sesiones de cuerpo completo si la base y disponibilidad lo permiten; fase específica: 1 mantenimiento; taper: microdosis y retirada en semana de carrera.";
   if(engine?.prescriptionCore?.policy)engine.prescriptionCore.policy.strengthPrescriptionVersion=ATLAS_STRENGTH_PRESCRIPTION_VERSION;
@@ -3200,6 +3199,15 @@ function openTrainingPlanEditor(section="info"){if(section==="secondary"){openTr
 
 
 
+function openTrainingPlanWorkspace(id){
+  const plan=currentTrainingPlans.find(p=>p.id===String(id));if(!plan)return;
+  const previousPlanId=currentTrainingPlanId;currentTrainingPlanId=plan.id;
+  const today=fmtDate(new Date()),weekAnchor=today<plan.startDate?plan.startDate:today>plan.raceDate?plan.raceDate:today;
+  currentTrainingPlanAvailabilityWeekStart=mondayOf(new Date(`${weekAnchor}T12:00:00`));
+  renderTrainingPlanWorkspace();collapseTrainingPlanSections();
+  ui.trainingPlanWorkspace.classList.remove("hidden");ui.trainingPlanWorkspace.setAttribute("aria-hidden","false");setAtlasSubpageNavHidden(true);document.body.style.overflow="hidden";ui.trainingPlanWorkspace.scrollTop=0;
+  if(String(previousPlanId||"")!==String(plan.id||""))persistTrainingPlans().catch(()=>{});
+}
 function closeTrainingPlanWorkspace(){if(!ui.trainingPlanWorkspace||ui.trainingPlanWorkspace.classList.contains("hidden"))return;ui.trainingPlanWorkspace.classList.add("hidden");ui.trainingPlanWorkspace.setAttribute("aria-hidden","true");document.body.style.overflow="";refreshAtlasSubpageNav();}
 function shiftTrainingPlanAvailabilityWeek(delta){const plan=activeTrainingPlan();if(!plan)return;if(!currentTrainingPlanAvailabilityWeekStart)currentTrainingPlanAvailabilityWeekStart=mondayOf(new Date(`${plan.startDate}T12:00:00`));const next=new Date(currentTrainingPlanAvailabilityWeekStart);next.setDate(next.getDate()+delta*7);const key=fmtDate(next),first=trainingPlanWeekKey(plan.startDate),last=trainingPlanWeekKey(plan.raceDate);if(key<first||key>last)return;currentTrainingPlanAvailabilityWeekStart=next;renderTrainingPlanAvailability();}
 async function handleTrainingPlanAvailabilityDay(e){const b=e.target.closest("[data-plan-availability-day]"),plan=activeTrainingPlan();if(!b||!plan)return;const d=Number(b.dataset.planAvailabilityDay),key=fmtDate(mondayOf(currentTrainingPlanAvailabilityWeekStart||new Date(`${plan.startDate}T12:00:00`))),current=trainingPlanWeekDays(plan,key),next=current.includes(d)?current.filter(x=>x!==d):[...current,d].sort((a,b)=>a-b);plan.availabilityByWeek=plan.availabilityByWeek||{};plan.availabilityByWeek[key]=next;plan.updatedAt=new Date().toISOString();trainingPlanMarkChanged(plan);await persistTrainingPlans();renderTrainingPlanAvailability();renderTrainingPlanWorkouts();renderPlan();}
@@ -5744,7 +5752,7 @@ atlasV0814OpenMoveSheet=function(sessionId){
 };
 
 
-/* ===== ɅTLɅS 2.0-H8.5 · Plan local helpers ===== */
+/* ===== ɅTLɅS 2.0-H8.6 · Plan local helpers ===== */
 function atlasTodayKey(){return fmtDate(new Date());}
 function atlasPlanEffectiveSchedule(plan){return typeof buildEffectivePlan==="function"?buildEffectivePlan(plan):plan?.engine?.prescriptionCore?.schedule;}
 function trainingPlanMarkChanged(plan){if(!plan)return;plan.updatedAt=new Date().toISOString();}
@@ -6062,6 +6070,9 @@ function atlasPlanRenderCore(){
   }
   ui.planDays.innerHTML=markup.join("");requestAnimationFrame(()=>{fitPlanTitles();fitActivityTitles();});
 };
+
+function renderPlan(){return atlasPlanRenderCore.apply(this,arguments);}
+function renderUpcomingTrainings(){if(!ui.upcomingTrainingList)return;ui.upcomingTrainingList.innerHTML='<div class="activity-row-copy" style="padding:10px 12px;color:var(--muted)">Sin entrenamientos planificados</div>';};
 
 
 /* ===== ɅTLɅS v0.9.5 · Perfil ATLAS, preferencias sincronizadas, mapas claros y coherente ===== */
@@ -8651,11 +8662,6 @@ function atlasV158CanonicalMetaMismatch(session){
   if(match&&Number.isFinite(calc)){const mk=Number(match[1].replace(",","."));if(Math.abs(mk-calc)>.11)return{sessionKey:session.id||null,reason:"metaLabel_distance",metaKm:mk,distanceKm:calc};}
   return null;
 }
-function atlasV158ReconcileExportPolicy(engine){
-  const list=engine?.workoutExportPolicy?.normalizedSessions;if(!Array.isArray(list))return;
-  const all=(engine?.prescriptionCore?.schedule?.days||[]).flatMap(d=>d.sessions||[]),byId=new Map(all.map(s=>[String(s.id),s]));
-  engine.workoutExportPolicy.normalizedSessions=list.map(row=>{const s=byId.get(String(row?.id));if(!s)return row;const wu=(s.steps||[]).filter(st=>st.section==="warmup").reduce((n,st)=>n+(Number(st.distanceM)||0),0),cd=(s.steps||[]).filter(st=>st.section==="cooldown").reduce((n,st)=>n+(Number(st.distanceM)||0),0);return{...row,date:s.date,name:s.name,warmupM:wu||null,cooldownM:cd||null};});
-}
 function atlasV158CanonicalFinalState(engine,plan){
   if(!engine?.prescriptionCore?.schedule?.weeks)return engine;
   const scheduleWeeks=engine.prescriptionCore.schedule.weeks,pcWeeks=engine.prescriptionCore.weeks||[],macroWeeks=engine?.macroPlan?.weeks||[],states=[];
@@ -8680,7 +8686,6 @@ function atlasV158CanonicalFinalState(engine,plan){
   if(engine.macroPlan?.volume){engine.macroPlan.volume.reachablePeakKm=peak;engine.macroPlan.volume.finalPeakKm=peak;engine.macroPlan.volume.entryKm=entry;engine.macroPlan.volume.canonicalFinalVersion=ATLAS_V158_VERSION;}
   if(engine.macroPlan?.longRun){engine.macroPlan.longRun.peakPlannedKm=lrPeak;engine.macroPlan.longRun.finalPeakKm=lrPeak;engine.macroPlan.longRun.canonicalFinalVersion=ATLAS_V158_VERSION;}
   if(Array.isArray(engine?.postSecondaryRaceProgression?.targets))engine.postSecondaryRaceProgression.targets=engine.postSecondaryRaceProgression.targets.map(t=>{const s=states.find(x=>Number(x.index)===Number(t.week));return s?{...t,targetKm:s.km,longRunKm:s.longRunKm,canonicalFinal:true}:t;});
-  atlasV158ReconcileExportPolicy(engine);
   const mismatches=(engine.prescriptionCore.schedule.days||[]).flatMap(d=>(d.sessions||[]).map(atlasV158CanonicalMetaMismatch).filter(Boolean));
   const validation=engine.prescriptionCore.validation||{},oldWarnings=Array.isArray(engine.prescriptionCore.warnings)?engine.prescriptionCore.warnings.slice():[];
   engine.prescriptionCore.warnings=[];
@@ -9452,8 +9457,52 @@ const atlasV163RenderPacesBase=renderTrainingPlanPaces;
 renderTrainingPlanPaces=function(){const plan=activeTrainingPlan(),anchors=plan&&typeof atlasK241EffectiveAnchors==="function"?atlasK241EffectiveAnchors(plan):plan?.adaptiveEngine?.structural?.paceAnchors;if(!plan||!anchors)return atlasV163RenderPacesBase.apply(this,arguments);const saved=plan.engine?.paceAnchors;if(!plan.engine)return atlasV163RenderPacesBase.apply(this,arguments);plan.engine.paceAnchors=anchors;try{return atlasV163RenderPacesBase.apply(this,arguments);}finally{plan.engine.paceAnchors=saved;}};
 
 
-/* ===== ɅTLɅS 2.0-H8.5 · Plan local + avisos estructurales ===== */
-const ATLAS_V164_VERSION="2.0-H8.5";
+/* H8.6 · mapa de actividad canónico restaurado */
+function renderActivityMapBase(payload,a=currentActivityDetail){
+if(currentActivityMap){currentActivityMap.remove();currentActivityMap=null;}
+  if(!a||!sportTypicallyGps(a)){ui.activityMap.classList.add("hidden");ui.activityMap.innerHTML="";return;}
+  ui.activityMap.classList.remove("hidden");
+  const pts=normalizeLatLngStreams(payload);
+  if(pts.length<2){ui.activityMap.innerHTML='<div class="activity-map-empty">Recorrido no disponible para esta actividad.</div>';renderActivityRaceBadge(a);return;}
+  if(!window.L){ui.activityMap.innerHTML='<div class="activity-map-empty">No se ha podido cargar el mapa.</div>';renderActivityRaceBadge(a);return;}
+  ui.activityMap.innerHTML="";
+  currentActivityMap=L.map(ui.activityMap,{zoomControl:false,attributionControl:true});
+  const base=atlasV0811AddBaseMap(currentActivityMap);
+  if(!base){
+    currentActivityMap.remove();currentActivityMap=null;
+    ui.activityMap.innerHTML='<div class="activity-map-empty">No se ha podido cargar la cartografía base.</div>';
+    renderActivityRaceBadge(a);return;
+  }
+  const route=L.polyline(pts,{weight:4.5,opacity:.9,color:"#ff453a",lineCap:"round",lineJoin:"round"}).addTo(currentActivityMap),
+    startIcon=L.divIcon({className:"atlas-map-icon",html:'<div class="atlas-route-pin atlas-route-start">▶</div>',iconSize:[27,27],iconAnchor:[13.5,13.5]}),
+    finishIcon=L.divIcon({className:"atlas-map-icon",html:'<div class="atlas-route-pin atlas-route-finish">🏁</div>',iconSize:[27,27],iconAnchor:[13.5,13.5]});
+  L.marker(pts[0],{icon:startIcon,title:"Inicio"}).addTo(currentActivityMap);
+  L.marker(pts[pts.length-1],{icon:finishIcon,title:"Final"}).addTo(currentActivityMap);
+  currentActivityMap.fitBounds(route.getBounds(),{padding:[18,18]});
+  renderActivityRaceBadge(a);
+  setTimeout(()=>currentActivityMap?.invalidateSize(),100);
+}
+function renderActivityMap(payload,a=currentActivityDetail){
+if(!a||!sportTypicallyGps(a))return renderActivityMapBase(payload,a);
+  const pts=normalizeLatLngStreams(payload);
+  if(pts.length<2)return renderActivityMapBase(payload,a);
+  if(window.L&&typeof L.maplibreGL==="function")return renderActivityMapBase(payload,a);
+  const activityId=String(a?.id??"");
+  ui.activityMap?.classList.remove("hidden");
+  if(ui.activityMap)ui.activityMap.innerHTML='<div class="activity-map-empty">Cargando mapa…</div>';
+  ensureAtlasMapRuntime().then(()=>{
+    if(String(currentActivityDetail?.id??"")!==activityId)return;
+    renderActivityMapBase(payload,a);
+  }).catch(error=>{
+    recordRuntimeAudit("map-runtime-load",error,{activityId}).catch(()=>{});
+    if(String(currentActivityDetail?.id??"")!==activityId)return;
+    if(ui.activityMap)ui.activityMap.innerHTML='<div class="activity-map-empty">No se ha podido cargar el mapa.</div>';
+    renderActivityRaceBadge(a);
+  });
+}
+
+/* ===== ɅTLɅS 2.0-H8.6 · Plan local + avisos estructurales ===== */
+const ATLAS_V164_VERSION="2.0-H8.6";
 function atlasV164ActionLabel(action){return({KEEP:"Mantener",SOFTEN:"Suavizar",MOVE:"Mover",SUBSTITUTE:"Sustituir",CANCEL:"Cancelar",ANCHOR_REFRESH:"Ritmos actualizados",AVAILABILITY_REMAP:"Disponibilidad",CURRENT_ABILITY_REFRESH:"Capacidad actual",PROGRESSION_HOLD:"Consolidación",CONSOLIDATE:"Consolidación",REENTRY_BLOCK:"Reentrada",GOAL_REVIEW_REQUIRED:"Revisar objetivo",STRUCTURAL_WATCH:"En observación",NO_CHANGE:"Sin cambio"})[String(action||"").toUpperCase()]||String(action||"Ajuste").replaceAll("_"," ");}
 function atlasV164StructuralNotice(plan){const d=plan?.adaptiveEngine?.structural?.decision;if(!d)return null;const action=String(d.action||"");if(!["GOAL_REVIEW_REQUIRED","PROGRESSION_HOLD","CONSOLIDATE","REENTRY_BLOCK","CURRENT_ABILITY_REFRESH","STRUCTURAL_WATCH"].includes(action))return null;let tone="",title=atlasV164ActionLabel(action),copy=String(d.reason||"");if(action==="GOAL_REVIEW_REQUIRED"){tone="stop";title="Revisar objetivo";}else if(["PROGRESSION_HOLD","CONSOLIDATE","REENTRY_BLOCK"].includes(action))tone="warn";return{tone,title,copy};}
 function atlasV164RenderPlanNotice(){const plan=activeTrainingPlan(),overview=ui.trainingPlanOverview;if(!overview)return;let box=$("atlasV164PlanNotice");if(!box){box=document.createElement("div");box.id="atlasV164PlanNotice";overview.insertAdjacentElement("afterend",box);}const notice=atlasV164StructuralNotice(plan);if(!notice){box.className="atlas-v164-plan-notice hidden";box.innerHTML="";return;}box.className=`atlas-v164-plan-notice ${notice.tone}`;box.innerHTML=`<div class="atlas-v164-plan-notice-title"><span>🧭</span><span>${esc(notice.title)}</span></div><div class="atlas-v164-plan-notice-copy">${esc(notice.copy)}</div>`;}
@@ -10281,7 +10330,6 @@ atlasV164StructuralNotice=function(plan){const d=plan?.adaptiveEngine?.structura
 /* Hoy: reutiliza vínculo explícito, Execution Matcher y fallback conservador de Plan. */
 function atlasK25ExecutionCompletedKeys(plan){const records=plan?.adaptiveEngine?.execution?.records||[];return new Set(records.filter(r=>['COMPLETED','PARTIAL'].includes(String(r?.executionStatus||''))).map(r=>String(r?.sessionKey||'')).filter(Boolean));}
 function atlasK25UpcomingEventCompleted(event,plan,completedKeys,todayPairs,todayEvents){const paired=event?.paired_activity_id;if(paired!=null&&currentActivities.some(a=>String(a?.id??a?.activity_id??'')===String(paired)))return true;if(plan){const key=atlasV160SessionKeyFromExternal(plan,atlasV160ExternalId(event));if(key&&completedKeys.has(String(key)))return true;}if(planEventDate(event)===fmtDate(new Date())){const idx=todayEvents.indexOf(event);if(idx>=0&&todayPairs.has(idx))return true;}return false;}
-renderUpcomingTrainings=function(){if(!ui.upcomingTrainingList)return;ui.upcomingTrainingList.innerHTML='<div class="activity-row-copy" style="padding:10px 12px;color:var(--muted)">Sin entrenamientos planificados</div>';};
 
 atlasDomReadyInitializers.push(()=>{atlasK25EnsureAdvisoryBox();});
 
@@ -12866,7 +12914,7 @@ registerAtlasDiagnostic("h75",Object.freeze({version:ATLAS_H75.version,source:AT
 
 
 /* ===== ɅTLɅS 2.0-H7.6 · Garmin-native truth layer ===== */
-const ATLAS_H76=Object.freeze({version:"H8.5",source:"garmin_connect_direct",garminNativeState:true,completeWellnessBackfill:true,truthFirstActivityDetail:true,loadModel:"acute_chronic_tunnel",remoteTrainingWrites:true});
+const ATLAS_H76=Object.freeze({version:"H8.6",source:"garmin_connect_direct",garminNativeState:true,completeWellnessBackfill:true,truthFirstActivityDetail:true,loadModel:"acute_chronic_tunnel",remoteTrainingWrites:false});
 
 /* ---------- Estado ATLAS: Garmin-native, comparable at a glance ---------- */
 function atlasH76FactorTone(score){const n=Number(score);if(!Number.isFinite(n))return"gray";if(n>=90)return"purple";if(n>=75)return"blue";if(n>=50)return"green";if(n>=25)return"orange";return"red";}
@@ -12929,10 +12977,10 @@ activityStreamSeries=function(key){const time=streamValues(currentActivityStream
 
 
 
-registerAtlasDiagnostic("h76",Object.freeze({version:ATLAS_H76.version,source:ATLAS_H76.source,loadModel:ATLAS_H76.loadModel,truthFirstActivityDetail:true,remoteTrainingWrites:true,remoteWriteMode:"manual_only"}));
-const ATLAS_H79=Object.freeze({version:"H8.5",canonicalActivityMeta:true,canonicalStateFactors:true,canonicalPaces:true});
+registerAtlasDiagnostic("h76",Object.freeze({version:ATLAS_H76.version,source:ATLAS_H76.source,loadModel:ATLAS_H76.loadModel,truthFirstActivityDetail:true,remoteTrainingWrites:false,remoteWriteMode:"disabled"}));
+const ATLAS_H79=Object.freeze({version:"H8.6",canonicalActivityMeta:true,canonicalStateFactors:true,canonicalPaces:true});
 registerAtlasDiagnostic("h79",ATLAS_H79);
-registerAtlasDiagnostic("h711",Object.freeze({version:"H8.5",shoesSource:"garmin_connect_direct",shoeLimits:"garmin_only",shoeLifecycle:"active_retired",legacyShoePrefs:false}));
+registerAtlasDiagnostic("h711",Object.freeze({version:"H8.6",shoesSource:"garmin_connect_direct",shoeLimits:"garmin_only",shoeLifecycle:"active_retired",legacyShoePrefs:false}));
 atlasDomReadyInitializers.push(()=>{try{localStorage.removeItem("atlas:profile-preferences:v1");for(let i=localStorage.length-1;i>=0;i--){const key=localStorage.key(i);if(key&&key.startsWith("atlas:shoe-max-km:"))localStorage.removeItem(key);}}catch{}});
 
 

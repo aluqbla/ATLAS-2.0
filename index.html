@@ -1181,7 +1181,7 @@ const AtlasHrv=(()=>{
 /* ===== ɅTLɅS v1.6.33 · K2.3 canonical Plan / Publication / Sync bindings =====
    Historical public overrides removed where the final implementation was self-contained.
    Golden K2.1 contracts remain the behavioral authority. */
-const APP_VERSION="2.0-H11.1",SCHEMA_VERSION=11,DB_NAME="atlas2",DB_VERSION=4;
+const APP_VERSION="2.0-H11.2",SCHEMA_VERSION=11,DB_NAME="atlas2",DB_VERSION=4;
 const ATLAS_RUNTIME=Object.freeze({appVersion:APP_VERSION,schemaVersion:SCHEMA_VERSION,dbName:DB_NAME,dbVersion:DB_VERSION,contractVersion:1});
 const atlasDiagnosticsRegistry=Object.create(null);
 function registerAtlasDiagnostic(name,value){if(!name)return value;atlasDiagnosticsRegistry[String(name)]=value;return value;}
@@ -1648,6 +1648,10 @@ async function init(){
     loadSettingsIntoForm().catch(error=>recordRuntimeAudit("settings-load",error).catch(()=>{})),
     loadTrainingPlans().catch(error=>recordRuntimeAudit("training-plans-load",error).catch(()=>{}) )
   ]);
+  /* H11.2: el manifiesto de publicación debe estar hidratado antes del primer
+     render útil. Antes se intentaba desde DOMContentLoaded cuando el plan activo
+     aún no estaba cargado; por eso Plan/Hoy permanecían vacíos hasta abrir el workspace. */
+  await atlasH106LoadRemotePublication(activeTrainingPlan(),{rerender:false}).catch(error=>recordRuntimeAudit("publication-startup-load",error).catch(()=>{}));
   /* K3.1: Hoy sólo necesita actividad, wellness, calendario local y VO₂ cacheado.
      No bloqueamos el primer paint con Perfil, equipamiento, bootstrap, upgrades,
      Adaptive, VO₂ histórico ni render de pestañas que el usuario todavía no ve. */
@@ -14895,7 +14899,6 @@ atlasDomReadyInitializers.push(()=>{
   atlasH106ApplyBranding();
   if(document.body)atlasH106Observer.observe(document.body,{subtree:true,childList:true,characterData:true});
   renderTrainingPlanPublication().catch(()=>{});
-  atlasH106LoadRemotePublication(activeTrainingPlan()).catch(()=>{});
 });
 
 

@@ -828,7 +828,7 @@ html{color-scheme:dark!important}#dataSystemDetail .data-detail-inner{padding-bo
 <div class="training-plan-section" data-training-plan-section="secondary"><button aria-controls="trainingPlanSectionBody-secondary" aria-expanded="false" class="training-plan-section-head" data-training-plan-section-toggle="secondary" id="trainingPlanSectionHead-secondary" type="button"><span class="training-plan-section-title">Carreras secundarias</span><span aria-hidden="true" class="training-plan-section-chevron">›</span></button><div class="training-plan-section-body hidden" data-training-plan-section-body="secondary" id="trainingPlanSectionBody-secondary"><div class="training-plan-section-actions"><button class="training-plan-edit-btn" id="trainingPlanEditIntermediateBtn" type="button">Editar</button></div><div class="training-plan-intermediate-list" id="trainingPlanIntermediate"></div></div></div>
 <div class="training-plan-section" data-training-plan-section="paces"><button aria-controls="trainingPlanSectionBody-paces" aria-expanded="false" class="training-plan-section-head" data-training-plan-section-toggle="paces" id="trainingPlanSectionHead-paces" type="button"><span class="training-plan-section-title">Ritmos</span><span aria-hidden="true" class="training-plan-section-chevron">›</span></button><div class="training-plan-section-body hidden" data-training-plan-section-body="paces" id="trainingPlanSectionBody-paces"><div class="training-plan-paces" id="trainingPlanPaces"></div></div></div>
 <div class="training-plan-section" data-training-plan-section="workouts"><button aria-controls="trainingPlanSectionBody-workouts" aria-expanded="false" class="training-plan-section-head" data-training-plan-section-toggle="workouts" id="trainingPlanSectionHead-workouts" type="button"><span class="training-plan-section-title">Entrenamientos</span><span aria-hidden="true" class="training-plan-section-chevron">›</span></button><div class="training-plan-section-body hidden" data-training-plan-section-body="workouts" id="trainingPlanSectionBody-workouts"><div class="training-plan-workouts" id="trainingPlanWorkouts"></div></div></div>
-<div class="training-plan-section" data-training-plan-section="publication"><button aria-controls="trainingPlanSectionBody-publication" aria-expanded="false" class="training-plan-section-head" data-training-plan-section-toggle="publication" id="trainingPlanSectionHead-publication" type="button"><span class="training-plan-section-title">Publicación<span class="atlas-h106-pending-dot" id="atlasH106PublicationDot" aria-hidden="true"></span></span><span aria-hidden="true" class="training-plan-section-chevron">›</span></button><div class="training-plan-section-body hidden" data-training-plan-section-body="publication" id="trainingPlanSectionBody-publication"><div class="atlas-h106-publication" id="atlasH106Publication"></div></div></div>
+
 
 <button class="metric-footer-back training-plan-workspace-bottom-back" id="trainingPlanWorkspaceBottomBack" type="button">Volver</button>
 </div>
@@ -1181,7 +1181,7 @@ const AtlasHrv=(()=>{
 /* ===== ɅTLɅS v1.6.33 · K2.3 canonical Plan / Publication / Sync bindings =====
    Historical public overrides removed where the final implementation was self-contained.
    Golden K2.1 contracts remain the behavioral authority. */
-const APP_VERSION="2.0-H11.3",SCHEMA_VERSION=11,DB_NAME="atlas2",DB_VERSION=4;
+const APP_VERSION="2.0-H11.4",SCHEMA_VERSION=11,DB_NAME="atlas2",DB_VERSION=4;
 const ATLAS_RUNTIME=Object.freeze({appVersion:APP_VERSION,schemaVersion:SCHEMA_VERSION,dbName:DB_NAME,dbVersion:DB_VERSION,contractVersion:1});
 const atlasDiagnosticsRegistry=Object.create(null);
 function registerAtlasDiagnostic(name,value){if(!name)return value;atlasDiagnosticsRegistry[String(name)]=value;return value;}
@@ -1648,10 +1648,6 @@ async function init(){
     loadSettingsIntoForm().catch(error=>recordRuntimeAudit("settings-load",error).catch(()=>{})),
     loadTrainingPlans().catch(error=>recordRuntimeAudit("training-plans-load",error).catch(()=>{}) )
   ]);
-  /* H11.2: el manifiesto de publicación debe estar hidratado antes del primer
-     render útil. Antes se intentaba desde DOMContentLoaded cuando el plan activo
-     aún no estaba cargado; por eso Plan/Hoy permanecían vacíos hasta abrir el workspace. */
-  await atlasH106LoadRemotePublication(activeTrainingPlan(),{rerender:false}).catch(error=>recordRuntimeAudit("publication-startup-load",error).catch(()=>{}));
   /* K3.1: Hoy sólo necesita actividad, wellness, calendario local y VO₂ cacheado.
      No bloqueamos el primer paint con Perfil, equipamiento, bootstrap, upgrades,
      Adaptive, VO₂ histórico ni render de pestañas que el usuario todavía no ve. */
@@ -6677,37 +6673,49 @@ deleteActiveTrainingPlan=atlasV095DeletePlanEverywhere;
 /* ---------- TÍTULOS: ajuste al ancho real en Hoy, Actividades y Plan ---------- */
 function atlasV095FitTitle(el){
   if(!el)return;
-  const planRow=el.closest(".plan-calendar-activity,.atlas-h106-planned,.plan-session-row");
+  const planRow=el.closest(".plan-calendar-activity,.atlas-h114-planned,.plan-session-row");
   const titleWrap=el.closest(".activity-row-title");
   const hasComplete=!!planRow?.querySelector(".atlas-plan-complete-mark");
+
   if(titleWrap&&planRow)titleWrap.style.setProperty("padding-right",hasComplete?"25px":"0px","important");
 
   el.style.setProperty("white-space","nowrap","important");
   el.style.setProperty("text-overflow","clip","important");
   el.style.setProperty("overflow","hidden","important");
-  el.style.setProperty("letter-spacing","0px","important");
   el.style.removeProperty("transform");
+  el.style.removeProperty("font-size");
+  el.style.removeProperty("letter-spacing");
 
-  /* H11.3: en el calendario semanal nunca agrandamos el título por encima
-     de su tamaño de diseño; sólo lo reducimos hasta que quepa en una línea. */
-  const max=planRow?12.2:18,min=planRow?6.6:7.2;
-  let lo=min,hi=max,best=min;
+  /* H11.4: conserva siempre el tamaño normal del diseño. Sólo si el texto
+     desborda se reduce hasta que cabe completo en una única línea. */
+  if(planRow){
+    const natural=parseFloat(getComputedStyle(el).fontSize)||12.2;
+    if(el.scrollWidth<=el.clientWidth+.5)return;
+    const min=7.2;let lo=min,hi=natural,best=min;
+    const set=s=>el.style.setProperty("font-size",`${s.toFixed(2)}px`,"important");
+    for(let i=0;i<12;i++){
+      const mid=(lo+hi)/2;set(mid);
+      if(el.scrollWidth<=el.clientWidth+.5){best=mid;lo=mid;}else hi=mid;
+    }
+    set(best);
+    if(el.scrollWidth>el.clientWidth+.5){
+      for(const spacing of[-.1,-.2,-.3,-.4,-.5,-.6,-.7]){
+        el.style.setProperty("letter-spacing",`${spacing}px`,"important");
+        if(el.scrollWidth<=el.clientWidth+.5)break;
+      }
+    }
+    return;
+  }
+
+  const max=18,min=7.2;let lo=min,hi=max,best=min;
   const set=s=>el.style.setProperty("font-size",`${s.toFixed(2)}px`,"important");
   set(max);
   if(el.scrollWidth<=el.clientWidth+.5)return;
-
   for(let i=0;i<12;i++){
     const mid=(lo+hi)/2;set(mid);
     if(el.scrollWidth<=el.clientWidth+.5){best=mid;lo=mid;}else hi=mid;
   }
   set(best);
-
-  if(el.scrollWidth>el.clientWidth+.5){
-    for(const spacing of[-.1,-.2,-.3,-.4,-.5,-.6,-.7]){
-      el.style.setProperty("letter-spacing",`${spacing}px`,"important");
-      if(el.scrollWidth<=el.clientWidth+.5)break;
-    }
-  }
 }
 function fitActivityTitles(){
   document.querySelectorAll(".activity-row-title-text").forEach(atlasV095FitTitle);
@@ -14475,589 +14483,163 @@ registerAtlasDiagnostic("h811",Object.freeze({version:"H8.11",manualOddDistance:
 
 registerAtlasDiagnostic("h93",Object.freeze({version:"H9.3",lazyTabs:["assistant","data"],startupAuxReads:0,staticTabDomCache:true,healthBackfill:"idle"}));
 
-/* ===== ɅTLɅS 2.0-H10.2 · Garmin Write 2.0 — Workout Translator =====
-   New implementation. It does not reuse the H8.1–H8.4 Garmin Write pipeline and performs no remote writes.
-   Boundary: effective ATLAS session -> AtlasWorkoutWriteV1 -> validation. */
-const ATLAS_H102=Object.freeze({
-  version:"H10.2",schema:"AtlasWorkoutWriteV1",schemaVersion:1,remoteWrites:false,
-  source:"atlas_effective_session",distanceUnit:"m",durationUnit:"s",paceTransport:"m/s"
+/* ===== ATLAS 2.0-H11.4 · Final Local Plan Mode =====
+   El Training Engine y el plan continúan plenamente funcionales.
+   El plan NO se publica, consulta ni sincroniza con Worker/Garmin. */
+const ATLAS_H114=Object.freeze({
+  version:"H11.4",
+  planMode:"local_only",
+  planRemoteReads:false,
+  planRemoteWrites:false,
+  garminPlanPublication:false,
+  trainingEngine:true
 });
-const ATLAS_H102_LIMITS=Object.freeze({
-  distanceM:Object.freeze({min:10,max:200000}),durationSec:Object.freeze({min:1,max:86400}),
-  speedMps:Object.freeze({min:0.5,max:10}),repetitions:Object.freeze({min:1,max:100}),
-  steps:Object.freeze({min:1,max:250}),nameMax:120,descriptionMax:4000
-});
-function atlasH102Finite(v){if(v==null||v==="")return null;const n=Number(v);return Number.isFinite(n)?n:null;}
-function atlasH102Round(v,d=3){const n=Number(v);return Number.isFinite(n)?Number(n.toFixed(d)):null;}
-function atlasH102Text(v,max=4000){return String(v??"").replace(/[\u0000-\u001f\u007f]/g," ").replace(/\s+/g," ").trim().slice(0,max);}
-function atlasH102Date(v){const s=String(v||"").slice(0,10);if(!/^\d{4}-\d{2}-\d{2}$/.test(s))return null;const d=new Date(`${s}T00:00:00Z`);return !Number.isNaN(d.getTime())&&d.toISOString().slice(0,10)===s?s:null;}
-function atlasH102SessionKey(session){const direct=atlasH102Text(session?.id??session?.sessionId??session?.key,180);if(direct)return direct;const date=atlasH102Date(session?.date),name=atlasH102Text(session?.name??session?.family??session?.type,80);return date&&name?`${date}|${name}`:null;}
-function atlasH102WorkoutKey(plan,session){const planId=atlasH102Text(plan?.id,180),sessionKey=atlasH102SessionKey(session);return planId&&sessionKey?`ATLAS|plan:${planId}|session:${sessionKey}`:null;}
-function atlasH102IsStrength(session){const t=`${session?.type||""} ${session?.family||""} ${session?.name||""}`.toLowerCase();return /strength|fuerza|weight/.test(t);}
-function atlasH102PaceToSpeedMps(secPerKm){const sec=atlasH102Finite(secPerKm);return sec>0?atlasH102Round(1000/sec,4):null;}
-function atlasH102PaceTarget(pace){
-  if(!pace||typeof pace!=="object")return null;
-  let fast=atlasH102Finite(pace.fastSecKm),slow=atlasH102Finite(pace.slowSecKm),mid=atlasH102Finite(pace.paceSecKm);
-  if(!(fast>0)&&mid>0)fast=mid;if(!(slow>0)&&mid>0)slow=mid;
-  if(fast>0&&slow>0&&fast>slow)[fast,slow]=[slow,fast];
-  if(!(fast>0)||!(slow>0))return null;
-  return Object.freeze({type:"pace",minSpeedMps:atlasH102PaceToSpeedMps(slow),maxSpeedMps:atlasH102PaceToSpeedMps(fast),sourcePaceSecPerKm:Object.freeze({fast:Math.round(fast),slow:Math.round(slow)})});
-}
-function atlasH102Duration(type,value){const n=atlasH102Finite(value);if(!(n>0))return{durationType:"open"};return type==="distance"?{durationType:"distance",distanceM:Math.round(n)}:{durationType:"time",durationSec:Math.round(n)};}
-function atlasH102StepKind(section){return section==="warmup"?"warmup":section==="cooldown"?"cooldown":section==="recovery"?"recovery":"work";}
-function atlasH102AtomicRunStep(kind,label,{distanceM=null,durationSec=null,pace=null}={}){
-  const distance=atlasH102Finite(distanceM),seconds=atlasH102Finite(durationSec),duration=distance>0?atlasH102Duration("distance",distance):seconds>0?atlasH102Duration("time",seconds):atlasH102Duration("open",null),target=atlasH102PaceTarget(pace);
-  return Object.freeze({kind,label:atlasH102Text(label,240)||kind,...duration,target});
-}
-function atlasH102TranslateRunStep(step,index){
-  const section=String(step?.section||"main").toLowerCase(),kind=atlasH102StepKind(section),label=atlasH102Text(step?.label,240)||`Paso ${index+1}`,reps=Math.round(atlasH102Finite(step?.reps)||0),repDistance=atlasH102Finite(step?.repDistanceM),workSec=atlasH102Finite(step?.workSec),recoverySec=atlasH102Finite(step?.recoverySec),pace=step?.pace||null;
-  if(reps>1&&(repDistance>0||workSec>0)){
-    const workDurationSec=workSec>0&&!repDistance?Math.max(1,Math.round(workSec/reps)):null;
-    const work=atlasH102AtomicRunStep("work",label,{distanceM:repDistance>0?repDistance:null,durationSec:workDurationSec,pace});
-    const children=[work];if(recoverySec>0)children.push(atlasH102AtomicRunStep("recovery",atlasH102Text(step?.recoveryMode,120)||"Recuperación",{durationSec:recoverySec}));
-    return Object.freeze({kind:"repeat",label,repetitions:reps,steps:Object.freeze(children)});
+
+const atlasH114ApiRequestBase=apiRequest;
+apiRequest=async function(path,options={}){
+  const target=String(path||"");
+  if(target.startsWith("/api/plan-state")||target.startsWith("/api/garmin/write/plan")){
+    return{ok:false,disabled:true,localOnly:true,code:"H11_4_PLAN_REMOTE_DISABLED"};
   }
-  const distance=atlasH102Finite(step?.distanceM)??atlasH102Finite(step?.workDistanceM),seconds=distance>0?null:workSec;
-  return atlasH102AtomicRunStep(kind,label,{distanceM:distance,durationSec:seconds,pace});
-}
-function atlasH102DoseNumber(v){if(v==null)return null;if(typeof v==="number")return Number.isFinite(v)?v:null;const m=String(v).replace(",",".").match(/\d+(?:\.\d+)?/);return m?Number(m[0]):null;}
-function atlasH102StrengthModel(session){if(session?.strengthModel?.blocks)return session.strengthModel;try{return typeof buildStrengthModel==="function"?buildStrengthModel(session):null;}catch{return null;}}
-function atlasH102Range(v,{min=0,max=Infinity,integer=false}={}){if(!v||typeof v!=="object")return null;let a=atlasH102Finite(v.min),b=atlasH102Finite(v.max);if(a==null&&b==null)return null;if(a==null)a=b;if(b==null)b=a;if(a>b)[a,b]=[b,a];if(integer){a=Math.round(a);b=Math.round(b);}return a>=min&&b<=max?Object.freeze({min:a,max:b}):null;}
-function atlasH102StrengthSteps(session){
-  const model=atlasH102StrengthModel(session),out=[];
-  for(const block of model?.blocks||[])for(const ex of block?.exercises||[]){
-    const sets=atlasH102Range(ex?.dose?.sets,{min:1,max:20,integer:true})||Object.freeze({min:1,max:1}),work=ex?.dose?.work||{},repetitions=atlasH102Range(work?.repetitions,{min:1,max:200,integer:true}),seconds=atlasH102Range(work?.seconds,{min:1,max:3600,integer:true}),restSec=atlasH102Range(ex?.dose?.restSec,{min:0,max:1800,integer:true}),rpe=atlasH102Range(ex?.dose?.intensity?.rpe,{min:1,max:10}),rir=atlasH102Range(ex?.dose?.intensity?.rir,{min:0,max:10}),load=atlasH102Text(ex?.dose?.load?.instruction,240),durationSec=seconds?seconds.max:null;
-    out.push(Object.freeze({kind:"strength",label:atlasH102Text(ex?.displayName??ex?.canonical?.name,120)||"Ejercicio",durationType:durationSec>0?"time":"open",...(durationSec>0?{durationSec}:{}),strength:Object.freeze({exerciseId:atlasH102Text(ex?.exerciseId,120)||null,block:atlasH102Text(block?.name,120)||null,sets,work:Object.freeze({kind:String(work?.kind|| (repetitions?"repetitions":seconds?"duration":"open")),repetitions,seconds,perSide:work?.perSide===true}),restSec,intensity:Object.freeze({rpe,rir}),loadInstruction:load||null,cue:atlasH102Text(ex?.cue,240)||null})}));
-  }
-  if(out.length)return Object.freeze(out);
-  const sec=atlasH102Finite(session?.durationSec);return Object.freeze([Object.freeze({kind:"strength",label:atlasH102Text(session?.name,120)||"Fuerza",...(sec>0?{durationType:"time",durationSec:Math.round(sec)}:{durationType:"open"}),strength:Object.freeze({exerciseId:null,block:null,sets:Object.freeze({min:1,max:1}),work:Object.freeze({kind:"open",repetitions:null,seconds:null,perSide:false}),restSec:null,intensity:Object.freeze({rpe:null,rir:null}),loadInstruction:null,cue:null})})]);
-}
-function atlasH102WorkoutDescription(session){const parts=[];const purpose=atlasH102Text(session?.purpose,700),structure=atlasH102Text(session?.structure,700);if(purpose)parts.push(purpose);if(structure&&structure!==purpose)parts.push(structure);for(const n of Array.isArray(session?.notes)?session.notes:[])if(atlasH102Text(n,400))parts.push(atlasH102Text(n,400));return parts.join(" · ").slice(0,ATLAS_H102_LIMITS.descriptionMax);}
-function atlasH102TranslateWorkout(plan,session){
-  const strength=atlasH102IsStrength(session),planId=atlasH102Text(plan?.id,180),sessionKey=atlasH102SessionKey(session),date=atlasH102Date(session?.date),distanceM=atlasH102Finite(session?.distanceM)??(atlasH102Finite(session?.distanceKm)>0?atlasH102Finite(session?.distanceKm)*1000:null),durationSec=atlasH102Finite(session?.durationSec);
-  let translatedSteps=strength?atlasH102StrengthSteps(session):(Array.isArray(session?.steps)?session.steps:[]).map(atlasH102TranslateRunStep);
-  if(!strength){
-    const hasExecutable=translatedSteps.some(s=>s?.kind==="repeat"||s?.durationType==="distance"||s?.durationType==="time");
-    if(!hasExecutable){
-      const pace=session?.targetPace&&typeof session.targetPace==="object"?session.targetPace:(atlasH102Finite(session?.targetPace?.paceSecKm)>0?session.targetPace:null);
-      translatedSteps=[atlasH102AtomicRunStep("work",atlasH102Text(session?.structure??session?.name,240)||"Bloque principal",{distanceM:distanceM>0?distanceM:null,durationSec:distanceM>0?null:(durationSec>0?durationSec:null),pace})];
-    }
-  }
-  const steps=Object.freeze(translatedSteps);
-  const contract=Object.freeze({
-    schema:ATLAS_H102.schema,schemaVersion:ATLAS_H102.schemaVersion,
-    identity:Object.freeze({planId:planId||null,sessionKey:sessionKey||null,workoutKey:atlasH102WorkoutKey(plan,session)}),
-    workout:Object.freeze({sport:strength?"STRENGTH":"RUNNING",name:atlasH102Text(session?.name??session?.family??session?.type,ATLAS_H102_LIMITS.nameMax)||"Entrenamiento",description:atlasH102WorkoutDescription(session),date,estimatedDurationSec:durationSec>0?Math.round(durationSec):null,estimatedDistanceM:!strength&&distanceM>0?Math.round(distanceM):null,steps}),
-    metadata:Object.freeze({schemaVersion:ATLAS_H102.schemaVersion,source:"ATLAS",translatorVersion:ATLAS_H102.version,remoteWriteAllowed:false})
-  });
-  return Object.freeze({contract,validation:atlasH102ValidateContract(contract)});
-}
-function atlasH102ValidateContract(contract){
-  const errors=[],warnings=[],limits=ATLAS_H102_LIMITS,add=(code,path,message)=>errors.push(Object.freeze({code,path,message}));
-  if(contract?.schema!==ATLAS_H102.schema)add("SCHEMA","schema","Schema H10 no válido.");if(Number(contract?.schemaVersion)!==1)add("SCHEMA_VERSION","schemaVersion","Versión de schema no válida.");
-  for(const k of["planId","sessionKey","workoutKey"])if(!atlasH102Text(contract?.identity?.[k],220))add("IDENTITY",`identity.${k}`,`${k} es obligatorio.`);
-  const w=contract?.workout||{};if(!["RUNNING","STRENGTH"].includes(w.sport))add("SPORT","workout.sport","Deporte no soportado.");if(!atlasH102Text(w.name,limits.nameMax))add("NAME","workout.name","Nombre vacío o inválido.");if(!atlasH102Date(w.date))add("DATE","workout.date","Fecha inválida.");
-  const totalDist=atlasH102Finite(w.estimatedDistanceM),totalSec=atlasH102Finite(w.estimatedDurationSec);if(totalDist!=null&&(totalDist<limits.distanceM.min||totalDist>limits.distanceM.max))add("TOTAL_DISTANCE","workout.estimatedDistanceM","Distancia total fuera de límites.");if(totalSec!=null&&(totalSec<limits.durationSec.min||totalSec>limits.durationSec.max))add("TOTAL_DURATION","workout.estimatedDurationSec","Duración total fuera de límites.");
-  const steps=Array.isArray(w.steps)?w.steps:[];if(steps.length<limits.steps.min||steps.length>limits.steps.max)add("STEP_COUNT","workout.steps","Número de pasos fuera de límites.");
-  const validateStep=(s,path,depth=0)=>{if(depth>3){add("STEP_DEPTH",path,"Anidación excesiva.");return;}if(!["warmup","work","recovery","cooldown","repeat","strength"].includes(s?.kind))add("STEP_KIND",`${path}.kind`,`Tipo de paso no válido.`);if(s?.kind==="repeat"){const r=atlasH102Finite(s?.repetitions);if(!(r>=limits.repetitions.min&&r<=limits.repetitions.max))add("REPETITIONS",`${path}.repetitions`,`Repeticiones fuera de límites.`);const children=Array.isArray(s?.steps)?s.steps:[];if(!children.length)add("REPEAT_EMPTY",`${path}.steps`,`Bloque repetido vacío.`);children.forEach((x,i)=>validateStep(x,`${path}.steps[${i}]`,depth+1));return;}if(!["distance","time","open"].includes(s?.durationType))add("DURATION_TYPE",`${path}.durationType`,`Tipo de duración inválido.`);if(s?.durationType==="distance"){const n=atlasH102Finite(s?.distanceM);if(!(n>=limits.distanceM.min&&n<=limits.distanceM.max))add("DISTANCE",`${path}.distanceM`,`Distancia de paso fuera de límites.`);}if(s?.durationType==="time"){const n=atlasH102Finite(s?.durationSec);if(!(n>=limits.durationSec.min&&n<=limits.durationSec.max))add("DURATION",`${path}.durationSec`,`Duración de paso fuera de límites.`);}if(s?.target){const lo=atlasH102Finite(s.target.minSpeedMps),hi=atlasH102Finite(s.target.maxSpeedMps);if(s.target.type!=="pace"||!(lo>=limits.speedMps.min&&hi<=limits.speedMps.max&&lo<=hi))add("PACE_TARGET",`${path}.target`,`Objetivo de ritmo/velocidad absurdo o invertido.`);}if(s?.kind==="strength"){const rangeOk=(r,min,max)=>!r||(atlasH102Finite(r.min)>=min&&atlasH102Finite(r.max)>=atlasH102Finite(r.min)&&atlasH102Finite(r.max)<=max),sets=s?.strength?.sets,reps=s?.strength?.work?.repetitions,seconds=s?.strength?.work?.seconds,rest=s?.strength?.restSec,rpe=s?.strength?.intensity?.rpe,rir=s?.strength?.intensity?.rir;if(!rangeOk(sets,1,20))add("STRENGTH_SETS",`${path}.strength.sets`,`Series de fuerza fuera de límites.`);if(!rangeOk(reps,1,200))add("STRENGTH_REPS",`${path}.strength.work.repetitions`,`Repeticiones de fuerza fuera de límites.`);if(!rangeOk(seconds,1,3600))add("STRENGTH_WORK_TIME",`${path}.strength.work.seconds`,`Tiempo de trabajo de fuerza fuera de límites.`);if(!rangeOk(rest,0,1800))add("STRENGTH_REST",`${path}.strength.restSec`,`Descanso de fuerza fuera de límites.`);if(!rangeOk(rpe,1,10))add("STRENGTH_RPE",`${path}.strength.intensity.rpe`,`RPE fuera de límites.`);if(!rangeOk(rir,0,10))add("STRENGTH_RIR",`${path}.strength.intensity.rir`,`RIR fuera de límites.`);}};
-  steps.forEach((s,i)=>validateStep(s,`workout.steps[${i}]`));if(w.sport==="RUNNING"&&!steps.some(s=>s.kind!=="strength"))add("RUN_STEPS","workout.steps","Carrera sin pasos ejecutables.");if(w.sport==="STRENGTH"&&!steps.some(s=>s.kind==="strength"))add("STRENGTH_STEPS","workout.steps","Fuerza sin ejercicios ejecutables.");if(atlasH102Text(w.description,5000).length>limits.descriptionMax)add("DESCRIPTION","workout.description","Descripción demasiado larga.");
-  return Object.freeze({ok:errors.length===0,errors:Object.freeze(errors),warnings:Object.freeze(warnings),checkedAt:new Date().toISOString(),remoteWriteAllowed:false});
-}
-function atlasH102Audit(){
-  const plan={id:"h102-audit"},easy={fastSecKm:330,slowSecKm:360},threshold={fastSecKm:240,slowSecKm:250};
-  const samples=[
-    {id:"continuous",date:"2026-10-21",name:"Fácil",distanceM:8000,durationSec:2760,steps:[{section:"main",label:"8 km Fácil",distanceM:8000,pace:easy}]},
-    {id:"intervals",date:"2026-10-22",name:"Umbral",distanceM:9000,durationSec:3300,steps:[{section:"warmup",label:"WU",distanceM:2000,pace:easy},{section:"main",label:"5 x 1 km",reps:5,repDistanceM:1000,workDistanceM:5000,pace:threshold,recoverySec:120,recoveryMode:"trote"},{section:"cooldown",label:"CD",distanceM:2000,pace:easy}]},
-    {id:"activation",date:"2026-10-23",name:"Activación",distanceM:4000,durationSec:1800,steps:[{section:"warmup",label:"4 km Fácil",distanceM:4000,pace:easy},{section:"main",label:"4 x 20 s",reps:4,workSec:80,recoverySec:60},{section:"cooldown",label:"Movilidad"}]}
-  ];
-  const translated=samples.map(s=>atlasH102TranslateWorkout(plan,s)),errors=[];translated.forEach((r,i)=>{if(!r.validation.ok)errors.push(`sample-${i+1}:${r.validation.errors.map(e=>e.code).join(",")}`);});
-  const pace=atlasH102PaceTarget({fastSecKm:240,slowSecKm:300});if(Math.abs(pace.minSpeedMps-3.3333)>.001||Math.abs(pace.maxSpeedMps-4.1667)>.001)errors.push("pace-conversion");
-  const bad=atlasH102ValidateContract({...translated[0].contract,workout:{...translated[0].contract.workout,steps:[{kind:"work",label:"bad",durationType:"distance",distanceM:-1,target:{type:"pace",minSpeedMps:20,maxSpeedMps:30}}]}});if(bad.ok)errors.push("absurd-value-gate");
-  return Object.freeze({ok:errors.length===0,errors:Object.freeze(errors),sampleCount:translated.length,paceProbe:pace,negativeGatePassed:!bad.ok,remoteWrites:false});
-}
-const ATLAS_H102_AUDIT=atlasH102Audit();
-registerAtlasDiagnostic("garminWriteH102",Object.freeze({version:ATLAS_H102.version,schema:ATLAS_H102.schema,remoteWrites:false,limits:ATLAS_H102_LIMITS,audit:ATLAS_H102_AUDIT,translate:(plan,session)=>atlasH102TranslateWorkout(plan,session)}));
+  return atlasH114ApiRequestBase(path,options);
+};
 
 
-/* ===== ɅTLɅS 2.0-H10.6 · Global Plan Publication =====
-   Draft edits stay in ATLAS/cloud. Garmin changes happen only after explicit global publication.
-   H10.7 will add global diff/update. */
-const ATLAS_H106=Object.freeze({
-  version:"H10.6",mode:"global_manual_plan_publication",firstPublish:true,
-  updatePlan:false,reconciliation:false,restDaysRemote:false,
-  garminBrandAsset:"https://static.garmincdn.com/com.garmin.connect/content/images/developer/gc-app-tile/mdpi/gc-app-tile_@120.png"
-});
-let atlasH106Busy=false;
-
-(function atlasH106InstallStyle(){
-  if($("atlas-h106-style"))return;
-  const s=document.createElement("style");s.id="atlas-h106-style";
+(function atlasH114InstallStyle(){
+  const s=document.createElement("style");
+  s.id="atlas-h114-local-plan-style";
   s.textContent=`
-    .atlas-h106-pending-dot{display:inline-block;width:7px;height:7px;margin-left:7px;border-radius:50%;background:#ff9f0a;vertical-align:1px;opacity:0;transform:scale(.75);transition:.18s}
-    .atlas-h106-pending-dot.active{opacity:1;transform:scale(1)}
-    .atlas-h106-publication{padding:2px 0 6px}
-    .atlas-h106-brand{display:flex;align-items:center;gap:10px;margin:2px 0 13px}
-    .atlas-h106-brand img{width:28px;height:28px;border-radius:7px;display:block;object-fit:contain}
-    .atlas-h106-brand-name{font-size:15px;font-weight:820;letter-spacing:-.02em;color:#f5f7f9}
-    .atlas-h106-brand-sub{margin-top:1px;font-size:10.5px;color:var(--muted2);font-weight:650}
-    .atlas-h106-state{padding:11px 12px;border-radius:14px;background:rgba(255,255,255,.045);border:1px solid rgba(255,255,255,.075)}
-    .atlas-h106-state-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
-    .atlas-h106-state-title{font-size:12.5px;font-weight:800;color:#f4f6f8}
-    .atlas-h106-badge{font-size:9.5px;font-weight:820;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.07);color:#aeb7bf;white-space:nowrap}
-    .atlas-h106-badge.published{background:rgba(48,209,88,.11);color:#30d158}.atlas-h106-badge.pending{background:rgba(255,159,10,.11);color:#ffb340}.atlas-h106-badge.error{background:rgba(255,69,58,.11);color:#ff453a}
-    .atlas-h106-copy{margin-top:6px;font-size:11px;line-height:1.45;color:#aeb7bf}
-    .atlas-h106-meta{margin-top:8px;font-size:10.5px;color:#7f8992;font-variant-numeric:tabular-nums}
-    .atlas-h106-actions{display:flex;flex-direction:column;gap:8px;margin-top:12px}
-    .atlas-h106-primary{min-height:44px;border:0;border-radius:14px;background:#0a84ff;color:#fff;font-weight:800;font-size:12px}
-    .atlas-h106-primary:disabled{opacity:.42}
-    .atlas-h106-progress{margin-top:10px;font-size:10.5px;line-height:1.4;color:#64b5ff}
-    .atlas-h106-garmin-source{display:inline-flex!important;align-items:center;gap:6px}
-    .atlas-h106-garmin-source::before{content:"";width:15px;height:15px;flex:0 0 15px;background:url("https://static.garmincdn.com/com.garmin.connect/content/images/developer/gc-app-tile/mdpi/gc-app-tile_@120.png") center/contain no-repeat;border-radius:4px}
-    .atlas-h106-planned{position:relative;width:100%;border:0;background:transparent;color:inherit;text-align:left;padding:7px 0;display:flex;flex-direction:column;gap:5px;min-width:0}
-    .atlas-h106-planned+.plan-calendar-activity,.plan-calendar-activity+.atlas-h106-planned,.atlas-h106-planned+.atlas-h106-planned{border-top:2px solid var(--line)}
-    .atlas-h106-planned .activity-row-title{display:flex;align-items:center;gap:6px;min-width:0;margin:0!important}
-    .atlas-h106-planned .activity-row-title-text{min-width:0;flex:1 1 auto;font-size:12.2px;line-height:1.12;font-weight:770;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .atlas-h106-planned .activity-row-main{display:flex;align-items:center;gap:11px;min-width:0;margin:0!important;color:var(--muted2);font-variant-numeric:tabular-nums}
-    .atlas-h106-rest{padding:6px 0!important}.atlas-h106-rest .activity-row-title-text{color:#7f8b94!important}.atlas-h106-rest .activity-row-title-emoji{opacity:.62}.atlas-h106-danger{min-height:42px;border:0;border-radius:13px;background:rgba(244,33,46,.10);color:var(--red);font-size:12px;font-weight:800}.atlas-h106-secondary{min-height:42px;border:0;border-radius:13px;background:rgba(255,255,255,.055);color:#d4d9de;font-size:12px;font-weight:790}.atlas-h107-diff{margin-top:10px;padding:10px 11px;border-radius:13px;background:rgba(255,255,255,.035);border:1px solid rgba(255,255,255,.065)}.atlas-h107-diff-head{font-size:11px;font-weight:820;color:#f4f6f8;margin-bottom:7px}.atlas-h107-counts{display:flex;flex-wrap:wrap;gap:6px}.atlas-h107-pill{font-size:9.5px;font-weight:800;padding:4px 7px;border-radius:999px;background:rgba(255,255,255,.065);color:#b9c2ca}.atlas-h107-pill.create{color:#30d158}.atlas-h107-pill.update,.atlas-h107-pill.move{color:#ffb340}.atlas-h107-pill.delete{color:#ff453a}.atlas-h107-list{margin-top:7px;font-size:10px;line-height:1.45;color:#8e99a3}.atlas-h107-list div+div{margin-top:2px}
+    .atlas-h114-planned{appearance:none;position:relative;width:100%;border:0;background:transparent;color:inherit;text-align:left;padding:7px 0;display:flex;flex-direction:column;gap:5px;min-width:0}
+    .atlas-h114-planned+.atlas-h114-planned::before{content:"";position:absolute;left:8px;right:8px;top:0;height:2px;background:var(--line)}
+    .atlas-h114-planned .activity-row-title{display:flex;align-items:center;gap:6px;min-width:0;margin:0!important}
+    .atlas-h114-planned .activity-row-title-text{min-width:0;flex:1 1 auto;font-size:12.2px;line-height:1.12;font-weight:770;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:clip}
+    .atlas-h114-planned .activity-row-main{display:flex;align-items:center;gap:11px;min-width:0;margin:0!important;color:var(--muted2);font-variant-numeric:tabular-nums}
+    .atlas-h114-rest{padding:6px 0!important}
+    .atlas-h114-rest .activity-row-title-text{color:#7f8b94!important}
+    .atlas-h114-rest .activity-row-title-emoji{opacity:.62}
   `;
   document.head.appendChild(s);
 })();
 
-function atlasH106Entries(plan){
-  const today=fmtDate(new Date()),schedule=buildEffectivePlan(plan),contracts=[],snapshot=[],rests=[];
+function atlasH114Schedule(plan){return plan?buildEffectivePlan(plan):null}
+function atlasH114Entries(plan){
+  const schedule=atlasH114Schedule(plan),sessions=[],rests=[];
   for(const day of schedule?.days||[]){
-    const date=String(day?.date||"");
-    if(!date||date<today||date>String(plan?.raceDate||"9999-12-31"))continue;
-    if(day?.rest===true)rests.push(date);
-    for(const session of day?.sessions||[]){
-      if(!session?.prescribed)continue;
-      const translated=atlasH102TranslateWorkout(plan,session);
-      contracts.push(translated.contract);
-      snapshot.push({
-        sessionKey:translated.contract.identity.sessionKey,
-        workoutKey:translated.contract.identity.workoutKey,
-        date:translated.contract.workout.date,
-        name:translated.contract.workout.name,
-        sport:translated.contract.workout.sport,
-        distanceM:translated.contract.workout.estimatedDistanceM||null,
-        durationSec:translated.contract.workout.estimatedDurationSec||null,
-        pace:trainingPresentationMetaParts(session).find(x=>/min\/km$/i.test(String(x)))||null,
-        structure:String(session?.structure||""),
-        family:String(session?.family||"")
+    const date=String(day?.date||"");if(!date)continue;
+    const rows=Array.isArray(day?.sessions)?day.sessions.filter(Boolean):[];
+    if(!rows.length&&day?.rest===true)rests.push(date);
+    for(const session of rows){
+      sessions.push({
+        sessionKey:String(atlasV0814SessionKey(session)||session.id||""),
+        id:String(session.id||""),
+        date,
+        name:trainingPresentationDisplayName(session),
+        family:String(session.family||""),
+        sport:(session.family==="Fuerza"||session.type==="Strength")?"STRENGTH":"RUNNING",
+        distanceM:Number(session.distanceM)||null,
+        durationSec:Number(session.durationSec)||null,
+        meta:trainingPresentationMetaParts(session),
+        icon:typeof atlasV086PlannedIcon==="function"?atlasV086PlannedIcon(session):((session.family==="Fuerza"||session.type==="Strength")?"💪🏼":"🏃")
       });
     }
   }
-  return{contracts,snapshot,rests:[...new Set(rests)].sort()};
+  return{sessions,rests:[...new Set(rests)]};
 }
-function atlasH106Digest(entries){
-  return trainingEngineDigest(entries.contracts.map(c=>({identity:c.identity,workout:c.workout})));
-}
-function atlasH106State(plan){
-  if(!plan)return{kind:"error",label:"No disponible",copy:"No hay un plan activo."};
-  const entries=atlasH106Entries(plan),invalid=entries.contracts.map((c,i)=>({i,c,v:atlasH102ValidateContract(c)})).find(x=>!x.v.ok);
-  if(invalid){
-    const first=invalid.v.errors?.[0]||{},snap=entries.snapshot?.[invalid.i]||{},name=snap.name||invalid.c?.workout?.name||`Entrenamiento ${invalid.i+1}`,date=snap.date||invalid.c?.workout?.date||"";
-    return{kind:"error",label:"Revisar",copy:`${name}${date?` · ${atlasDateLabel(date)}`:""}: ${first.message||"No supera la validación de publicación."}${first.path?` (${first.path})`:""}`,entries,invalid};
-  }
-  const pub=plan.publication||{},published=["H10.6.4","H10.6.5","H10.6.6","H10.7"].includes(pub.h10Version)&&pub.status==="published",digest=atlasH106Digest(entries),pending=published&&digest!==pub.h106ManifestDigest;
-  if(!published)return{kind:"ready",label:"Sin publicar",copy:`${entries.contracts.length} entrenamientos futuros preparados para Garmin Connect™. Los descansos se publicarán únicamente en las vistas de ATLAS.`,entries,digest,pending:false};
-  if(pending)return{kind:"pending",label:"Cambios pendientes",copy:"El borrador de ATLAS ha cambiado. Garmin Connect™ conserva la última versión publicada hasta que confirmes la actualización global.",entries,digest,pending:true};
-  return{kind:"published",label:"Publicado",copy:"El plan publicado coincide con el borrador actual de ATLAS.",entries,digest,pending:false};
-}
-function atlasH106DateTime(value){
-  if(!value)return"—";
-  const d=new Date(value);if(Number.isNaN(d.getTime()))return"—";
-  return new Intl.DateTimeFormat("es-ES",{day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"}).format(d);
-}
-function atlasH106BrandMarkup(){
-  return`<div class="atlas-h106-brand"><img src="${ATLAS_H106.garminBrandAsset}" alt="Garmin Connect"><div><div class="atlas-h106-brand-name">Garmin Connect™</div><div class="atlas-h106-brand-sub">Publicación manual del plan</div></div></div>`;
-}
-function atlasH106ApplyBranding(){
-  const nodes=qsa("span,div,strong,button",document);
-  for(const el of nodes){
-    if(el.closest(".atlas-h106-brand")||el.children.length)continue;
-    const t=String(el.textContent||"").trim();
-    const branded=/^(?:Garmin(?: Connect)?(?:™)?(?: conectado)?(?: · copia local disponible)?|Configura Garmin Connect)$/i.test(t);
-    el.classList.toggle("atlas-h106-garmin-source",branded);
-  }
-}
-async function renderTrainingPlanPublication(){
-  const root=$("atlasH106Publication"),plan=activeTrainingPlan(),dot=$("atlasH106PublicationDot");
-  if(!root||!plan)return;
-  const state=atlasH106State(plan),pub=plan.publication||{};
-  dot?.classList.toggle("active",state.pending===true);
-  const first=state.kind==="ready",pending=state.kind==="pending",busy=atlasH106Busy;
-  const last=pub.lastPublishAt?`Última publicación · ${atlasH106DateTime(pub.lastPublishAt)}`:"";
-  const publishedNow=!!atlasH106RuntimePublication(plan)||state.kind==="published"||state.kind==="pending";
-  root.innerHTML=`${atlasH106BrandMarkup()}<div class="atlas-h106-state"><div class="atlas-h106-state-top"><div class="atlas-h106-state-title">${state.kind==="error"?"Plan pendiente de revisión":first?"Plan preparado":pending?"Actualización necesaria":"Plan sincronizado"}</div><span class="atlas-h106-badge ${state.kind}">${esc(state.label)}</span></div><div class="atlas-h106-copy">${esc(state.copy)}</div>${last?`<div class="atlas-h106-meta">${esc(last)}${pub.h106PublishedCount!=null?` · ${Number(pub.h106PublishedCount)} entrenamientos`:""}</div>`:""}</div><div class="atlas-h106-actions">${first?'<button type="button" class="atlas-h106-primary" id="atlasH106PublishBtn">Publicar en Garmin Connect</button>':pending?'<button type="button" class="atlas-h106-primary" id="atlasH106UpdateBtn">Actualizar en Garmin Connect</button>':""}${publishedNow?'<button type="button" class="atlas-h106-danger" id="atlasH106UnpublishBtn">Eliminar de Garmin Connect</button>':""}<button type="button" class="atlas-h106-secondary" id="atlasH106DeletePlanBtn">Eliminar plan de ATLAS</button></div><div class="atlas-h106-progress ${busy?"":"hidden"}" id="atlasH106Progress">${busy?"Preparando publicación…":""}</div>`;
-  const publish=$("atlasH106PublishBtn"),update=$("atlasH106UpdateBtn"),unpublish=$("atlasH106UnpublishBtn"),deletePlan=$("atlasH106DeletePlanBtn");
-  if(publish){publish.disabled=busy||state.kind==="error"||!state.entries.contracts.length;on(publish,"click",atlasH106PublishPlan);}
-  if(update){update.disabled=busy;on(update,"click",()=>toast("Los cambios están detectados y Garmin sigue intacto. H10.7 habilitará la actualización global con vista previa del diff.",true));}
-  if(unpublish){unpublish.disabled=busy;on(unpublish,"click",atlasH106UnpublishPlan);}
-  if(deletePlan){deletePlan.disabled=busy;on(deletePlan,"click",deleteActiveTrainingPlan);}
-  atlasH106ApplyBranding();
-}
-async function atlasH106PublishPlan(){
-  if(atlasH106Busy)return;
-  const plan=activeTrainingPlan(),state=atlasH106State(plan);
-  if(!plan||state.kind!=="ready")return;
-  if(!state.entries.contracts.length){toast("⚠️ No hay entrenamientos futuros para publicar.",true);return;}
-  const runCount=state.entries.contracts.filter(c=>c.workout.sport==="RUNNING").length,strengthCount=state.entries.contracts.filter(c=>c.workout.sport==="STRENGTH").length;
-  if(!confirm(`¿Publicar el plan completo en Garmin Connect?\n\n${state.entries.contracts.length} entrenamientos · ${runCount} carrera · ${strengthCount} fuerza\n\nLos ${state.entries.rests.length} días de descanso aparecerán en ATLAS, pero no se crearán como workouts en Garmin.`))return;
-  atlasH106Busy=true;await renderTrainingPlanPublication();
-  const contracts=state.entries.contracts,batchSize=8,allResults=[];
-  try{
-    for(let start=0;start<contracts.length;start+=batchSize){
-      const batch=contracts.slice(start,start+batchSize),progress=$("atlasH106Progress");
-      if(progress){progress.classList.remove("hidden");progress.textContent=`Publicando ${start+1}–${Math.min(start+batch.length,contracts.length)} de ${contracts.length} en Garmin Connect…`;}
-      const result=await apiRequest("/api/garmin/write/plan",{method:"POST",body:{action:"PUBLISH_PLAN_BATCH",contracts:batch},timeoutMs:90000,retries:0});
-      allResults.push(...(Array.isArray(result?.results)?result.results:[]));
-      const accepted=allResults.filter(x=>x?.accepted===true).length;
-      if(progress)progress.textContent=`Publicados ${accepted}/${contracts.length} entrenamientos…`;
-      if(Number(result?.failed)>0){
-        const first=(result.results||[]).find(x=>!x?.accepted);
-        throw new Error(`${first?.name||"Un entrenamiento"}${first?.date?` · ${atlasDateLabel(first.date)}`:""}: ${first?.error||"Garmin rechazó la publicación."}`);
-      }
-    }
-    const accepted=allResults.filter(x=>x?.accepted===true).length;
-    if(accepted!==contracts.length)throw new Error(`Publicación incompleta: ${accepted}/${contracts.length} entrenamientos aceptados.`);
-    const final=await apiRequest("/api/garmin/write/plan",{method:"POST",body:{action:"FINALIZE_PLAN",planId:String(plan.id),digest:state.digest,items:allResults},timeoutMs:30000,retries:0});
-    if(final?.status!=="published")throw new Error(`No se pudo cerrar la publicación: ${Number(final?.accepted)||0}/${contracts.length}.`);
-
-    const now=new Date().toISOString();
-    if(final?.manifest)atlasH106RemotePublication.set(String(plan.id),final.manifest);
-    plan.publication={...(plan.publication||{}),status:"published",h10Version:"H10.6.5",schema:1,dirty:false,h106ManifestDigest:state.digest,h106ServerDigest:String(final.manifestDigest||state.digest),h106Snapshot:state.entries.snapshot,h106PublishedCount:state.entries.snapshot.length,publishedRestDates:state.entries.rests,publishedAt:plan.publication?.publishedAt||now,lastPublishAt:now,updatedAt:now,lastError:null,lastErrorAt:null};
-    plan.updatedAt=now;
-    await persistTrainingPlans();
-
-    /* Render directly from ATLAS snapshot. No Garmin readback gate. */
-    atlasH106Busy=false;
-    renderPlan();
-    renderUpcomingTrainings();
-    await renderTrainingPlanPublication();
-    toast(`✅ Plan publicado · ${contracts.length}/${contracts.length} entrenamientos en Garmin Connect.`);
-  }catch(error){
-    plan.publication={...(plan.publication||{}),status:"partial",h10Version:"H10.6.4",dirty:true,lastError:error?.message||"Publicación incompleta",lastErrorAt:new Date().toISOString(),updatedAt:new Date().toISOString()};
-    await persistTrainingPlans();
-    recordRuntimeAudit("h10.6.4-plan-publication",error,{planId:plan?.id||null,accepted:allResults.filter(x=>x?.accepted===true).length,total:contracts.length}).catch(()=>{});
-    toast(`⚠️ ${error?.message||"No se pudo completar la publicación global."}`,true);
-  }finally{
-    atlasH106Busy=false;
-    await renderTrainingPlanPublication();
-  }
-}
-
-/* H10.6.5 · Published-plan view source.
-   Garmin write manifest in Worker is authoritative for whether a plan was published.
-   UI rows are rebuilt from the current effective ATLAS plan, not from a fragile local snapshot. */
-const atlasH106RemotePublication=new Map();
-function atlasH106PlanId(plan){return String(plan?.id||"")}
-function atlasH106RuntimePublication(plan){
-  const id=atlasH106PlanId(plan),remote=atlasH106RemotePublication.get(id);
-  if(remote?.status==="published")return remote;
-  const local=plan?.publication;
-  if(local?.status==="published"&&(local?.h106Snapshot?.length||local?.h106PublishedCount>0))return{
-    status:"published",
-    count:Number(local.h106PublishedCount)||local.h106Snapshot?.length||0,
-    items:(local.h106Snapshot||[]).map(x=>({sessionKey:x.sessionKey,workoutKey:x.workoutKey,date:x.date,sport:x.sport,name:x.name,pace:x.pace||null,accepted:true}))
-  };
-  return null;
-}
-function atlasH106RuntimeEntries(plan){
-  const publication=atlasH106RuntimePublication(plan);
-  if(!publication)return{snapshot:[],rests:[],publication:null};
-  const current=atlasH106Entries(plan),wantedKeys=new Set((publication.items||[]).map(x=>String(x?.sessionKey||"")).filter(Boolean));
-  let snapshot=current.snapshot;
-  if(wantedKeys.size)snapshot=current.snapshot.filter(x=>wantedKeys.has(String(x.sessionKey||"")));
-  /* A complete published manifest should expose all current published sessions.
-     If an old manifest has no session keys, the effective current plan is the safe display source. */
-  const rests=current.rests||[];
-  return{snapshot,rests,publication};
-}
-async function atlasH106LoadRemotePublication(plan=activeTrainingPlan(),{rerender=true}={}){
-  const id=atlasH106PlanId(plan);if(!id||!hasAtlasConnectionConfig())return null;
-  try{
-    const result=await apiRequest(`/api/garmin/write/plan?planId=${encodeURIComponent(id)}`,{method:"GET",timeoutMs:20000,retries:0});
-    if(result?.exists&&result?.manifest){
-      atlasH106RemotePublication.set(id,result.manifest);
-      if(rerender){
-        renderPlan();
-        renderUpcomingTrainings();
-        renderTrainingPlanPublication().catch(()=>{});
-      }
-      return result.manifest;
-    }
-  }catch(error){
-    recordRuntimeAudit("h10.6.5-load-publication",error,{planId:id}).catch(()=>{});
-  }
-  return null;
-}
-
-
-async function atlasH106UnpublishPlan(){
-  if(atlasH106Busy)return;
-  const plan=activeTrainingPlan(),runtime=atlasH106RuntimePublication(plan),items=Array.isArray(runtime?.items)?runtime.items:[];
-  if(!plan||!items.length){toast("No hay una publicación de Garmin que eliminar.");return;}
-  if(!confirm(`¿Eliminar de Garmin Connect todos los entrenamientos publicados de “${plan.name}”?\\n\\nEl plan seguirá existiendo en ATLAS. Las actividades ya realizadas no se borrarán.`))return;
-  atlasH106Busy=true;await renderTrainingPlanPublication();
-  const batchSize=8,all=[];
-  try{
-    for(let start=0;start<items.length;start+=batchSize){
-      const batch=items.slice(start,start+batchSize),progress=$("atlasH106Progress");
-      if(progress){progress.classList.remove("hidden");progress.textContent=`Eliminando ${start+1}–${Math.min(start+batch.length,items.length)} de ${items.length} en Garmin Connect…`;}
-      const result=await apiRequest("/api/garmin/write/plan",{method:"POST",body:{action:"DELETE_PLAN_BATCH",planId:String(plan.id),items:batch},timeoutMs:90000,retries:0});
-      all.push(...(result?.results||[]));
-      const deleted=all.filter(x=>x?.deleted===true).length;
-      if(progress)progress.textContent=`Eliminados ${deleted}/${items.length} entrenamientos…`;
-      if(Number(result?.failed)>0){
-        const first=(result.results||[]).find(x=>!x?.deleted);
-        throw new Error(`${first?.name||"Un entrenamiento"}: ${first?.error||"No se pudo eliminar de Garmin."}`);
-      }
-    }
-    const done=await apiRequest("/api/garmin/write/plan",{method:"POST",body:{action:"FINALIZE_UNPUBLISH",planId:String(plan.id)},timeoutMs:30000,retries:0});
-    atlasH106RemotePublication.delete(String(plan.id));
-    plan.publication={...(plan.publication||{}),status:"unpublished",h10Version:"H10.6.6",dirty:false,h106Snapshot:[],h106PublishedCount:0,publishedRestDates:[],lastPublishAt:plan.publication?.lastPublishAt||null,updatedAt:new Date().toISOString(),lastError:null};
-    plan.updatedAt=new Date().toISOString();
-    await persistTrainingPlans();
-    renderPlan();renderUpcomingTrainings();await renderTrainingPlanPublication();
-    toast(`✅ Publicación eliminada de Garmin Connect · ${all.filter(x=>x?.deleted).length}/${items.length}.`);
-  }catch(error){
-    recordRuntimeAudit("h10.6.6-unpublish-plan",error,{planId:plan?.id||null}).catch(()=>{});
-    toast(`⚠️ ${error?.message||"No se pudo eliminar toda la publicación de Garmin."}`,true);
-  }finally{atlasH106Busy=false;await renderTrainingPlanPublication();}
-}
-
-function atlasH106PublishedSessions(plan,date){
-  return atlasH106RuntimeEntries(plan).snapshot.filter(x=>String(x?.date||"")===String(date));
-}
-function atlasH106SessionMeta(x){
-  const bits=[];
-  if(Number(x?.distanceM)>0)bits.push(`${formatNatural(Number(x.distanceM)/1000,1)} km`);
-  if(Number(x?.durationSec)>0)bits.push(formatDuration(Number(x.durationSec)));
-  if(x?.pace)bits.push(String(x.pace));
-  return bits;
-}
-function atlasH106SessionIcon(x){return x?.sport==="STRENGTH"?"💪🏼":"🏃";}
-function atlasH106MatchPublishedToActivity(session,activity){
+function atlasH114ActivityMatches(session,activity){
   const kind=session?.sport==="STRENGTH"?"strength":"run";
-  if(atlasH88ActivityKind(activity)!==kind)return false;
-  if(kind==="run"&&Number(session?.distanceM)>0){
-    const ad=atlasH88ActivityDistanceM(activity),sd=Number(session.distanceM),tol=Math.max(600,sd*.18);
-    return ad>0&&Math.abs(ad-sd)<=tol;
+  if(typeof atlasH88ActivityKind==="function"&&atlasH88ActivityKind(activity)!==kind)return false;
+  if(kind==="run"&&Number(session?.distanceM)>0&&typeof atlasH88ActivityDistanceM==="function"){
+    const actual=atlasH88ActivityDistanceM(activity),planned=Number(session.distanceM),tol=Math.max(600,planned*.18);
+    return actual>0&&Math.abs(actual-planned)<=tol;
   }
   return true;
 }
-const atlasH106RenderPlanBase=renderPlan;
+
+/* Publication UI and plan cloud sync are explicitly disabled. */
+renderTrainingPlanPublication=async function(){return null};
+trainingPlanMarkPublicationDirty=function(plan){return plan||null};
+markTrainingPlansCloudDirty=async function(){return false};
+pushTrainingPlansCloudBestEffort=async function(){return false};
+scheduleTrainingPlansCloudPush=function(){return false};
+syncTrainingPlansCloud=async function(){return false};
+atlasV153FetchRemote=async function(){return null};
+persistTrainingPlans=async function(){
+  const value=trainingPlansLocalEnvelope();
+  await storePut("meta",{key:TRAINING_PLANS_META_KEY,value});
+  return value;
+};
+
+/* Deleting a plan is purely local in H11.4. */
+deleteActiveTrainingPlan=async function(){
+  const plan=activeTrainingPlan();if(!plan)return;
+  if(!confirm(`¿Eliminar “${plan.name}”?\\n\\nSe eliminará únicamente de ATLAS. Las actividades realizadas de Garmin Connect no se borrarán.`))return;
+  currentTrainingPlans=currentTrainingPlans.filter(p=>String(p?.id)!==String(plan.id));
+  currentTrainingPlanId=currentTrainingPlans[0]?.id||null;
+  await persistTrainingPlans();
+  closeTrainingPlanWorkspace();renderPlan();renderUpcomingTrainings();toast("Plan eliminado de ATLAS.");
+};
+
+/* Plan weekly calendar: real activities remain canonical; local Effective Plan is overlaid. */
+const atlasH114RenderPlanBase=renderPlan;
 renderPlan=function(){
-  atlasH106RenderPlanBase.apply(this,arguments);
-  const plan=activeTrainingPlan(),runtime=atlasH106RuntimeEntries(plan);
-  if(!plan||!runtime.publication||!ui.planDays)return;
-  const {start,startKey,endKey}=planWeekRange(),dayRows=qsa(".plan-day",ui.planDays),restSet=new Set(runtime.rests||[]);
-  const weekPublished=runtime.snapshot.filter(x=>String(x?.date||"")>=startKey&&String(x?.date||"")<=endKey);
-  const plannedKm=weekPublished.reduce((sum,x)=>sum+(x?.sport==="RUNNING"&&Number(x?.distanceM)>0?Number(x.distanceM)/1000:0),0);
+  atlasH114RenderPlanBase.apply(this,arguments);
+  const plan=activeTrainingPlan();if(!plan||!ui.planDays)return;
+  const entries=atlasH114Entries(plan),{start,startKey,endKey}=planWeekRange(),rows=qsa(".plan-day",ui.planDays),restSet=new Set(entries.rests);
+  const weekSessions=entries.sessions.filter(s=>s.date>=startKey&&s.date<=endKey);
+  const plannedKm=weekSessions.reduce((sum,s)=>sum+(s.sport==="RUNNING"&&Number(s.distanceM)>0?Number(s.distanceM)/1000:0),0);
   if(ui.planPlannedKm)ui.planPlannedKm.textContent=formatNatural(plannedKm,1);
-  if(ui.planSessions)ui.planSessions.textContent=String(weekPublished.length+(currentActivities||[]).filter(a=>{const d=activityDate(a);return d>=startKey&&d<=endKey;}).length);
-  dayRows.forEach((row,i)=>{
-    const d=new Date(start);d.setDate(start.getDate()+i);const date=planDateKey(d),copy=row.querySelector(".activity-row-copy");if(!copy)return;
-    const sessions=atlasH106PublishedSessions(plan,date),activities=(currentActivities||[]).filter(a=>activityDate(a)===date),used=new Set();
-    const planned=sessions.filter(s=>{
-      const ai=activities.findIndex((a,j)=>!used.has(j)&&atlasH106MatchPublishedToActivity(s,a));
-      if(ai>=0){used.add(ai);return false;}return true;
+  if(ui.planSessions)ui.planSessions.textContent=String(weekSessions.length+(currentActivities||[]).filter(a=>{const d=activityDate(a);return d>=startKey&&d<=endKey;}).length);
+
+  rows.forEach((row,i)=>{
+    const d=new Date(start);d.setDate(start.getDate()+i);
+    const date=planDateKey(d),copy=row.querySelector(".activity-row-copy");if(!copy)return;
+    const activities=(currentActivities||[]).filter(a=>activityDate(a)===date),used=new Set(),daySessions=entries.sessions.filter(s=>s.date===date);
+    const planned=daySessions.filter(s=>{
+      const idx=activities.findIndex((a,j)=>!used.has(j)&&atlasH114ActivityMatches(s,a));
+      if(idx>=0){used.add(idx);return false}
+      return true;
     });
-    const showRest=restSet.has(date)&&activities.length===0&&!sessions.length;
+    const showRest=restSet.has(date)&&activities.length===0&&daySessions.length===0;
     if(!planned.length&&!showRest)return;
     let list=copy.querySelector(".plan-calendar-list");
     if(!list){list=document.createElement("div");list.className="plan-calendar-list";copy.prepend(list);}
-    const prefix=[];
-    for(const s of planned){const meta=atlasH106SessionMeta(s);prefix.push(`<button class="atlas-h106-planned" type="button" data-h106-session-key="${esc(s.sessionKey)}"><div class="activity-row-title"><span class="activity-row-title-emoji">${atlasH106SessionIcon(s)}</span><span class="activity-row-title-text">${esc(s.name)}</span></div><div class="activity-row-main">${meta.length?activityStatsHtml(meta):'<span class="activity-row-stat">Planificado</span>'}</div></button>`);}
-    if(showRest)prefix.push('<div class="atlas-h106-rest training-plan-rest"><div class="activity-row-title"><span class="activity-row-title-emoji">🛏️</span><span class="activity-row-title-text">Descanso</span></div></div>');
-    list.insertAdjacentHTML("afterbegin",prefix.join(""));
+    const fragments=[];
+    for(const s of planned){
+      fragments.push(`<button class="atlas-h114-planned" type="button" data-h114-session-key="${esc(s.sessionKey)}"><div class="activity-row-title"><span class="activity-row-title-emoji">${s.icon}</span><span class="activity-row-title-text">${esc(s.name)}</span></div><div class="activity-row-main">${s.meta.length?activityStatsHtml(s.meta):'<span class="activity-row-stat">Planificado</span>'}</div></button>`);
+    }
+    if(showRest)fragments.push('<div class="atlas-h114-rest training-plan-rest"><div class="activity-row-title"><span class="activity-row-title-emoji">🛏️</span><span class="activity-row-title-text">Descanso</span></div></div>');
+    list.insertAdjacentHTML("afterbegin",fragments.join(""));
   });
-  qsa("[data-h106-session-key]",ui.planDays).forEach(btn=>on(btn,"click",()=>{const s=findEffectiveSession(btn.dataset.h106SessionKey)||trainingPresentationSessionById(btn.dataset.h106SessionKey);if(s?.id)openPrescribedPlanDetail(s.id);}));
+  qsa("[data-h114-session-key]",ui.planDays).forEach(btn=>on(btn,"click",()=>{
+    const s=findEffectiveSession(btn.dataset.h114SessionKey)||trainingPresentationSessionById(btn.dataset.h114SessionKey);
+    if(s?.id)openPrescribedPlanDetail(s.id);
+  }));
   requestAnimationFrame(()=>{fitPlanTitles();fitActivityTitles();});
 };
+
+/* Hoy reads the local Effective Plan directly; no published snapshot is needed. */
 renderUpcomingTrainings=function(){
   if(!ui.upcomingTrainingList)return;
-  const plan=activeTrainingPlan(),today=fmtDate(new Date()),runtime=atlasH106RuntimeEntries(plan),items=runtime.snapshot.filter(x=>String(x.date)>=today).sort((a,b)=>String(a.date).localeCompare(String(b.date))).slice(0,3);
-  if(!items.length){ui.upcomingTrainingList.innerHTML='<div class="activity-row-copy" style="padding:10px 12px;color:var(--muted)">Sin entrenamientos planificados</div>';return;}
-  ui.upcomingTrainingList.innerHTML=items.map(x=>{const date=compactActivityDate(x.date),meta=atlasH106SessionMeta(x);return`<button class="activity-row" type="button" data-h106-session-key="${esc(x.sessionKey)}"><div class="activity-row-date"><span class="activity-row-weekday">${date.weekday}</span><span class="activity-row-day">${date.day}</span><span class="activity-row-month">${date.month}</span></div><span class="activity-row-sep" aria-hidden="true"></span><div class="activity-row-copy"><div class="activity-row-title"><span class="activity-row-title-emoji">${atlasH106SessionIcon(x)}</span><span class="activity-row-title-text">${esc(x.name)}</span></div><div class="activity-row-main">${meta.length?activityStatsHtml(meta):'<span class="activity-row-stat">Planificado</span>'}</div></div></button>`;}).join("");
-  qsa("[data-h106-session-key]",ui.upcomingTrainingList).forEach(btn=>on(btn,"click",()=>{const s=findEffectiveSession(btn.dataset.h106SessionKey)||trainingPresentationSessionById(btn.dataset.h106SessionKey);if(s?.id)openPrescribedPlanDetail(s.id);}));
+  const plan=activeTrainingPlan(),today=fmtDate(new Date()),items=atlasH114Entries(plan).sessions
+    .filter(x=>String(x.date)>=today)
+    .sort((a,b)=>String(a.date).localeCompare(String(b.date)))
+    .slice(0,3);
+  if(!items.length){
+    ui.upcomingTrainingList.innerHTML='<div class="activity-row-copy" style="padding:10px 12px;color:var(--muted)">Sin entrenamientos planificados</div>';
+    return;
+  }
+  ui.upcomingTrainingList.innerHTML=items.map(x=>{
+    const date=compactActivityDate(x.date);
+    return`<button class="activity-row" type="button" data-h114-session-key="${esc(x.sessionKey)}"><div class="activity-row-date"><span class="activity-row-weekday">${date.weekday}</span><span class="activity-row-day">${date.day}</span><span class="activity-row-month">${date.month}</span></div><span class="activity-row-sep" aria-hidden="true"></span><div class="activity-row-copy"><div class="activity-row-title"><span class="activity-row-title-emoji">${x.icon}</span><span class="activity-row-title-text">${esc(x.name)}</span></div><div class="activity-row-main">${x.meta.length?activityStatsHtml(x.meta):'<span class="activity-row-stat">Planificado</span>'}</div></div></button>`;
+  }).join("");
+  qsa("[data-h114-session-key]",ui.upcomingTrainingList).forEach(btn=>on(btn,"click",()=>{
+    const s=findEffectiveSession(btn.dataset.h114SessionKey)||trainingPresentationSessionById(btn.dataset.h114SessionKey);
+    if(s?.id)openPrescribedPlanDetail(s.id);
+  }));
   requestAnimationFrame(fitActivityTitles);
 };
 
-const atlasH106WorkspaceBase=renderTrainingPlanWorkspace;
-renderTrainingPlanWorkspace=function(){
-  const r=atlasH106WorkspaceBase.apply(this,arguments);
-  renderTrainingPlanPublication().catch(()=>{});
-  atlasH106ApplyBranding();
-  atlasH106LoadRemotePublication(activeTrainingPlan()).catch(()=>{});
-  return r;
-};
-
-const atlasH106DirtyBase=trainingPlanMarkPublicationDirty;
-trainingPlanMarkPublicationDirty=function(plan){
-  atlasH106DirtyBase.apply(this,arguments);
-  if(["H10.6.4","H10.6.5","H10.6.6","H10.7"].includes(plan?.publication?.h10Version)&&plan.publication.status==="published")plan.publication.dirty=true;
-  if(plan===activeTrainingPlan())requestAnimationFrame(()=>renderTrainingPlanPublication().catch(()=>{}));
-};
-
-const atlasH106Observer=new MutationObserver(()=>atlasH106ApplyBranding());
-atlasDomReadyInitializers.push(()=>{
-  atlasH106ApplyBranding();
-  if(document.body)atlasH106Observer.observe(document.body,{subtree:true,childList:true,characterData:true});
-  renderTrainingPlanPublication().catch(()=>{});
-});
-
-
-
-/* ===== ɅTLɅS 2.0-H10.7 · Publication Diff & Reconciliation ===== */
-const ATLAS_H107=Object.freeze({version:"H10.7",diff:["CREATE","UPDATE","MOVE","DELETE","UNCHANGED"],manualApply:true,remoteReadbackRequired:false});
-let atlasH107PreviewOpen=false;
-
-function atlasH107StableSnapshotRow(x){
-  return{
-    sessionKey:String(x?.sessionKey||""),workoutKey:String(x?.workoutKey||""),name:String(x?.name||""),
-    sport:String(x?.sport||""),distanceM:Number(x?.distanceM)||null,durationSec:Number(x?.durationSec)||null,
-    pace:x?.pace||null,structure:String(x?.structure||""),family:String(x?.family||"")
-  };
-}
-function atlasH107ContentFingerprint(x){
-  return trainingEngineDigest(atlasH107StableSnapshotRow(x));
-}
-function atlasH107Baseline(plan){
-  const local=Array.isArray(plan?.publication?.h106Snapshot)?plan.publication.h106Snapshot:[];
-  if(local.length)return local;
-  const remote=atlasH106RuntimePublication(plan);
-  return(Array.isArray(remote?.items)?remote.items:[]).map(x=>({
-    sessionKey:x.sessionKey,workoutKey:x.workoutKey,date:x.date,name:x.name,sport:x.sport,
-    distanceM:null,durationSec:null,pace:null,structure:"",family:""
-  }));
-}
-function atlasH107Diff(plan){
-  const current=atlasH106Entries(plan),baseline=atlasH107Baseline(plan),currentBy=new Map(current.snapshot.map((x,i)=>[String(x.sessionKey),{snapshot:x,contract:current.contracts[i]}])),baseBy=new Map(baseline.map(x=>[String(x.sessionKey),x]));
-  const create=[],update=[],move=[],del=[],unchanged=[];
-  for(const [key,row] of currentBy){
-    const old=baseBy.get(key);
-    if(!old){create.push({type:"CREATE",sessionKey:key,current:row.snapshot,contract:row.contract});continue}
-    const contentChanged=atlasH107ContentFingerprint(old)!==atlasH107ContentFingerprint(row.snapshot),dateChanged=String(old.date||"")!==String(row.snapshot.date||"");
-    if(contentChanged)update.push({type:"UPDATE",sessionKey:key,baseline:old,current:row.snapshot,contract:row.contract});
-    if(dateChanged)move.push({type:"MOVE",sessionKey:key,baseline:old,current:row.snapshot,contract:row.contract});
-    if(!contentChanged&&!dateChanged)unchanged.push({type:"UNCHANGED",sessionKey:key,baseline:old,current:row.snapshot,contract:row.contract});
-  }
-  for(const [key,old] of baseBy)if(!currentBy.has(key))del.push({type:"DELETE",sessionKey:key,baseline:old});
-  return{create,update,move,delete:del,unchanged,current,baseline,totalChanges:create.length+update.length+move.length+del.length};
-}
-function atlasH107DiffSummary(diff){
-  return[
-    ["CREATE",diff.create.length,"create"],["UPDATE",diff.update.length,"update"],
-    ["MOVE",diff.move.length,"move"],["DELETE",diff.delete.length,"delete"],["UNCHANGED",diff.unchanged.length,""]
-  ];
-}
-function atlasH107RenderPreview(diff){
-  if(!atlasH107PreviewOpen||!diff?.totalChanges)return"";
-  const lines=[...diff.create,...diff.update,...diff.move,...diff.delete].slice(0,10).map(x=>{
-    const s=x.current||x.baseline||{},label=x.type==="CREATE"?"Nuevo":x.type==="UPDATE"?"Modificar":x.type==="MOVE"?"Mover":"Eliminar";
-    const dates=x.type==="MOVE"?` · ${atlasDateLabel(x.baseline?.date)} → ${atlasDateLabel(x.current?.date)}`:(s.date?` · ${atlasDateLabel(s.date)}`:"");
-    return`<div><strong>${label}</strong> · ${esc(s.name||"Entrenamiento")}${dates}</div>`;
-  });
-  const more=diff.totalChanges>10?`<div>… y ${diff.totalChanges-10} cambios más</div>`:"";
-  return`<div class="atlas-h107-diff"><div class="atlas-h107-diff-head">Vista previa de actualización</div><div class="atlas-h107-counts">${atlasH107DiffSummary(diff).map(([k,n,c])=>`<span class="atlas-h107-pill ${c}">${k} · ${n}</span>`).join("")}</div><div class="atlas-h107-list">${lines.join("")}${more}</div></div>`;
-}
-function atlasH107ManifestItems(plan,diff,opResults){
-  const remote=atlasH106RuntimePublication(plan),oldBy=new Map((remote?.items||[]).map(x=>[String(x.sessionKey),x])),resultBy=new Map();
-  for(const r of opResults||[])if(r?.ok&&r.sessionKey)resultBy.set(String(r.sessionKey),r);
-  return diff.current.snapshot.map(s=>{
-    const key=String(s.sessionKey),r=resultBy.get(key),old=oldBy.get(key)||{};
-    return{
-      workoutKey:s.workoutKey,sessionKey:key,workoutId:r?.workoutId??old.workoutId??null,
-      scheduleId:r?.scheduleId??old.scheduleId??null,date:s.date,sport:s.sport,name:s.name,accepted:true,ok:true
-    };
-  });
-}
-async function atlasH107ApplyUpdate(){
-  if(atlasH106Busy)return;
-  const plan=activeTrainingPlan(),diff=atlasH107Diff(plan);
-  if(!diff.totalChanges){toast("El plan ya coincide con la última publicación.");return;}
-  const counts=`${diff.create.length} nuevos · ${diff.update.length} modificados · ${diff.move.length} movidos · ${diff.delete.length} eliminados`;
-  if(!confirm(`¿Actualizar Garmin Connect?\n\n${counts}\n\nGarmin no se modificará hasta confirmar esta acción.`))return;
-  atlasH106Busy=true;await renderTrainingPlanPublication();
-  const phases=[["CREATE",diff.create],["UPDATE",diff.update],["MOVE",diff.move],["DELETE",diff.delete]],allResults=[];
-  try{
-    for(const [type,ops] of phases){
-      for(let start=0;start<ops.length;start+=8){
-        const batch=ops.slice(start,start+8),progress=$("atlasH106Progress");
-        if(progress){progress.classList.remove("hidden");progress.textContent=`${type} · ${Math.min(start+batch.length,ops.length)}/${ops.length}`;}
-        const payloadItems=batch.map(x=>type==="DELETE"?{baseline:x.baseline}:{contract:x.contract,baseline:x.baseline||null});
-        const result=await apiRequest("/api/garmin/write/plan",{method:"POST",body:{action:"APPLY_DIFF_BATCH",planId:String(plan.id),type,items:payloadItems},timeoutMs:90000,retries:0});
-        allResults.push(...(result?.results||[]));
-        if(Number(result?.failed)>0){
-          const first=(result.results||[]).find(x=>!x?.ok);
-          throw new Error(`${type}: ${first?.name||"entrenamiento"} · ${first?.error||"operación rechazada"}`);
-        }
-      }
-    }
-    const items=atlasH107ManifestItems(plan,diff,allResults),digest=atlasH106Digest(diff.current);
-    const final=await apiRequest("/api/garmin/write/plan",{method:"POST",body:{action:"FINALIZE_UPDATE_PLAN",planId:String(plan.id),digest,items},timeoutMs:30000,retries:0});
-    const now=new Date().toISOString();
-    if(final?.manifest)atlasH106RemotePublication.set(String(plan.id),final.manifest);
-    plan.publication={...(plan.publication||{}),status:"published",h10Version:"H10.7",dirty:false,h106ManifestDigest:digest,h106ServerDigest:String(final?.manifestDigest||digest),h106Snapshot:diff.current.snapshot,h106PublishedCount:diff.current.snapshot.length,publishedRestDates:diff.current.rests,lastPublishAt:now,lastUpdateAt:now,updatedAt:now,lastError:null,lastErrorAt:null};
-    plan.updatedAt=now;
-    await persistTrainingPlans();
-    atlasH107PreviewOpen=false;
-    renderPlan();renderUpcomingTrainings();await renderTrainingPlanPublication();
-    toast(`✅ Garmin Connect actualizado · ${diff.totalChanges} cambios.`);
-  }catch(error){
-    recordRuntimeAudit("h10.7-plan-update",error,{planId:plan?.id||null}).catch(()=>{});
-    toast(`⚠️ ${error?.message||"No se pudo completar la actualización."}`,true);
-  }finally{atlasH106Busy=false;await renderTrainingPlanPublication();}
-}
-
-/* H10.7 replaces only the H10.6 publication renderer controls. */
-const atlasH107RenderPublicationBase=renderTrainingPlanPublication;
-renderTrainingPlanPublication=async function(){
-  await atlasH107RenderPublicationBase.apply(this,arguments);
-  const root=$("atlasH106Publication"),plan=activeTrainingPlan();
-  if(!root||!plan)return;
-  const state=atlasH106State(plan),diff=atlasH107Diff(plan),update=$("atlasH106UpdateBtn");
-  const dot=$("atlasH106PublicationDot");
-  dot?.classList.toggle("active",diff.totalChanges>0&&!!atlasH106RuntimePublication(plan));
-  if(update){
-    update.disabled=atlasH106Busy||!diff.totalChanges;
-    update.textContent="Actualizar en Garmin Connect";
-    update.onclick=async()=>{atlasH107PreviewOpen=true;await renderTrainingPlanPublication();};
-    if(atlasH107PreviewOpen&&diff.totalChanges){
-      update.textContent="Confirmar actualización en Garmin Connect";
-      update.onclick=atlasH107ApplyUpdate;
-    }
-    update.insertAdjacentHTML("beforebegin",atlasH107RenderPreview(diff));
-  }
-  const stateCopy=root.querySelector(".atlas-h106-copy");
-  if(state.kind==="pending"&&stateCopy)stateCopy.textContent=`${diff.totalChanges} cambios pendientes. Garmin Connect conserva la última versión publicada hasta que confirmes la actualización.`;
-};
-
-const atlasH107StateBase=atlasH106State;
-atlasH106State=function(plan){
-  const state=atlasH107StateBase(plan);
-  if(!plan||state.kind==="error")return state;
-  const published=!!atlasH106RuntimePublication(plan);
-  if(!published)return state;
-  const diff=atlasH107Diff(plan);
-  if(diff.totalChanges)return{...state,kind:"pending",label:"Cambios pendientes",pending:true,copy:`${diff.totalChanges} cambios pendientes.`};
-  return{...state,kind:"published",label:"Publicado",pending:false,copy:"El plan publicado coincide con el borrador actual de ATLAS."};
-};
-
-registerAtlasDiagnostic("h107",ATLAS_H107);
-
-function atlasH106ValidationDiagnostic(){
-  const plan=activeTrainingPlan();if(!plan)return{ok:false,error:"NO_ACTIVE_PLAN"};
-  const entries=atlasH106Entries(plan);
-  return entries.contracts.map((contract,index)=>{
-    const validation=atlasH102ValidateContract(contract),snap=entries.snapshot[index]||{};
-    return{index:index+1,name:snap.name||contract?.workout?.name||null,date:snap.date||contract?.workout?.date||null,sport:contract?.workout?.sport||null,ok:validation.ok,errors:validation.errors||[]};
-  }).filter(x=>!x.ok);
-}
-
-registerAtlasDiagnostic("h106",ATLAS_H106);
+registerAtlasDiagnostic("h114",ATLAS_H114);
 
 })();
 
